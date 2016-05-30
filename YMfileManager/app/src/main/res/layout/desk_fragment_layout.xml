@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <GridView
+        android:id="@+id/gv_desk_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="40dp"
+        android:verticalSpacing="50dp"
+        android:horizontalSpacing="30dp"
+        android:columnWidth="150dp"
+        android:padding="15dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:scrollbars="none" />
+
+    <TextView
+        android:id="@+id/tv_demo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="没有发现桌面图标"
+        android:textSize="25sp"
+        android:gravity="center"
+        android:visibility="gone"/>
+
+</LinearLayout>

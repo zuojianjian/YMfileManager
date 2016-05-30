@@ -1,0 +1,30 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <GridView
+        android:id="@+id/gv_video_pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="auto_fit"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:verticalSpacing="45dp"
+        android:horizontalSpacing="30dp"
+        android:columnWidth="150dp"
+        android:padding="15dp"
+        android:stretchMode="columnWidth"
+        android:scrollbars="none">
+    </GridView>
+
+    <TextView
+        android:id="@+id/tv_no_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="没有发现视频..."
+        android:textSize="30sp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>

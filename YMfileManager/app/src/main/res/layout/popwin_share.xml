@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/title_tools_bg"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/pop_name"
+        style="@style/wrap"
+        android:textColor="@drawable/tv_item_selector"
+        android:layout_marginTop="10dp"
+        android:textSize="@dimen/text18"
+        android:text="名称" />
+    <TextView
+        android:id="@+id/pop_size"
+        style="@style/wrap"
+        android:textColor="@drawable/tv_item_selector"
+        android:textSize="@dimen/text18"
+        android:text="大小" />
+    <TextView
+        android:id="@+id/pop_data"
+        style="@style/wrap"
+        android:textColor="@drawable/tv_item_selector"
+        android:textSize="@dimen/text18"
+        android:text="日期" />
+    <TextView
+        android:id="@+id/pop_type"
+        style="@style/wrap"
+        android:textColor="@drawable/tv_item_selector"
+        android:textSize="@dimen/text18"
+        android:text="类型" />
+
+</LinearLayout>
