@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.ygcompany.zuojj.ymfilemanager.component.PopWinShare;
 import com.ygcompany.zuojj.ymfilemanager.fragment.DeskFragment;
@@ -25,38 +25,40 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
-    private static int POP_TAG;
     FragmentManager manager = getSupportFragmentManager();
     //初始化控件
     @Bind(R.id.fl_mian)
     FrameLayout fl_mian;
     @Bind(R.id.tv_desk)
-    TextView tv_desk;
+    LinearLayout tv_desk;
     @Bind(R.id.tv_music)
-    TextView tv_music;
+    LinearLayout tv_music;
     @Bind(R.id.tv_video)
-    TextView tv_video;
+    LinearLayout tv_video;
     @Bind(R.id.tv_picture)
-    TextView tv_picture;
+    LinearLayout tv_picture;
     @Bind(R.id.tv_android)
-    TextView tv_android;
+    LinearLayout tv_android;
     @Bind(R.id.tv_storage)
-    TextView tv_storage;
+    LinearLayout tv_storage;
     @Bind(R.id.tv_net_service)
-    TextView tv_net_service;
+    LinearLayout tv_net_service;
     @Bind(R.id.iv_back)
     ImageView iv_back;
+    @Bind(R.id.iv_menu)
+    ImageView iv_menu;
+
     private PopWinShare popWinShare;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(MainActivity.this);
         initView();
     }
 
     private void initView() {
-        ButterKnife.bind(MainActivity.this);
         manager.beginTransaction().replace(R.id.fl_mian, new SdStorageFragment(manager)).commit();
         //设置焦点监听
         tv_desk.setOnClickListener(this);
@@ -65,6 +67,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         tv_picture.setOnClickListener(this);
         tv_android.setOnClickListener(this);
         iv_back.setOnClickListener(this);
+        iv_menu.setOnClickListener(this);
         tv_storage.setOnClickListener(this);
         tv_net_service.setOnClickListener(this);
     }
@@ -97,15 +100,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.iv_back:
                 onBackPressed();
                 break;
+            case R.id.iv_menu:
+                T.showShort(MainActivity.this,"iv_menu");
+                shownPopWidndow();
+                break;
         }
     }
 
     private void shownPopWidndow() {
         if (popWinShare == null) {
             //自定义的单击事件
-            OnClickListener paramOnClickListener = new OnClickListener();
+            OnClickLintener paramOnClickListener = new OnClickLintener();
             popWinShare = new PopWinShare(MainActivity.this, paramOnClickListener,
-                    DisplayUtil.dip2px(MainActivity.this, 120), DisplayUtil.dip2px(MainActivity.this, 150));
+                    DisplayUtil.dip2px(MainActivity.this, 120), DisplayUtil.dip2px(MainActivity.this, 160));
             //监听窗口的焦点事件，点击窗口外面则取消显示
             popWinShare.getContentView().setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
@@ -120,35 +127,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //设置默认获取焦点
         popWinShare.setFocusable(true);
         //以某个控件的x和y的偏移量位置开始显示窗口
-        //TODO
-        popWinShare.showAsDropDown(null, 0, 0);
+        popWinShare.showAsDropDown(iv_menu, 10, 10);
         //如果窗口存在，则更新
         popWinShare.update();
-    }
-
-    class OnClickListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.pop_name:
-                    T.showShort(MainActivity.this,"名称");
-                    break;
-                case R.id.pop_size:
-                    T.showShort(MainActivity.this,"大小");
-                    break;
-                case R.id.pop_data:
-                    T.showShort(MainActivity.this,"日期");
-                    break;
-                case R.id.pop_type:
-                    T.showShort(MainActivity.this,"类型");
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
     }
 
     @Override
@@ -170,6 +151,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public SystemSpaceFragment getSystemSpaceFragment(){
         SystemSpaceFragment fragment = (SystemSpaceFragment) manager.findFragmentByTag("system_space_fragment");
         return fragment;
+    }
+
+    private class OnClickLintener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+
+        }
     }
 }
 

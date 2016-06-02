@@ -8,18 +8,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="10dp"
         >
-
         <TextView
-            android:id="@+id/left_storage_up"
+            android:id="@+id/tv_storage_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
             android:gravity="center"
             android:text="收藏"
             android:textSize="18sp" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,30 +26,82 @@
             android:layout_marginTop="10dp"
             android:orientation="vertical"
             android:visibility="visible">
-
-            <TextView
+            <LinearLayout
                 android:id="@+id/tv_desk"
-                style="@style/textSet"
-                android:text="桌面"
-                android:textColor="@drawable/textcolor_selector"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <TextView
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="23dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/desk"/>
+
+                <TextView
+                    style="@style/textSet"
+                    android:text="桌面"
+                    android:textColor="@drawable/textcolor_selector"/>
+             </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/tv_music"
-                style="@style/textSet"
-                android:text="音乐"
-                android:textColor="@drawable/textcolor_selector"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <TextView
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="23dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/music"/>
+
+                <TextView
+                    style="@style/textSet"
+                    android:text="音乐"
+                    android:textColor="@drawable/textcolor_selector"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/tv_video"
-                style="@style/textSet"
-                android:text="视频"
-                android:textColor="@drawable/textcolor_selector"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <TextView
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="23dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/video"/>
+                <TextView
+                    style="@style/textSet"
+                    android:text="视频"
+                    android:textColor="@drawable/textcolor_selector"/>
+
+            </LinearLayout>
+            <LinearLayout
                 android:id="@+id/tv_picture"
-                style="@style/textSet"
-                android:text="图片"
-                android:textColor="@drawable/textcolor_selector"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="23dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/picture"/>
+
+                <TextView
+                    style="@style/textSet"
+                    android:text="图片"
+                    android:textColor="@drawable/textcolor_selector"/>
+            </LinearLayout>
+
         </LinearLayout>
 
         <TextView
@@ -71,18 +122,43 @@
             android:orientation="vertical"
             android:visibility="visible">
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/tv_android"
-                style="@style/textSet"
-                android:text="计算机"
-                android:textColor="@drawable/textcolor_selector"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <TextView
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="23dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/computer"/>
+
+                <TextView
+                    style="@style/textSet"
+                    android:text="计算机"
+                    android:textColor="@drawable/textcolor_selector"/>
+            </LinearLayout>
+            <LinearLayout
                 android:id="@+id/tv_storage"
-                style="@style/textSet"
-                android:text="USB"
-                android:textColor="@drawable/textcolor_selector"
-                />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="23dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/usb"/>
+
+                <TextView
+                    style="@style/textSet"
+                    android:text="USB"
+                    android:textColor="@drawable/textcolor_selector"/>
+            </LinearLayout>
+
         </LinearLayout>
 
         <TextView
@@ -104,11 +180,25 @@
             android:orientation="vertical"
             android:visibility="visible">
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/tv_net_service"
-                style="@style/textSet"
-                android:text="网上邻居"
-                android:textColor="@drawable/textcolor_selector"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="23dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/internet"/>
+
+                <TextView
+                    style="@style/textSet"
+                    android:text="网上邻居"
+                    android:textColor="@drawable/textcolor_selector"/>
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>

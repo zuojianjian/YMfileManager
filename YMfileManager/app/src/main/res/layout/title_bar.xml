@@ -21,18 +21,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="文件管理中心"
-            android:textSize="30dp"
+            android:textSize="25dp"
             android:layout_weight="8"
             android:gravity="center"
-            android:layout_marginRight="30dp"
             android:textColor="@android:color/black"/>
 
-        <!--<ImageView-->
-            <!--android:id="@+id/iv_grid_view"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@mipmap/icon_pic_grid_type"-->
-            <!--android:layout_weight="1"/>-->
+        <ImageView
+            android:id="@+id/iv_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/menu"
+            android:layout_weight="1"/>
 
         <!--<ImageView-->
             <!--android:id="@+id/iv_list_view"-->

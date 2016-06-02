@@ -2,8 +2,8 @@ package com.ygcompany.zuojj.ymfilemanager.fragment;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,7 +24,6 @@ import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.adapter.AudioAdapter;
 import com.ygcompany.zuojj.ymfilemanager.bean.AudioItem;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -93,14 +92,18 @@ public class MusicFragment extends Fragment implements AdapterView.OnItemClickLi
 //            mediaPlayer.release();
 //            mediaPlayer = null;
         currentPath = path;
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        try {
-            mediaPlayer.setDataSource(getContext(), Uri.parse(currentPath));
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mediaPlayer.start();
+//        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//        try {
+//            mediaPlayer.setDataSource(getContext(), Uri.parse(currentPath));
+//            mediaPlayer.prepare();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        mediaPlayer.start();
+        Intent intent = new Intent(currentPath);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction("android.intent.action.MUSIC_PLAYER");
+        startActivity(intent);
     }
 
     private void getAudioList() {

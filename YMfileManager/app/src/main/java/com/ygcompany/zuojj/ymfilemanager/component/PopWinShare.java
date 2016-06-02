@@ -41,6 +41,6 @@ public class PopWinShare extends PopupWindow {
         //设置显示隐藏动画
         setAnimationStyle(R.style.AnimTools);
         //设置背景透明
-        setBackgroundDrawable(new ColorDrawable(0));
+        setBackgroundDrawable(new ColorDrawable());
     }
 }

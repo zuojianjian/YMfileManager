@@ -11,6 +11,8 @@ import com.ygcompany.zuojj.ymfilemanager.component.AppManager;
  * Created by zuojj on 16-5-18.
  */
 public class BaseActivity extends FragmentActivity{
+
+
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);

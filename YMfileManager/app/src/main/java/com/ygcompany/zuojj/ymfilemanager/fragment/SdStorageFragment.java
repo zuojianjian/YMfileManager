@@ -4,12 +4,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.ygcompany.zuojj.ymfilemanager.R;
+import com.ygcompany.zuojj.ymfilemanager.utils.MemoryUtil;
 import com.ygcompany.zuojj.ymfilemanager.utils.T;
 import com.ygcompany.zuojj.ymfilemanager.view.PersonalSpaceFragment;
 import com.ygcompany.zuojj.ymfilemanager.view.SystemSpaceFragment;
@@ -25,11 +29,6 @@ public class SdStorageFragment extends Fragment implements View.OnClickListener 
     private static final String TAG = SdStorageFragment.class.getSimpleName();
     private static final String SYSTEM_SPACE_FRAGMENT = "system_space_fragment";
     FragmentManager manager = getFragmentManager();
-    private View view;
-//    public int[] icon = {R.mipmap.category_icon_music, R.mipmap.category_icon_video, R.mipmap.category_icon_picture,
-//            R.mipmap.category_icon_theme, R.mipmap.category_icon_document, R.mipmap.category_icon_zip,
-//            R.mipmap.category_icon_apk, R.mipmap.category_icon_favorite};
-//    private String[] iconName = {"音乐", "视频", "图片", "主题", "文档", "压缩包", "安装包", "收藏"};
 
     @Bind(R.id.android_system)
     RelativeLayout android_system;
@@ -39,8 +38,16 @@ public class SdStorageFragment extends Fragment implements View.OnClickListener 
     RelativeLayout android_service;
     @Bind(R.id.rl_dvd_space)
     RelativeLayout rl_dvd_space;
-//    @Bind(R.id.gv_picture)
-//    GridView gv_picture;
+    @Bind(R.id.tv_system_total)
+    TextView tv_system_total;
+    @Bind(R.id.tv_system_avail)
+    TextView tv_system_avail;
+    @Bind(R.id.pb_system_process)
+    ProgressBar pb_system_process;
+
+    private View view;
+    private long total;
+    private long avail;
 
     public SdStorageFragment(FragmentManager manager) {
         this.manager = manager;
@@ -57,7 +64,20 @@ public class SdStorageFragment extends Fragment implements View.OnClickListener 
         view = inflater.inflate(R.layout.android_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         initView();
+        initData();
         return view;
+    }
+
+    private void initData() {
+        total = MemoryUtil.getTotalMemory(getContext());
+        avail = MemoryUtil.getAvailMemory(getContext());
+
+        tv_system_total.setText(Formatter.formatFileSize(getContext(), total));
+        tv_system_avail.setText(Formatter.formatFileSize(getContext(), avail));
+
+        pb_system_process.setMax((int) total);
+        pb_system_process.setProgress((int) (total - avail));
+
     }
 
     private void initView() {
@@ -66,37 +86,8 @@ public class SdStorageFragment extends Fragment implements View.OnClickListener 
         personal_space.setOnClickListener(this);
         android_service.setOnClickListener(this);
         rl_dvd_space.setOnClickListener(this);
-//        gv_picture.setAdapter(new AndroidAdapter(getContext(),icon,iconName));
-//        gv_picture.setOnItemClickListener(this);
     }
 
-//    @Override
-//    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//        switch (i) {
-//            case 0:
-//                manager.popBackStack();
-//                manager.beginTransaction().replace(R.id.fl_mian, new MusicFragment()).addToBackStack(null).commit();
-//                break;
-//            case 1:
-//                manager.beginTransaction().replace(R.id.fl_mian, new VideoFragment()).addToBackStack(null).commit();
-//                break;
-//            case 2:
-//                manager.beginTransaction().replace(R.id.fl_mian, new PictrueFragment()).addToBackStack(null).commit();
-//                break;
-//            case 3:
-//                T.showShort(getContext(),"敬请期待");
-//                break;
-//            case 4:
-//                T.showShort(getContext(),"敬请期待");
-//                break;
-//            case 5:
-//                T.showShort(getContext(),"敬请期待");
-//                break;
-//            case 6:
-//                T.showShort(getContext(),"敬请期待");
-//                break;
-//        }
-//    }
 
     @Override
     public void onClick(View view) {

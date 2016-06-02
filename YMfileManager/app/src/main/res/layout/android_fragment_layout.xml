@@ -17,15 +17,15 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="10dp"
             android:text="本机存储"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="15sp" />
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="20dp"
-            android:background="@android:color/darker_gray" />
+            android:background="#E6E6E6" />
     </LinearLayout>
 
     <LinearLayout
@@ -65,6 +65,7 @@
                     />
 
                 <ProgressBar
+                    android:id="@+id/pb_system_process"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
@@ -72,12 +73,38 @@
                     android:max="100"
                     android:progress="50" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="设备存储：1.22G"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="15sp" />
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="总存储："
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="15sp" />
+                    <TextView
+                        android:id="@+id/tv_system_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:text="可用存储："
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="15sp" />
+                    <TextView
+                        android:id="@+id/tv_system_avail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
             </LinearLayout>
         </RelativeLayout>
 
@@ -97,15 +124,15 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="10dp"
             android:text="移动设备"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="15sp" />
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="20dp"
-            android:background="@android:color/darker_gray" />
+            android:background="#E6E6E6" />
     </LinearLayout>
 
     <LinearLayout
@@ -216,15 +243,15 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="10dp"
             android:text="云服务"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="15sp" />
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="20dp"
-            android:background="@android:color/darker_gray" />
+            android:background="#E6E6E6" />
     </LinearLayout>
 
     <LinearLayout

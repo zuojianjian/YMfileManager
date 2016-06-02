@@ -70,8 +70,9 @@ public class PictrueFragment extends Fragment {
                     list = subGroupOfImage(mGruopMap);
                     if (null != list){
                         adapter = new GroupAdapter(getContext(), list, gv_pictrue);
+                    }else {
+                        tv_no_pictrue.setVisibility(View.VISIBLE);
                     }
-                    tv_no_pictrue.setVisibility(View.VISIBLE);
                         gv_pictrue.setAdapter(adapter);
                     mHandler.removeCallbacksAndMessages(null);
                     break;
