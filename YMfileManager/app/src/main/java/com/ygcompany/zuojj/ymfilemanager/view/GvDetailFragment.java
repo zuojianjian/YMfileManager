@@ -1,10 +1,10 @@
 package com.ygcompany.zuojj.ymfilemanager.view;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +15,7 @@ import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.adapter.ChildAdapter;
 import com.ygcompany.zuojj.ymfilemanager.bean.ImageBean;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,11 +70,21 @@ public class GvDetailFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             //将fragment添加到BackStack
-            FragmentManager fm = getFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fl_mian, new FullScreenFragment(childList,i),FULL_SCREEN);//主页面
-            ft.addToBackStack(FULL_SCREEN);
-            ft.commit();
+//            FragmentManager fm = getFragmentManager();
+//            FragmentTransaction ft = fm.beginTransaction();
+//            ft.replace(R.id.fl_mian, new FullScreenFragment(childList,i),FULL_SCREEN);//主页面
+//            ft.addToBackStack(FULL_SCREEN);
+//            ft.commit();
+            String path = childList.get(i);
+//Uri mUri = Uri.parse("file://" + picFile.getPath());Android3.0以后最好不要通过该方法，存在一些小Bug
+            File file = new File(path);
+            if (file != null && file.isFile() == true) {
+                Intent intent = new Intent();
+                intent.setAction(android.content.Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(file), "image/*");
+                startActivity(intent);
+
+            }
         }
     }
 

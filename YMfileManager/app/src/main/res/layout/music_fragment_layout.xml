@@ -8,12 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:numColumns="auto_fit"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="30dp"
-        android:verticalSpacing="45dp"
-        android:horizontalSpacing="30dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dp"
+        android:verticalSpacing="25dp"
+        android:horizontalSpacing="25dp"
         android:columnWidth="150dp"
-        android:padding="15dp"
+        android:padding="10dp"
         android:stretchMode="columnWidth"
         android:scrollbars="none"/>
 

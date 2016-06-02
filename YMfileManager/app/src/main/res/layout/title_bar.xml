@@ -12,16 +12,14 @@
 
         <ImageView
             android:id="@+id/iv_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@mipmap/back_select"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="文件管理中心"
-            android:textSize="25dp"
             android:layout_weight="8"
             android:gravity="center"
             android:textColor="@android:color/black"/>

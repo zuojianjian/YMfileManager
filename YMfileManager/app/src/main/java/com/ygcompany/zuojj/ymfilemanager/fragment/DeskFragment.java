@@ -104,4 +104,9 @@ public class DeskFragment extends Fragment {
         //        TextView tv_app_name;
         ImageView iv_desk_icon;
     }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
 }

@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -86,12 +85,10 @@ public class MusicFragment extends Fragment implements AdapterView.OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        MediaPlayer mediaPlayer = new MediaPlayer();
+//        MediaPlayer mediaPlayer = new MediaPlayer();
         AudioItem audioItem = audioItems.get(i);
-        String path = audioItem.getData();
 //            mediaPlayer.release();
 //            mediaPlayer = null;
-        currentPath = path;
 //        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 //        try {
 //            mediaPlayer.setDataSource(getContext(), Uri.parse(currentPath));
@@ -100,7 +97,7 @@ public class MusicFragment extends Fragment implements AdapterView.OnItemClickLi
 //            e.printStackTrace();
 //        }
 //        mediaPlayer.start();
-        Intent intent = new Intent(currentPath);
+        Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction("android.intent.action.MUSIC_PLAYER");
         startActivity(intent);
@@ -143,10 +140,5 @@ public class MusicFragment extends Fragment implements AdapterView.OnItemClickLi
         }.start();
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
-    }
 
 }

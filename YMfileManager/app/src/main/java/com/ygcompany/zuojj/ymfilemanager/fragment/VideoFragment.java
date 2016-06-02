@@ -2,6 +2,7 @@ package com.ygcompany.zuojj.ymfilemanager.fragment;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,8 +11,6 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import android.widget.VideoView;
 import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.adapter.VideoAdapter;
 import com.ygcompany.zuojj.ymfilemanager.adapter.VideoItem;
-import com.ygcompany.zuojj.ymfilemanager.view.VideoPlayFragment;
 
 import java.util.ArrayList;
 
@@ -118,11 +116,10 @@ public class VideoFragment extends Fragment implements AdapterView.OnItemClickLi
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         VideoItem videoItem = videoItems.get(i);
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft  = fm.beginTransaction();
-        ft.replace(R.id.fl_mian,new VideoPlayFragment(videoItem),VIDEO_PLAY);
-        ft.addToBackStack(VIDEO_PLAY);
-        ft.commit();
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+        Uri data = Uri.parse(videoItem.getData());
+        intent.setDataAndType(data, "video/mp4");
+        startActivity(intent);
     }
 
     @Override

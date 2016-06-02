@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ygcompany.zuojj.ymfilemanager.R;
-import com.ygcompany.zuojj.ymfilemanager.utils.MemoryUtil;
+import com.ygcompany.zuojj.ymfilemanager.system.Util;
 import com.ygcompany.zuojj.ymfilemanager.utils.T;
 import com.ygcompany.zuojj.ymfilemanager.view.PersonalSpaceFragment;
 import com.ygcompany.zuojj.ymfilemanager.view.SystemSpaceFragment;
@@ -46,8 +45,6 @@ public class SdStorageFragment extends Fragment implements View.OnClickListener 
     ProgressBar pb_system_process;
 
     private View view;
-    private long total;
-    private long avail;
 
     public SdStorageFragment(FragmentManager manager) {
         this.manager = manager;
@@ -64,19 +61,19 @@ public class SdStorageFragment extends Fragment implements View.OnClickListener 
         view = inflater.inflate(R.layout.android_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         initView();
-        initData();
+        setSdInfo();
         return view;
     }
 
-    private void initData() {
-        total = MemoryUtil.getTotalMemory(getContext());
-        avail = MemoryUtil.getAvailMemory(getContext());
-
-        tv_system_total.setText(Formatter.formatFileSize(getContext(), total));
-        tv_system_avail.setText(Formatter.formatFileSize(getContext(), avail));
-
-        pb_system_process.setMax((int) total);
-        pb_system_process.setProgress((int) (total - avail));
+    //设置sd卡用量信息
+    private void setSdInfo() {
+        Util.SDCardInfo sdCardInfo = Util.getSDCardInfo();
+        if (sdCardInfo != null) {
+            tv_system_total.setText(Util.convertStorage(sdCardInfo.total));
+            tv_system_avail.setText(Util.convertStorage(sdCardInfo.free));
+            pb_system_process.setMax((int) sdCardInfo.total);
+            pb_system_process.setProgress((int) (sdCardInfo.total - sdCardInfo.free));
+        }
 
     }
 
@@ -113,7 +110,6 @@ public class SdStorageFragment extends Fragment implements View.OnClickListener 
                 break;
         }
     }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -2,7 +2,6 @@ package com.ygcompany.zuojj.ymfilemanager;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -80,21 +79,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 manager.beginTransaction().replace(R.id.fl_mian, new DeskFragment()).commit();
                 break;
             case R.id.tv_music:
+                manager.popBackStack();
                 manager.beginTransaction().replace(R.id.fl_mian, new MusicFragment()).commit();
                 break;
             case R.id.tv_video:
+                manager.popBackStack();
                 manager.beginTransaction().replace(R.id.fl_mian, new VideoFragment()).commit();
                 break;
             case R.id.tv_picture:
+                manager.popBackStack();
                 manager.beginTransaction().replace(R.id.fl_mian, new PictrueFragment()).commit();
                 break;
             case R.id.tv_android:
+                manager.popBackStack();
                 manager.beginTransaction().replace(R.id.fl_mian, new SdStorageFragment(manager),"android").commit();
                 break;
             case R.id.tv_storage:
+                manager.popBackStack();
                 manager.beginTransaction().replace(R.id.fl_mian, new PersonalStorageFragment()).commit();
                 break;
             case R.id.tv_net_service:
+                manager.popBackStack();
                 manager.beginTransaction().replace(R.id.fl_mian, new OnlineNeighborFragment()).commit();
                 break;
             case R.id.iv_back:
@@ -135,7 +140,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
         FragmentManager fm = getSupportFragmentManager();
-        Fragment f = fm.findFragmentById(R.id.fl_mian);
+        fm.findFragmentById(R.id.fl_mian);
 
         if(fm.getBackStackEntryCount() >= 1){
             fm.popBackStack();

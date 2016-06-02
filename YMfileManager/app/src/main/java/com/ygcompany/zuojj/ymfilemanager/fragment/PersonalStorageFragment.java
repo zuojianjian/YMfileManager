@@ -40,4 +40,9 @@ public class PersonalStorageFragment extends Fragment {
     private void initView() {
 
     }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
 }
