@@ -1,7 +1,9 @@
 package com.ygcompany.zuojj.ymfilemanager.fragment;
 
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,9 +11,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.bean.AppInfo;
@@ -49,7 +53,8 @@ public class DeskFragment extends Fragment {
     }
 
     private void initView() {
-        packages = getActivity().getPackageManager().getInstalledPackages(0);
+        final PackageManager pm = getActivity().getPackageManager();
+        packages = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
         for(int i=0;i<packages.size();i++) {
             PackageInfo packageInfo = packages.get(i);
             AppInfo appInfo =new AppInfo();
@@ -57,12 +62,26 @@ public class DeskFragment extends Fragment {
             appInfo.setAppName(appName);
             Drawable appIcon = packageInfo.applicationInfo.loadIcon(getActivity().getPackageManager());
             appInfo.setIcon(appIcon);
+            String packageName = packageInfo.packageName;
+            appInfo.setPackageName(packageName);
             //将应用信息加入appInfos
             if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM)==0){
                 appInfos.add(appInfo);//如果非系统应用则添加进list
             }
         }
         gv_desk_icon.setAdapter(new DeskAdapter());
+        gv_desk_icon.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String packageName = appInfos.get(i).getPackageName();
+                //取到点击的包名
+                Intent intent = pm.getLaunchIntentForPackage(packageName);
+                //如果该程序不可启动（像系统自带的包，有很多是没有入口的）会返回NULL
+                if (null != intent){
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     private class DeskAdapter extends BaseAdapter {
@@ -88,20 +107,20 @@ public class DeskFragment extends Fragment {
                 hodler = new Hodler();
                 convertView = convertView.inflate(getContext(),R.layout.desk_icon_item,null);
                 hodler.iv_desk_icon = (ImageView) convertView.findViewById(R.id.iv_desk_icon);
-//                hodler.tv_app_name = (TextView) convertView.findViewById(R.id.tv_app_name);
+                hodler.tv_app_name = (TextView) convertView.findViewById(R.id.tv_app_name);
                 convertView.setTag(hodler);
             }else {
                 hodler = (Hodler) convertView.getTag();
             }
             AppInfo appInfo = appInfos.get(i);
             hodler.iv_desk_icon.setImageDrawable(appInfo.getIcon());
-//            hodler.tv_app_name.setText(appInfo.getAppName());
+            hodler.tv_app_name.setText(appInfo.getAppName());
             return convertView  ;
         }
     }
 
     static class Hodler {
-        //        TextView tv_app_name;
+        TextView tv_app_name;
         ImageView iv_desk_icon;
     }
     @Override
