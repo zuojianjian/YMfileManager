@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +20,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.ygcompany.zuojj.ymfilemanager.MainActivity;
 import com.ygcompany.zuojj.ymfilemanager.R;
+import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.system.Constants;
 import com.ygcompany.zuojj.ymfilemanager.system.FileCategoryHelper;
 import com.ygcompany.zuojj.ymfilemanager.system.FileIconHelper;
@@ -46,8 +47,8 @@ import butterknife.ButterKnife;
  * 系统空间存储页面
  * Created by zuojj on 16-5-19.
  */
-public class SystemSpaceFragment extends Fragment implements
-        IFileInteractionListener {
+public class SystemSpaceFragment extends BaseFragment implements
+        IFileInteractionListener ,MainActivity.IBackPressedListener {
     public static final String EXT_FILTER_KEY = "ext_filter";
 
     private static final String LOG_TAG = "SystemSpaceFragment";
@@ -63,19 +64,23 @@ public class SystemSpaceFragment extends Fragment implements
 
     private FileViewInteractionHub mFileViewInteractionHub;
 
+    //区分文件的工具类
     private FileCategoryHelper mFileCagetoryHelper;
 
+    //设置不同文件图标的工具类
     private FileIconHelper mFileIconHelper;
 
+    //文件list集合
     private ArrayList<FileInfo> mFileNameList = new ArrayList<FileInfo>();
 
     private Activity mActivity;
 
     private View view;
 
+    //获得SD卡的存储目录
     private static final String sdDir = Util.getSdDirectory();
 
-    private int popTag;
+    private String sdOrSystem;
 
     // memorize the scroll positions of previous paths
     private ArrayList<PathScrollPositionItem> mScrollPositionList = new ArrayList<PathScrollPositionItem>();
@@ -107,6 +112,10 @@ public class SystemSpaceFragment extends Fragment implements
     Button button_pick_confirm;
     @Bind(R.id.button_pick_cancel)
     Button button_pick_cancel;
+
+    public SystemSpaceFragment(String sdSpaceFragment) {
+        this.sdOrSystem = sdSpaceFragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -183,7 +192,8 @@ public class SystemSpaceFragment extends Fragment implements
         }
         mFileViewInteractionHub.setRootPath(rootDir);
 
-        String currentDir = FileManagerPreferenceActivity.getPrimaryFolder(mActivity);
+        //获取currentDir路径为根路径 sdOrSystem为路径选择标识
+        String currentDir = FileManagerPreferenceActivity.getPrimaryFolder(mActivity,sdOrSystem);
         Uri uri = intent.getData();
         if (uri != null) {
             if (baseSd && this.sdDir.startsWith(uri.getPath())) {
@@ -209,6 +219,7 @@ public class SystemSpaceFragment extends Fragment implements
         mActivity.registerReceiver(mReceiver, intentFilter);
 
         updateUI();
+        setHasOptionsMenu(true);
     }
 
     public void switchType(int popTag) {
@@ -242,10 +253,17 @@ public class SystemSpaceFragment extends Fragment implements
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @Override
+    public boolean onBack() {
+        if (mBackspaceExit || !Util.isSDCardReady() || mFileViewInteractionHub == null) {
+            return false;
+        }
+        return mFileViewInteractionHub.onBackPressed();
+    }
+
     private class PathScrollPositionItem {
         String path;
         int pos;
-
         PathScrollPositionItem(String s, int p) {
             path = s;
             pos = p;
@@ -255,7 +273,7 @@ public class SystemSpaceFragment extends Fragment implements
     // execute before change, return the memorized scroll position
     private int computeScrollPosition(String path) {
         int pos = 0;
-        if (mPreviousPath != null) {
+        if(mPreviousPath!=null) {
             if (path.startsWith(mPreviousPath)) {
                 int firstVisiblePosition = file_path_list.getFirstVisiblePosition();
                 if (mScrollPositionList.size() != 0
@@ -282,7 +300,7 @@ public class SystemSpaceFragment extends Fragment implements
                     pos = mScrollPositionList.get(i - 1).pos;
                 }
 
-                for (int j = mScrollPositionList.size() - 1; j >= i - 1 && j >= 0; j--) {
+                for (int j = mScrollPositionList.size() - 1; j >= i-1 && j>=0; j--) {
                     mScrollPositionList.remove(j);
                 }
             }
@@ -292,7 +310,6 @@ public class SystemSpaceFragment extends Fragment implements
         mPreviousPath = path;
         return pos;
     }
-
     public boolean onRefreshFileList(String path, FileSortHelper sort) {
         File file = new File(path);
         if (!file.exists() || !file.isDirectory()) {
@@ -337,11 +354,11 @@ public class SystemSpaceFragment extends Fragment implements
         View noSdView = view.findViewById(R.id.sd_not_available_page);
         noSdView.setVisibility(sdCardReady ? View.GONE : View.VISIBLE);
 
-//        View navigationBar = view.findViewById(R.id.navigation_bar);
-//        navigationBar.setVisibility(sdCardReady ? View.VISIBLE : View.GONE);
+        View navigationBar = view.findViewById(R.id.navigation_bar);
+        navigationBar.setVisibility(sdCardReady ? View.VISIBLE : View.GONE);
         file_path_list.setVisibility(sdCardReady ? View.VISIBLE : View.GONE);
 
-        if (sdCardReady) {
+        if(sdCardReady) {
             mFileViewInteractionHub.refreshFileList();
         }
     }
@@ -420,7 +437,7 @@ public class SystemSpaceFragment extends Fragment implements
     public boolean onNavigation(String path) {
         return false;
     }
-
+    //TODO
     @Override
     public boolean shouldHideMenu(int menu) {
         return false;
@@ -490,11 +507,6 @@ public class SystemSpaceFragment extends Fragment implements
     }
 
     @Override
-    public boolean onBack() {
-        return false;
-    }
-
-    @Override
     public int getItemCount() {
         return mFileNameList.size();
     }
@@ -503,5 +515,19 @@ public class SystemSpaceFragment extends Fragment implements
     public void runOnUiThread(Runnable r) {
         mActivity.runOnUiThread(r);
     }
+    /**
+     * 当前是否可以发生回退操作
+     * @return
+     */
+    public boolean canGoBack() {
 
+        return  false;
+    }
+
+    /**
+     * 执行回退操作
+     */
+    public void goBack() {
+
+    }
 }

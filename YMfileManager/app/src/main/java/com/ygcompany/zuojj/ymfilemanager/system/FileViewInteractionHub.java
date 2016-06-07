@@ -29,6 +29,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.view.SystemSpaceFragment;
@@ -50,6 +51,12 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     private View mConfirmOperationBar;
 
     private ProgressDialog progressDialog;
+
+    private View mNavigationBar;
+
+    private TextView mNavigationBarText;
+
+//    private View mDropdownNavigation;
 
     private Context mContext;
 
@@ -76,6 +83,10 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     public void sortCurrentList() {
         mFileViewListener.sortCurrentList(mFileSortHelper);
+    }
+
+    public boolean canShowCheckBox() {
+        return mConfirmOperationBar.getVisibility() != View.VISIBLE;
     }
 
     private void showConfirmOperationBar(boolean show) {
@@ -137,6 +148,15 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         setupFileListView();
         //确定取消按钮
         setupOperationPane();
+        //顶部导航栏（sd卡路径）
+        setupNaivgationBar();
+    }
+
+    private void setupNaivgationBar() {
+        mNavigationBar = mFileViewListener.getViewById(R.id.navigation_bar);
+        mNavigationBarText = (TextView) mFileViewListener.getViewById(R.id.current_path_view);
+//        mDropdownNavigation = mFileViewListener.getViewById(R.id.dropdown_navigation);
+
     }
 
     // buttons
@@ -156,6 +176,21 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
+                case R.id.button_operation_copy:
+                    onOperationCopy();
+                    break;
+                case R.id.button_operation_move:
+                    onOperationMove();
+                    break;
+                case R.id.button_operation_send:
+                    onOperationSend();
+                    break;
+                case R.id.button_operation_delete:
+                    onOperationDelete();
+                    break;
+                case R.id.button_operation_cancel:
+                    onOperationSelectAllOrCancel();
+                    break;
                 case R.id.button_moving_confirm:
                     onOperationButtonConfirm();
                     break;
@@ -213,24 +248,19 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         mFileViewListener.onDataChanged();
     }
 
-    private OnClickListener navigationClick = new OnClickListener() {
+    public boolean onOperationUpLevel() {
+//        showDropdownNavigation(false);
 
-        @Override
-        public void onClick(View v) {
-            String path = (String) v.getTag();
-            assert (path != null);
-            if (mFileViewListener.onNavigation(path))
-                return;
-
-            if(path.isEmpty()){
-                mCurrentPath = mRoot;
-            } else{
-                mCurrentPath = path;
-            }
-            refreshFileList();
+        if (mFileViewListener.onOperation(Constants.OPERATION_UP_LEVEL)) {
+            return true;
         }
-
-    };
+        if (!mRoot.equals(mCurrentPath)) {
+            mCurrentPath = new File(mCurrentPath).getParent();
+            refreshFileList();
+            return true;
+        }
+        return false;
+    }
 
     //TODO 创建文件夹时获取输入字符
     public void onOperationCreateFolder() {
@@ -323,7 +353,8 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     public void refreshFileList() {
         clearSelection();
-
+        //更新导航栏
+        updateNavigationPane();
         // onRefreshFileList returns true indicates list has changed
         mFileViewListener.onRefreshFileList(mCurrentPath, mFileSortHelper);
 
@@ -346,6 +377,11 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
 
         confirmButton.setText(text);
+    }
+
+    //更新导航栏
+    private void updateNavigationPane() {
+        mNavigationBarText.setText(mFileViewListener.getDisplayPath(mCurrentPath));
     }
 
     public void onOperationSend() {
@@ -849,6 +885,17 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
+    public boolean onBackPressed() {
+//        if (mDropdownNavigation.getVisibility() == View.VISIBLE) {
+//            mDropdownNavigation.setVisibility(View.GONE);
+//        } else
+        if (isInSelection()) {
+            clearSelection();
+        } else if (!onOperationUpLevel()) {
+            return false;
+        }
+        return true;
+    }
 
     public void copyFile(ArrayList<FileInfo> files) {
         mFileOperationHelper.Copy(files);
@@ -861,6 +908,10 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         // refresh to hide selected files
         refreshFileList();
     }
+
+//    private void showDropdownNavigation(boolean show) {
+//        mDropdownNavigation.setVisibility(show ? View.VISIBLE : View.GONE);
+//    }
 
     @Override
     public void onFileChanged(String path) {

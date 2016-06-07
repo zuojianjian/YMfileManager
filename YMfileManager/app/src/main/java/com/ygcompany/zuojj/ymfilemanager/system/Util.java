@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.os.StatFs;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -316,6 +317,7 @@ public class Util {
             return String.format("%d B", size);
     }
 
+    //SD卡常量信息
     public static class SDCardInfo {
         public long total;
 
@@ -355,8 +357,42 @@ public class Util {
                 Log.e(LOG_TAG, e.toString());
             }
         }
-
         return null;
+    }
+
+    //System常量信息
+    public static class SystemInfo {
+        public long romMemory;
+
+        public long avilMemory;
+    }
+    //获得system ROM的各种信息，总容量大小和剩余容量大小等
+    public static SystemInfo getRomMemory() {
+        try {
+        SystemInfo systemInfo = new SystemInfo();
+        //Total rom memory
+        systemInfo.romMemory = getTotalInternalMemorySize();
+
+        //Available rom memory
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSize();
+        long availableBlocks = stat.getAvailableBlocks();
+        systemInfo.avilMemory = blockSize * availableBlocks;
+        return systemInfo;
+
+        } catch (IllegalArgumentException e) {
+            Log.e(LOG_TAG, e.toString());
+        }
+        return null;
+    }
+
+    public static long getTotalInternalMemorySize() {
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSize();
+        long totalBlocks = stat.getBlockCount();
+        return totalBlocks * blockSize;
     }
     //显示一条系统通知
 //    public static void showNotification(Context context, Intent intent, String title, String body, int drawableId) {

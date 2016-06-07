@@ -37,7 +37,7 @@
         android:visibility="visible">
 
         <RelativeLayout
-            android:id="@+id/android_system"
+            android:id="@+id/rl_android_system"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp">
@@ -61,11 +61,10 @@
                     style="@style/textSet"
                     android:layout_marginTop="5dp"
                     android:text="安卓系统"
-                    android:textColor="@android:color/black"
-                    />
+                    android:textColor="@android:color/black"/>
 
                 <ProgressBar
-                    android:id="@+id/pb_system_process"
+                    android:id="@+id/pb_system"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
@@ -144,7 +143,7 @@
         android:visibility="visible">
 
         <RelativeLayout
-            android:id="@+id/personal_space"
+            android:id="@+id/rl_sd_space"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp">
@@ -166,10 +165,11 @@
                 <TextView
                     style="@style/textSet"
                     android:layout_marginTop="5dp"
-                    android:text="个人空间"
+                    android:text="磁盘存储"
                     android:textColor="@android:color/black"/>
 
                 <ProgressBar
+                    android:id="@+id/pb_sd"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
@@ -177,20 +177,47 @@
                     android:max="100"
                     android:progress="50" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="内存存储：1.0G"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="15sp" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="总存储："
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="15sp" />
+                    <TextView
+                        android:id="@+id/tv_sd_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:text="可用存储："
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="15sp" />
+                    <TextView
+                        android:id="@+id/tv_sd_avail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="15sp" />
+                </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/rl_dvd_space"
+            android:id="@+id/rl_mount_space"
             android:layout_marginLeft="80dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/iv_dvd"
@@ -209,7 +236,7 @@
                 <TextView
                     style="@style/textSet"
                     android:layout_marginTop="5dp"
-                    android:text="DVD驱动"
+                    android:text="可移动磁盘"
                     android:textColor="@android:color/black"/>
 
                 <ProgressBar
@@ -263,7 +290,7 @@
         android:visibility="visible">
 
         <RelativeLayout
-            android:id="@+id/android_service"
+            android:id="@+id/rl_android_service"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp">

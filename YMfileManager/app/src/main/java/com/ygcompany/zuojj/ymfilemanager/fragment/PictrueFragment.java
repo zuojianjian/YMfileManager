@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -21,6 +20,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.adapter.GroupAdapter;
 import com.ygcompany.zuojj.ymfilemanager.bean.ImageBean;
@@ -43,7 +43,7 @@ import static android.widget.Toast.LENGTH_SHORT;
  * 显示图片集合缩略图页面
  * Created by zuojj on 16-5-18.
  */
-public class PictrueFragment extends Fragment {
+public class PictrueFragment extends BaseFragment {
     private static final int SCAN_OK = 1;
     private static final String GV_DETAIL = "gv_detail";
 
@@ -97,8 +97,9 @@ public class PictrueFragment extends Fragment {
 
     private void initView() {
         //清空上一次集合数据，防止数据重复加载
-        list.clear();
-        mGruopMap.clear();
+        if (null != list){
+            list.clear();
+        }
         //查询手机中的图片数据，并封装进list集合中
         getImages();
         //文件夹点击显示全部图片

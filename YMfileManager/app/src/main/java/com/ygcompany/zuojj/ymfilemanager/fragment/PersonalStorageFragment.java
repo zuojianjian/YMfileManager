@@ -2,12 +2,12 @@ package com.ygcompany.zuojj.ymfilemanager.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.R;
 
 import butterknife.Bind;
@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
  * Storage页面
  * Created by zuojj on 16-5-19.
  */
-public class PersonalStorageFragment extends Fragment {
+public class PersonalStorageFragment extends BaseFragment {
     private View view;
 
     @Bind(R.id.tv_storage_page)

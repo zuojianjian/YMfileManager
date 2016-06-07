@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.adapter.AudioAdapter;
 import com.ygcompany.zuojj.ymfilemanager.bean.AudioItem;
@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 /**
  * Created by zuojj on 16-5-18.
  */
-public class MusicFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class MusicFragment  extends BaseFragment implements AdapterView.OnItemClickListener {
     private static final String TAG = MusicFragment.class.getSimpleName();
     private View view;
     private static final int MUSIC_OK = 0;
@@ -139,6 +139,4 @@ public class MusicFragment extends Fragment implements AdapterView.OnItemClickLi
             }
         }.start();
     }
-
-
 }

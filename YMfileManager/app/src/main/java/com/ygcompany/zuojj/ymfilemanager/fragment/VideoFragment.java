@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +18,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.adapter.VideoAdapter;
 import com.ygcompany.zuojj.ymfilemanager.adapter.VideoItem;
@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 /**
  * Created by zuojj on 16-5-18.
  */
-public class VideoFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class VideoFragment extends BaseFragment implements AdapterView.OnItemClickListener {
     private static final String VIDEO_PLAY = "video_play";
     private View view;
     private ArrayList<VideoItem> videoItems;
