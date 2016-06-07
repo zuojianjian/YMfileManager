@@ -62,4 +62,20 @@ public class PersonalSpaceFragment extends Fragment {
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
+
+
+    /**
+     * 当前是否可以发生回退操作
+     * @return
+     */
+    public boolean canGoBack() {
+        return  false;
+    }
+
+    /**
+     * 执行回退操作
+     */
+    public void goBack() {
+
+    }
 }

@@ -21,8 +21,10 @@ public class FileManagerPreferenceActivity extends PreferenceActivity implements
     private static final String READ_ROOT = "pref_key_read_root";
     private static final String SHOW_REAL_PATH = "pref_key_show_real_path";
     private static final String SYSTEM_SEPARATOR = File.separator;
+    private static String sdOrSystem = "";
 
     private EditTextPreference mEditTextPreference;
+    private static String primaryFolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +66,13 @@ public class FileManagerPreferenceActivity extends PreferenceActivity implements
         }
     }
 
-    public static String getPrimaryFolder(Context context) {
+    public static String getPrimaryFolder(Context context, String sdOrSystem) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        String primaryFolder = settings.getString(PRIMARY_FOLDER, context.getString(R.string.default_primary_folder, Constants.ROOT_PATH));
+        if ("system_space_fragment".equals(sdOrSystem)){
+            primaryFolder = settings.getString(PRIMARY_FOLDER, context.getString(R.string.default_system_primary_folder, Constants.ROOT_PATH));
+        }else if ("sd_space_fragment".equals(sdOrSystem)){
+            primaryFolder = settings.getString(PRIMARY_FOLDER, context.getString(R.string.default_sd_primary_folder, Constants.ROOT_PATH));
+        }
 
         if (TextUtils.isEmpty(primaryFolder)) { // setting primary folder = empty("")
             primaryFolder = Constants.ROOT_PATH;
@@ -86,7 +92,7 @@ public class FileManagerPreferenceActivity extends PreferenceActivity implements
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
         boolean isReadRootFromSetting = settings.getBoolean(READ_ROOT, false);
-        boolean isReadRootWhenSettingPrimaryFolderWithoutSdCardPrefix = !getPrimaryFolder(context).startsWith(Util.getSdDirectory());
+        boolean isReadRootWhenSettingPrimaryFolderWithoutSdCardPrefix = !getPrimaryFolder(context, sdOrSystem).startsWith(Util.getSdDirectory());
 
         return isReadRootFromSetting || isReadRootWhenSettingPrimaryFolderWithoutSdCardPrefix;
     }

@@ -5,7 +5,6 @@ import android.content.pm.PackageInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.bean.AppInfo;
 
@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 /**
  * Created by zuojj on 16-5-18.
  */
-public class DeskFragment extends Fragment {
+public class DeskFragment extends BaseFragment {
     private View view;
     //用来存储获取的应用信息数据
     private ArrayList<AppInfo> appInfos = new ArrayList<>();
