@@ -38,19 +38,6 @@
                 android:textSize="27px"
                 android:singleLine="true" />
         </LinearLayout>
-        <!--<ScrollView-->
-            <!--android:id="@+id/dropdown_navigation"-->
-            <!--android:overScrollMode="never"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="@drawable/dropdown">-->
-            <!--<LinearLayout-->
-                <!--android:id="@+id/dropdown_navigation_list"-->
-                <!--android:orientation="vertical"-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content">-->
-            <!--</LinearLayout>-->
-        <!--</ScrollView>-->
         <LinearLayout
             android:id="@+id/sd_not_available_page"
             android:orientation="vertical"

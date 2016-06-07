@@ -27,6 +27,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
+ * 桌面应用图标页面
  * Created by zuojj on 16-5-18.
  */
 public class DeskFragment extends BaseFragment {
@@ -48,12 +49,15 @@ public class DeskFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.desk_fragment_layout, container, false);
         ButterKnife.bind(this, view);
-        initView();
+        initData();
         return view;
     }
 
-    private void initView() {
+    //初始化数据
+    private void initData() {
+        //获取包管理器
         final PackageManager pm = getActivity().getPackageManager();
+        //通过管理器获取已安装应用
         packages = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
         for(int i=0;i<packages.size();i++) {
             PackageInfo packageInfo = packages.get(i);
@@ -69,7 +73,10 @@ public class DeskFragment extends BaseFragment {
                 appInfos.add(appInfo);//如果非系统应用则添加进list
             }
         }
+        //设置adapter
         gv_desk_icon.setAdapter(new DeskAdapter());
+
+        //item点击监听
         gv_desk_icon.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -84,6 +91,7 @@ public class DeskFragment extends BaseFragment {
         });
     }
 
+    //设置数据
     private class DeskAdapter extends BaseAdapter {
         @Override
         public int getCount() {
@@ -123,6 +131,7 @@ public class DeskFragment extends BaseFragment {
         TextView tv_app_name;
         ImageView iv_desk_icon;
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

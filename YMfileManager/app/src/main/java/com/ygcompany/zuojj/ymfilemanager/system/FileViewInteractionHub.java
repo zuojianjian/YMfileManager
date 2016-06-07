@@ -56,8 +56,6 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     private TextView mNavigationBarText;
 
-//    private View mDropdownNavigation;
-
     private Context mContext;
 
     public enum Mode {
@@ -155,8 +153,6 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     private void setupNaivgationBar() {
         mNavigationBar = mFileViewListener.getViewById(R.id.navigation_bar);
         mNavigationBarText = (TextView) mFileViewListener.getViewById(R.id.current_path_view);
-//        mDropdownNavigation = mFileViewListener.getViewById(R.id.dropdown_navigation);
-
     }
 
     // buttons
@@ -202,16 +198,9 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     };
 
+    //刷新列表
     private void onOperationReferesh() {
         refreshFileList();
-    }
-
-    private void onOperationFavorite() {
-        String path = mCurrentPath;
-
-        if (mListViewContextMenuSelectedItem != -1) {
-            path = mFileViewListener.getItem(mListViewContextMenuSelectedItem).filePath;
-        }
     }
 
     private void onOperationSetting() {
@@ -249,8 +238,6 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     }
 
     public boolean onOperationUpLevel() {
-//        showDropdownNavigation(false);
-
         if (mFileViewListener.onOperation(Constants.OPERATION_UP_LEVEL)) {
             return true;
         }
@@ -668,9 +655,6 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                 case Constants.MENU_SHOWHIDE:
                     onOperationShowSysFiles();
                     break;
-                case Constants.MENU_FAVORITE:
-                    onOperationFavorite();
-                    break;
                 case MENU_SETTING:
                     onOperationSetting();
                     break;
@@ -886,9 +870,6 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     }
 
     public boolean onBackPressed() {
-//        if (mDropdownNavigation.getVisibility() == View.VISIBLE) {
-//            mDropdownNavigation.setVisibility(View.GONE);
-//        } else
         if (isInSelection()) {
             clearSelection();
         } else if (!onOperationUpLevel()) {
@@ -908,10 +889,6 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         // refresh to hide selected files
         refreshFileList();
     }
-
-//    private void showDropdownNavigation(boolean show) {
-//        mDropdownNavigation.setVisibility(show ? View.VISIBLE : View.GONE);
-//    }
 
     @Override
     public void onFileChanged(String path) {
