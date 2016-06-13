@@ -106,6 +106,16 @@ public class PictrueFragment extends BaseFragment {
         gv_pictrue.setOnItemClickListener(new FolderOnItemClickListener());
     }
 
+    @Override
+    public boolean canGoBack() {
+        return false;
+    }
+
+    @Override
+    public void goBack() {
+
+    }
+
     private class FolderOnItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

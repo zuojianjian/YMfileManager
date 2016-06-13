@@ -10,30 +10,38 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <ImageView
-            android:id="@+id/iv_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@mipmap/back_select"/>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="7"/>
-        <ImageView
-            android:id="@+id/iv_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/iv_search"
-            android:layout_weight="1"/>
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="请输入搜索内容"
-            android:singleLine="true"
-            android:textSize="15sp"/>
+
+
+        <FrameLayout
+            android:layout_width="110dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1">
+
+            <SearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:queryHint="请输入搜索内容"
+                android:singleLine="true"
+                android:imeOptions="actionSearch"
+                android:iconifiedByDefault="true"
+                android:textSize="15sp"
+                android:layout_marginBottom="-10dp"
+                android:background="@mipmap/search_edit"/>
+
+
+            <!--<ImageView-->
+                <!--android:id="@+id/iv_search"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:src="@mipmap/search"-->
+                <!--android:layout_marginRight="20dp"/>-->
+        </FrameLayout>
 
         <ImageView
             android:id="@+id/iv_menu"
@@ -41,14 +49,6 @@
             android:layout_height="wrap_content"
             android:src="@mipmap/menu"
             android:layout_weight="1"/>
-
-        <!--<ImageView-->
-            <!--android:id="@+id/iv_list_view"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@mipmap/icon_pic_list_type"-->
-            <!--android:layout_weight="1"-->
-            <!--android:layout_marginRight="20dp"/>-->
 
     </LinearLayout>
 

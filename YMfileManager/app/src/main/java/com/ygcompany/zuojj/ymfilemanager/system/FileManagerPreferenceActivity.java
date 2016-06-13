@@ -57,6 +57,7 @@ public class FileManagerPreferenceActivity extends PreferenceActivity implements
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
+    //sp存储了程序启动时的根路径“/“
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedpreferences, String key) {
         if (PRIMARY_FOLDER.equals(key)) {
@@ -66,12 +67,20 @@ public class FileManagerPreferenceActivity extends PreferenceActivity implements
         }
     }
 
-    public static String getPrimaryFolder(Context context, String sdOrSystem) {
+    //获取文件的根目录（根据各个页面传入字段的不同选择不同的路径）
+    public static String getPrimaryFolder(Context context, String sdOrSystem, String directorPath) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
         if ("system_space_fragment".equals(sdOrSystem)){
             primaryFolder = settings.getString(PRIMARY_FOLDER, context.getString(R.string.default_system_primary_folder, Constants.ROOT_PATH));
         }else if ("sd_space_fragment".equals(sdOrSystem)){
             primaryFolder = settings.getString(PRIMARY_FOLDER, context.getString(R.string.default_sd_primary_folder, Constants.ROOT_PATH));
+        }else if ("usb_space_fragment".equals(sdOrSystem)){
+            primaryFolder = settings.getString(PRIMARY_FOLDER, context.getString(R.string.default_usb_primary_folder, Constants.ROOT_PATH));
+        }else if ("yun_space_fragment".equals(sdOrSystem)){
+            primaryFolder = settings.getString(PRIMARY_FOLDER, context.getString(R.string.default_yun_primary_folder, Constants.ROOT_PATH));
+        }else if ("search_fragment".equals(sdOrSystem)){
+//            primaryFolder = sdOrSystem;
+            primaryFolder = settings.getString(PRIMARY_FOLDER, directorPath);
         }
 
         if (TextUtils.isEmpty(primaryFolder)) { // setting primary folder = empty("")
@@ -92,7 +101,8 @@ public class FileManagerPreferenceActivity extends PreferenceActivity implements
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 
         boolean isReadRootFromSetting = settings.getBoolean(READ_ROOT, false);
-        boolean isReadRootWhenSettingPrimaryFolderWithoutSdCardPrefix = !getPrimaryFolder(context, sdOrSystem).startsWith(Util.getSdDirectory());
+        String directorPath = "";
+        boolean isReadRootWhenSettingPrimaryFolderWithoutSdCardPrefix = !getPrimaryFolder(context, sdOrSystem, directorPath).startsWith(Util.getSdDirectory());
 
         return isReadRootFromSetting || isReadRootWhenSettingPrimaryFolderWithoutSdCardPrefix;
     }

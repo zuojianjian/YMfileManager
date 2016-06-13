@@ -7,4 +7,10 @@ import android.support.v4.app.Fragment;
  *
  */
 public abstract class BaseFragment extends Fragment {
+
+    public abstract boolean canGoBack();
+    /**
+     * 执行回退操作
+     */
+    public abstract void goBack();
 }

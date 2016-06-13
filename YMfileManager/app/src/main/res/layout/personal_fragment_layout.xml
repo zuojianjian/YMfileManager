@@ -13,18 +13,11 @@
         android:text="个人空间...."
         android:textSize="30sp" />
     <TextView
-        android:id="@+id/tv_service"
+        android:id="@+id/tv_internet"
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="云盘空间...."
-        android:textSize="30sp" />
-    <TextView
-        android:id="@+id/tv_dvd"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="云盘空间...."
+        android:text="网上邻居...."
         android:textSize="30sp" />
 
 </LinearLayout>

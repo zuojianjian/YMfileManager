@@ -20,9 +20,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.MainActivity;
 import com.ygcompany.zuojj.ymfilemanager.R;
-import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.system.Constants;
 import com.ygcompany.zuojj.ymfilemanager.system.FileCategoryHelper;
 import com.ygcompany.zuojj.ymfilemanager.system.FileIconHelper;
@@ -80,7 +80,16 @@ public class SystemSpaceFragment extends BaseFragment implements
     //获得SD卡的存储目录
     private static final String sdDir = Util.getSdDirectory();
 
+    //传入的标识和路径
     private String sdOrSystem;
+    private String directorPath;
+
+    // 传进来的根目录
+    private String curRootDir = "";
+    // 传进来的选中文件列表
+    private ArrayList<FileInfo> fileInfoList = null;
+    // 传进来的复制和移动模式的标志
+    FileViewInteractionHub.CopyOrMove copyOrMove = null;
 
     // memorize the scroll positions of previous paths
     private ArrayList<PathScrollPositionItem> mScrollPositionList = new ArrayList<PathScrollPositionItem>();
@@ -113,8 +122,11 @@ public class SystemSpaceFragment extends BaseFragment implements
     @Bind(R.id.button_pick_cancel)
     Button button_pick_cancel;
 
-    public SystemSpaceFragment(String sdSpaceFragment) {
+    public SystemSpaceFragment(String sdSpaceFragment,String directPath, ArrayList<FileInfo> fileInfoList, FileViewInteractionHub.CopyOrMove copyOrMove) {
         this.sdOrSystem = sdSpaceFragment;
+        this.fileInfoList = fileInfoList;
+        this.copyOrMove = copyOrMove;
+        this.directorPath = directPath;
     }
 
     @Override
@@ -138,8 +150,7 @@ public class SystemSpaceFragment extends BaseFragment implements
         mFileViewInteractionHub = new FileViewInteractionHub(this);
         Intent intent = getActivity().getIntent();
         String action = intent.getAction();
-        if (!TextUtils.isEmpty(action)
-                && (action.equals(Intent.ACTION_PICK) || action.equals(Intent.ACTION_GET_CONTENT))) {
+        if (!TextUtils.isEmpty(action) && (action.equals(Intent.ACTION_PICK) || action.equals(Intent.ACTION_GET_CONTENT))) {
             mFileViewInteractionHub.setMode(FileViewInteractionHub.Mode.Pick);
 
             boolean pickFolder = intent.getBooleanExtra(PICK_FOLDER, false);
@@ -193,7 +204,7 @@ public class SystemSpaceFragment extends BaseFragment implements
         mFileViewInteractionHub.setRootPath(rootDir);
 
         //获取currentDir路径为根路径 sdOrSystem为路径选择标识
-        String currentDir = FileManagerPreferenceActivity.getPrimaryFolder(mActivity,sdOrSystem);
+        String currentDir = FileManagerPreferenceActivity.getPrimaryFolder(mActivity,sdOrSystem,directorPath);
         Uri uri = intent.getData();
         if (uri != null) {
             if (baseSd && this.sdDir.startsWith(uri.getPath())) {
@@ -203,6 +214,7 @@ public class SystemSpaceFragment extends BaseFragment implements
             }
         }
         mFileViewInteractionHub.setCurrentPath(currentDir);
+        curRootDir = currentDir;
         Log.i(LOG_TAG, "CurrentDir = " + currentDir);
 
         mBackspaceExit = (uri != null)
@@ -212,16 +224,24 @@ public class SystemSpaceFragment extends BaseFragment implements
         file_path_list.setAdapter(mAdapter);
         mFileViewInteractionHub.refreshFileList();
 
+        if (fileInfoList != null && fileInfoList.size() > 0) {
+            mFileViewInteractionHub.setCheckedFileList(fileInfoList, copyOrMove);
+        }
+
+        //设置意图过滤器，接收SD卡是否挂载的广播
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
         intentFilter.addDataScheme("file");
         mActivity.registerReceiver(mReceiver, intentFilter);
 
+        //更新UI
         updateUI();
+        //设置optionmenu
         setHasOptionsMenu(true);
     }
 
+    //TODO（待定）
     public void switchType(int popTag) {
         if (popTag == 0) {
             mFileViewInteractionHub.onSortChanged(FileSortHelper.SortMethod.name);
@@ -241,18 +261,21 @@ public class SystemSpaceFragment extends BaseFragment implements
         ButterKnife.unbind(this);
     }
 
+    //准备创建optionmenu
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         mFileViewInteractionHub.onPrepareOptionsMenu(menu);
         super.onPrepareOptionsMenu(menu);
     }
 
+    //创建optionmenu
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mFileViewInteractionHub.onCreateOptionsMenu(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    //回退操作
     @Override
     public boolean onBack() {
         if (mBackspaceExit || !Util.isSDCardReady() || mFileViewInteractionHub == null) {
@@ -271,6 +294,7 @@ public class SystemSpaceFragment extends BaseFragment implements
     }
 
     // execute before change, return the memorized scroll position
+    //返回滚动前的位置
     private int computeScrollPosition(String path) {
         int pos = 0;
         if(mPreviousPath!=null) {
@@ -310,6 +334,8 @@ public class SystemSpaceFragment extends BaseFragment implements
         mPreviousPath = path;
         return pos;
     }
+
+    //刷新列表
     public boolean onRefreshFileList(String path, FileSortHelper sort) {
         File file = new File(path);
         if (!file.exists() || !file.isDirectory()) {
@@ -413,14 +439,37 @@ public class SystemSpaceFragment extends BaseFragment implements
         return false;
     }
 
-    //支持显示真实路径
+//    //显示底部导航栏
+//    @Override
+//    public String getDisplayPath(String path) {
+//        if (path.startsWith(this.sdDir) && !FileManagerPreferenceActivity.showRealPath(mActivity)) {
+//            return getString(R.string.sd_folder) + path.substring(this.sdDir.length());
+//        } else {
+//            return path;
+//        }
+//    }
+    //根据传入页面标志,显示底部导航栏
     @Override
     public String getDisplayPath(String path) {
-        if (path.startsWith(this.sdDir) && !FileManagerPreferenceActivity.showRealPath(mActivity)) {
-            return getString(R.string.sd_folder) + path.substring(this.sdDir.length());
-        } else {
-            return path;
+        int id = 0;
+        String paths = path;
+        if (sdOrSystem.equals("system_space_fragment")){
+            id = R.string.tab_system_category;
+            paths = path.substring(7);
+        }else if (sdOrSystem.equals("sd_space_fragment")){
+            paths = path.substring(11);
+            id = R.string.tab_sd_category;
+        }else if (sdOrSystem.equals("usb_space_fragment")){
+            id = R.string.tab_usb_category;
+            paths = "";
+        }else if (sdOrSystem.equals("yun_space_fragment")){
+            id = R.string.tab_yun_category;
+            paths = "";
+        }else if (sdOrSystem.equals("search_fragment")){
+            id = R.string.qi_ta;
         }
+
+        return getString(id) + paths;
     }
 
     @Override
@@ -520,14 +569,27 @@ public class SystemSpaceFragment extends BaseFragment implements
      * @return
      */
     public boolean canGoBack() {
-
-        return  false;
+        String currentPath = mFileViewInteractionHub.getCurrentPath();
+        if (currentPath.trim().equals(curRootDir.trim())) {
+            return false;
+        }
+        return true;
     }
 
     /**
      * 执行回退操作
      */
     public void goBack() {
+       mFileViewInteractionHub.onBackPressed();
+    }
 
+    // 获取当前选中的文件列表
+    public ArrayList<FileInfo> getFileInfoList(){
+        return mFileViewInteractionHub.getCheckedFileList();
+    }
+
+    // 当前是移动还是复制操作
+    public FileViewInteractionHub.CopyOrMove getCurCopyOrMoveMode() {
+        return mFileViewInteractionHub.getCurCopyOrMoveMode();
     }
 }

@@ -2,27 +2,24 @@ package com.ygcompany.zuojj.ymfilemanager.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Storage页面
- * Created by zuojj on 16-5-19.
+ * Created by zuojj on 16-6-8.
  */
-public class PersonalStorageFragment extends BaseFragment {
+public class PersonalStorageFragment extends Fragment{
     private View view;
-
-    @Bind(R.id.tv_storage_page)
-    TextView tv_storage_page;
-
+    @Bind(R.id.tv_personal)
+    TextView tv_personal;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,19 +27,14 @@ public class PersonalStorageFragment extends BaseFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.storage_fragment_layout, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.personal_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         initView();
         return view;
     }
 
     private void initView() {
-
-    }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
+        tv_personal.setVisibility(View.VISIBLE);
     }
 }

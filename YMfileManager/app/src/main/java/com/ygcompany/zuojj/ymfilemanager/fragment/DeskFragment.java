@@ -91,6 +91,16 @@ public class DeskFragment extends BaseFragment {
         });
     }
 
+    @Override
+    public boolean canGoBack() {
+        return false;
+    }
+
+    @Override
+    public void goBack() {
+
+    }
+
     //设置数据
     private class DeskAdapter extends BaseAdapter {
         @Override

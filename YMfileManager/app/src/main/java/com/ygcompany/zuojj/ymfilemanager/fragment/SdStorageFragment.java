@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +18,15 @@ import android.widget.TextView;
 
 import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.R;
+import com.ygcompany.zuojj.ymfilemanager.system.FileInfo;
+import com.ygcompany.zuojj.ymfilemanager.system.FileViewInteractionHub;
 import com.ygcompany.zuojj.ymfilemanager.system.Util;
 import com.ygcompany.zuojj.ymfilemanager.utils.T;
-import com.ygcompany.zuojj.ymfilemanager.view.PersonalSpaceFragment;
 import com.ygcompany.zuojj.ymfilemanager.view.SystemSpaceFragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,14 +39,17 @@ import butterknife.ButterKnife;
  */
 public class SdStorageFragment extends BaseFragment implements View.OnClickListener {
     private static final String TAG = SdStorageFragment.class.getSimpleName();
-    //当前fragment标识
+    //传入子页面字段标识（用于设置底部目录）
     private static final String SYSTEM_SPACE_FRAGMENT = "system_space_fragment";
     private static final String SD_SPACE_FRAGMENT = "sd_space_fragment";
+    private static final String USB_SPACE_FRAGMENT = "usb_space_fragment";
+    private static final String YUN_SPACE_FRAGMENT = "yun_space_fragment";
 
-    // 启动系统空间的标识
+    // 启动各个fragment的标识
     private static final String SYSTEM_SPACE_FRAGMENT_TAG = "System_Space_Fragment_tag";
-    // 启动个人中心的标识
     private static final String PERSONAL_SPACE_FRAGMENT_TAG = "Personal_Space_Fragment_tag";
+    private static final String USB_SPACE_FRAGMENT_TAG = "usb_space_fragment_tag";
+    private static final String YUN_SPACE_FRAGMENT_TAG = "yun_space_fragment_tag";
 
     //初始化控件
     @Bind(R.id.rl_android_system)
@@ -69,9 +76,12 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     ProgressBar pb_sd;
 
     private View view;
+    // 当前的主界面
+    private BaseFragment curFragment;
 
     private String sdStorageFragment;
     FragmentManager manager = getFragmentManager();
+
     public SdStorageFragment(FragmentManager manager, String sdStorageFragment) {
         this.manager = manager;
         this.sdStorageFragment = sdStorageFragment;
@@ -88,7 +98,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
             switch (msg.what) {
                 case 1:
 //                    T.showShort(getContext(),"更新UI");
-                    if (null != rl_mount_space){
+                    if (null != rl_mount_space) {
                         rl_mount_space.setVisibility(View.VISIBLE);
                     }
                     break;
@@ -119,7 +129,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     private void setVolumSize() {
         //设置system ROM信息
         Util.SystemInfo systemInfo = Util.getRomMemory();
-        if (null != systemInfo){
+        if (null != systemInfo) {
             tv_system_total.setText(Util.convertStorage(systemInfo.romMemory));
             tv_system_avail.setText(Util.convertStorage(systemInfo.avilMemory));
             pb_system.setMax((int) systemInfo.romMemory);
@@ -145,7 +155,13 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         UsbManager usbManager = (UsbManager) getContext().getSystemService(Context.USB_SERVICE);
         //获取设备列表返回HashMap
         HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
-        if (deviceList.size() > 0){
+        Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
+        //遍历usb设备列表
+        while (deviceIterator.hasNext()) {
+            UsbDevice device = deviceIterator.next();
+            //your code
+        }
+        if (deviceList.size() > 0) {
             task = new TimerTask() {
                 @Override
                 public void run() {
@@ -155,7 +171,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
                     handler.sendMessage(message);
                 }
             };
-            timer.schedule(task,1000, 3000); //延时1000ms后执行，1000ms执行一次
+            timer.schedule(task, 1000, 3000); //延时1000ms后执行，1000ms执行一次
             //timer.cancel(); //退出计时器
         }
     }
@@ -163,25 +179,47 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        ArrayList<FileInfo> fileInfoArrayList = null;
+        FileViewInteractionHub.CopyOrMove copyOrMove = null;
         switch (view.getId()) {
             case R.id.rl_android_system:
+                if (curFragment != null) {
+                    fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
+                    copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
+                }
+                curFragment = new SystemSpaceFragment(SYSTEM_SPACE_FRAGMENT, null, fileInfoArrayList, copyOrMove);
                 //开启事务替换当前fragment
-                manager.beginTransaction().replace(R.id.fl_mian, new SystemSpaceFragment(SYSTEM_SPACE_FRAGMENT), SYSTEM_SPACE_FRAGMENT_TAG)
+                manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
                         .addToBackStack(null).commit();
                 break;
             case R.id.rl_sd_space:
+                if (curFragment != null) {
+                    fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
+                    copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
+                }
+                curFragment = new SystemSpaceFragment( SD_SPACE_FRAGMENT,null, fileInfoArrayList, copyOrMove);
                 T.showShort(getContext(), "磁盘空间");
-                manager.beginTransaction().replace(R.id.fl_mian, new SystemSpaceFragment(SD_SPACE_FRAGMENT), SYSTEM_SPACE_FRAGMENT_TAG)
-                        .addToBackStack(null).commit();
-                break;
-            case R.id.rl_android_service:
-                T.showShort(getContext(), "云盘");
-                manager.beginTransaction().replace(R.id.fl_mian, new PersonalSpaceFragment(1), SYSTEM_SPACE_FRAGMENT_TAG)
+                manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
                         .addToBackStack(null).commit();
                 break;
             case R.id.rl_mount_space:
                 T.showShort(getContext(), "可移动磁盘");
-                manager.beginTransaction().replace(R.id.fl_mian, new PersonalSpaceFragment(2), SYSTEM_SPACE_FRAGMENT_TAG)
+                if (curFragment != null) {
+                    fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
+                    copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
+                }
+                curFragment = new SystemSpaceFragment(USB_SPACE_FRAGMENT, null, fileInfoArrayList, copyOrMove);
+                manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
+                        .addToBackStack(null).commit();
+                break;
+            case R.id.rl_android_service:
+                T.showShort(getContext(), "云盘");
+                if (curFragment != null) {
+                    fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
+                    copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
+                }
+                curFragment = new SystemSpaceFragment(YUN_SPACE_FRAGMENT,null , fileInfoArrayList, copyOrMove);
+                manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
                         .addToBackStack(null).commit();
                 break;
         }
@@ -196,41 +234,29 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         ButterKnife.unbind(this);
     }
 
-//    /**
-//     * 当前是否可以发生回退操作
-//     * @return
-//     */
-//    public boolean canGoBack() {
-//        boolean canGoBack = false;
-//        Fragment baseFragment = manager.getFragment(null,SYSTEM_SPACE_FRAGMENT_TAG);
-//        if(baseFragment instanceof  PersonalSpaceFragment)
-//        {
-//            PersonalSpaceFragment personalSpaceFragment = (PersonalSpaceFragment) baseFragment;
-//            canGoBack = personalSpaceFragment.canGoBack();
-//        }
-//        else if (baseFragment instanceof  SystemSpaceFragment)
-//        {
-//            SystemSpaceFragment systemSpaceFragment = (SystemSpaceFragment) baseFragment;
-//            canGoBack = systemSpaceFragment.canGoBack();
-//        }
-//        return canGoBack;
-//    }
+    /**
+     * 当前是否可以发生回退操作
+     *
+     * @return
+     */
+    public boolean canGoBack() {
+        boolean canGoBack = false;
+        Fragment baseFragment = curFragment;
+        if (baseFragment instanceof SystemSpaceFragment) {
+            SystemSpaceFragment systemSpaceFragment = (SystemSpaceFragment) baseFragment;
+            canGoBack = systemSpaceFragment.canGoBack();
+        }
+        return canGoBack;
+    }
 
-//    /**
-//     * 执行回退操作
-//     */
-//    public void goBack() {
-//        Fragment baseFragment = manager.getFragment(null,SYSTEM_SPACE_FRAGMENT_TAG);
-//        if(baseFragment instanceof  PersonalSpaceFragment)
-//        {
-//            PersonalSpaceFragment personalSpaceFragment = (PersonalSpaceFragment) baseFragment;
-//            personalSpaceFragment.goBack();
-//        }
-//        else if (baseFragment instanceof  SystemSpaceFragment)
-//        {
-//            SystemSpaceFragment systemSpaceFragment = (SystemSpaceFragment) baseFragment;
-//            systemSpaceFragment.goBack();
-//        }
-//    }
-
+    /**
+     * 执行回退操作
+     */
+    public void goBack() {
+        Fragment baseFragment = curFragment;
+        if (baseFragment instanceof SystemSpaceFragment) {
+            SystemSpaceFragment systemSpaceFragment = (SystemSpaceFragment) baseFragment;
+            systemSpaceFragment.goBack();
+        }
+    }
 }

@@ -46,7 +46,7 @@ public class TextInputDialog extends AlertDialog {
         mFolderName.setText(mInputText);
 
         setView(mView);
-        setButton(BUTTON_POSITIVE, mContext.getString(R.string.ok),
+        setButton(BUTTON_POSITIVE, mContext.getString(R.string.confirm),
                 new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

@@ -13,7 +13,7 @@ public abstract class Constants {
 
     // Menu id
     public static final int MENU_NEW_FOLDER = 100;
-    public static final int MENU_FAVORITE = 101;
+    public static final int MENU_NEW_FILE = 119;
     public static final int MENU_COPY = 104;
     public static final int MENU_PASTE = 105;
     public static final int MENU_MOVE = 106;

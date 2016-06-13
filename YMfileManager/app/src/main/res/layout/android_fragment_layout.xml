@@ -15,15 +15,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:text="本机存储"
             android:textColor="@android:color/darker_gray"
-            android:textSize="18sp" />
+            android:textSize="13sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="20dp"
             android:background="#E6E6E6" />
     </LinearLayout>
@@ -46,7 +46,7 @@
                 android:id="@+id/iv_android"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:src="@mipmap/storage" />
 
             <LinearLayout
@@ -121,7 +121,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:text="移动设备"
             android:textColor="@android:color/darker_gray"
             android:textSize="18sp" />
@@ -129,7 +129,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="20dp"
             android:background="#E6E6E6" />
     </LinearLayout>
@@ -152,7 +152,7 @@
                 android:id="@+id/iv_person"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:src="@mipmap/storage" />
 
             <LinearLayout
@@ -223,7 +223,7 @@
                 android:id="@+id/iv_dvd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:src="@mipmap/storage" />
 
             <LinearLayout
@@ -268,7 +268,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:text="云服务"
             android:textColor="@android:color/darker_gray"
             android:textSize="18sp" />
@@ -276,7 +276,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="20dp"
             android:background="#E6E6E6" />
     </LinearLayout>
@@ -299,7 +299,7 @@
                 android:id="@+id/iv_service"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:src="@mipmap/storage" />
 
             <LinearLayout

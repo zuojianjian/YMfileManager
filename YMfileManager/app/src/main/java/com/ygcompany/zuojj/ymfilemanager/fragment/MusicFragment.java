@@ -139,4 +139,14 @@ public class MusicFragment  extends BaseFragment implements AdapterView.OnItemCl
             }
         }.start();
     }
+
+    @Override
+    public boolean canGoBack() {
+        return false;
+    }
+
+    @Override
+    public void goBack() {
+
+    }
 }

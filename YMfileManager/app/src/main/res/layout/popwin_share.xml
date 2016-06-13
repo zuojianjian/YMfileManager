@@ -7,28 +7,47 @@
     android:gravity="center_horizontal">
 
     <TextView
-        android:id="@+id/pop_name"
+        android:id="@+id/pop_select_all"
         style="@style/wrap"
         android:textColor="@drawable/tv_item_selector"
         android:textSize="@dimen/text18"
-        android:text="名称" />
+        android:text="全选" />
     <TextView
-        android:id="@+id/pop_size"
+        android:id="@+id/pop_select_cancel"
         style="@style/wrap"
         android:textColor="@drawable/tv_item_selector"
         android:textSize="@dimen/text18"
-        android:text="大小" />
+        android:text="取消" />
     <TextView
-        android:id="@+id/pop_data"
+        android:id="@+id/pop_copy"
         style="@style/wrap"
         android:textColor="@drawable/tv_item_selector"
         android:textSize="@dimen/text18"
-        android:text="日期" />
+        android:text="复制" />
     <TextView
-        android:id="@+id/pop_type"
+        android:id="@+id/pop_delete"
         style="@style/wrap"
         android:textColor="@drawable/tv_item_selector"
         android:textSize="@dimen/text18"
-        android:text="类型" />
+        android:text="删除" />
+    <TextView
+        android:id="@+id/pop_move"
+        style="@style/wrap"
+        android:textColor="@drawable/tv_item_selector"
+        android:textSize="@dimen/text18"
+        android:text="移动" />
+    <TextView
+        android:id="@+id/pop_send"
+        style="@style/wrap"
+        android:textColor="@drawable/tv_item_selector"
+        android:textSize="@dimen/text18"
+        android:text="发送" />
+    <TextView
+        android:id="@+id/pop_create"
+        style="@style/wrap"
+        android:textColor="@drawable/tv_item_selector"
+        android:textSize="@dimen/text18"
+        android:text="发送" />
+
 
 </LinearLayout>

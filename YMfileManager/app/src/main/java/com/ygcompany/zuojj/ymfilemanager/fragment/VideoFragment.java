@@ -127,4 +127,14 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
+
+    @Override
+    public boolean canGoBack() {
+        return false;
+    }
+
+    @Override
+    public void goBack() {
+
+    }
 }

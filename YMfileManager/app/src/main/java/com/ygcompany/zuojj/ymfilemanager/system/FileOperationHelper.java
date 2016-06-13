@@ -46,7 +46,7 @@ public class FileOperationHelper {
     public void setFilenameFilter(FilenameFilter f) {
         mFilter = f;
     }
-    //根据路径和文件名，创建文件
+    //根据路径和名称，创建文件夹
     public boolean CreateFolder(String path, String name) {
         Log.v(LOG_TAG, "CreateFolder >>> " + path + "," + name);
 
@@ -55,6 +55,20 @@ public class FileOperationHelper {
             return false;
 
         return f.mkdir();
+    }
+
+    //根据路径和文件名，创建文件
+    public void CreateFile(String path) {
+        Log.v(LOG_TAG, "CreateFolder >>> " + path);
+
+        File dir = new File(path);
+        if (!dir.exists())
+            try {
+                //在指定的文件夹中创建文件
+                dir.createNewFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
     //拷贝若干个文件，把文件集合拷贝到“当前文件集合中mCurFileNameList”，可以供“粘贴操作”使用
     public void Copy(ArrayList<FileInfo> files) {
@@ -305,8 +319,6 @@ public class FileOperationHelper {
             }
         }
     }
-
-
     /**
      * 获取内外置存储文件
      * @return
@@ -350,5 +362,4 @@ public class FileOperationHelper {
             return null;
         }
     }
-
 }

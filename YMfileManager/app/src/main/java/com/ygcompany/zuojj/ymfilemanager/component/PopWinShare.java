@@ -15,23 +15,29 @@ import com.ygcompany.zuojj.ymfilemanager.R;
  */
 public class PopWinShare extends PopupWindow {
     private View mainView;
-    private TextView pop_size,pop_data,pop_type,pop_name;
+    private TextView pop_select_all,pop_select_cancel,pop_copy,pop_delete,pop_move,pop_send,pop_create;
 
     public PopWinShare(MainActivity mainActivity, View.OnClickListener paramOnClickListener, int paramInt1, int paramInt2){
         super(mainActivity);
         //窗口布局
         mainView = LayoutInflater.from(mainActivity).inflate(R.layout.popwin_share, null);
         //初始化
-        pop_name = (TextView) mainView.findViewById(R.id.pop_name);
-        pop_size = (TextView) mainView.findViewById(R.id.pop_size);
-        pop_data = (TextView) mainView.findViewById(R.id.pop_data);
-        pop_type = (TextView) mainView.findViewById(R.id.pop_type);
+        pop_select_all = (TextView) mainView.findViewById(R.id.pop_select_all);
+        pop_select_cancel = (TextView) mainView.findViewById(R.id.pop_select_cancel);
+        pop_copy = (TextView) mainView.findViewById(R.id.pop_copy);
+        pop_delete = (TextView) mainView.findViewById(R.id.pop_delete);
+        pop_move = (TextView) mainView.findViewById(R.id.pop_move);
+        pop_send = (TextView) mainView.findViewById(R.id.pop_send);
+        pop_create = (TextView) mainView.findViewById(R.id.pop_create);
         //设置每个子布局的事件监听器
         if (paramOnClickListener != null){
-            pop_size.setOnClickListener(paramOnClickListener);
-            pop_data.setOnClickListener(paramOnClickListener);
-            pop_type.setOnClickListener(paramOnClickListener);
-            pop_name.setOnClickListener(paramOnClickListener);
+            pop_select_all.setOnClickListener(paramOnClickListener);
+            pop_select_cancel.setOnClickListener(paramOnClickListener);
+            pop_copy.setOnClickListener(paramOnClickListener);
+            pop_delete.setOnClickListener(paramOnClickListener);
+            pop_move.setOnClickListener(paramOnClickListener);
+            pop_send.setOnClickListener(paramOnClickListener);
+            pop_create.setOnClickListener(paramOnClickListener);
         }
         setContentView(mainView);
         //设置宽度
