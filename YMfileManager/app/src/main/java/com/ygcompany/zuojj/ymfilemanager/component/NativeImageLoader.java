@@ -18,8 +18,6 @@ public class NativeImageLoader {
     private static NativeImageLoader mInstance = new NativeImageLoader();
     private ExecutorService mImageThreadPool = Executors.newFixedThreadPool(1);
 
-
-
     private NativeImageLoader(){
         //获取应用程序的最大内存
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -43,7 +41,6 @@ public class NativeImageLoader {
     public static NativeImageLoader getInstance(){
         return mInstance;
     }
-
 
     /**
      * 加载本地图片，对图片不进行裁剪
@@ -97,8 +94,6 @@ public class NativeImageLoader {
         return bitmap;
 
     }
-
-
 
     /**
      * 往内存缓存中添加Bitmap

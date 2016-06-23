@@ -27,7 +27,6 @@ import butterknife.ButterKnife;
  * Created by zuojj on 16-5-18.
  */
 public class GvDetailFragment extends Fragment {
-    private static final String FULL_SCREEN = "full_screen";
     private View view;
 
     @Bind(R.id.gv_detail_pictrue)
@@ -69,12 +68,6 @@ public class GvDetailFragment extends Fragment {
     private class DetailOnItemClickListener implements android.widget.AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            //将fragment添加到BackStack
-//            FragmentManager fm = getFragmentManager();
-//            FragmentTransaction ft = fm.beginTransaction();
-//            ft.replace(R.id.fl_mian, new FullScreenFragment(childList,i),FULL_SCREEN);//主页面
-//            ft.addToBackStack(FULL_SCREEN);
-//            ft.commit();
             String path = childList.get(i);
 //Uri mUri = Uri.parse("file://" + picFile.getPath());Android3.0以后最好不要通过该方法，存在一些小Bug
             File file = new File(path);
@@ -83,7 +76,6 @@ public class GvDetailFragment extends Fragment {
                 intent.setAction(android.content.Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(file), "image/*");
                 startActivity(intent);
-
             }
         }
     }

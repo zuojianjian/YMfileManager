@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.ygcompany.zuojj.ymfilemanager.R;
+import com.ygcompany.zuojj.ymfilemanager.utils.LocalCache;
 
 import java.util.List;
 
@@ -35,13 +36,17 @@ public class FileListAdapter extends ArrayAdapter<FileInfo> {
         if (convertView != null) {
             view = convertView;
         } else {
-            view = mInflater.inflate(R.layout.file_browser_item, parent, false);
+            if ("list".equals(LocalCache.getInstance(mContext).getViewTag())){
+                view = mInflater.inflate(R.layout.file_browser_item_list, parent, false);
+            }else if ("grid".equals(LocalCache.getInstance(mContext).getViewTag())){
+                view = mInflater.inflate(R.layout.file_browser_item_grid, parent, false);
+            }
         }
 
         FileInfo lFileInfo = mFileViewInteractionHub.getItem(position);
         FileListItem.setupFileListItemInfo(mContext, view, lFileInfo,
                 mFileIcon, mFileViewInteractionHub);
-        view.findViewById(R.id.file_checkbox_area).setOnClickListener(
+        view.findViewById(R.id.file_checkbox).setOnClickListener(
                 new FileListItem.FileItemOnClickListener(mContext,
                         mFileViewInteractionHub));
         return view;

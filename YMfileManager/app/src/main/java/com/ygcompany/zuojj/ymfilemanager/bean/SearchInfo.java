@@ -1,6 +1,7 @@
 package com.ygcompany.zuojj.ymfilemanager.bean;
 
 /**
+ * 搜索功能文件信息
  * Created by zuojj on 16-6-13.
  */
 public class SearchInfo {

@@ -3,7 +3,6 @@ package com.ygcompany.zuojj.ymfilemanager.fragment;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,7 +52,6 @@ public class PictrueFragment extends BaseFragment {
     @Bind(R.id.tv_no_pictrue)
     TextView tv_no_pictrue;
 
-    private Bitmap bitmap;
     private GroupAdapter adapter;
     private ProgressDialog mProgressDialog;
     //图片分类封装集合
@@ -167,7 +165,10 @@ public class PictrueFragment extends BaseFragment {
             public void run() {
                 Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                 ContentResolver mContentResolver = getContext().getContentResolver();
-
+//                String[] projection = {
+//                        MediaStore.Images.Media.DISPLAY_NAME,//图片名称
+//                        MediaStore.Images.Media.SIZE//图片的大小
+//                };
                 //只查询jpeg和png的图片
                 Cursor mCursor = mContentResolver.query(mImageUri, null,
                         MediaStore.Images.Media.MIME_TYPE + "=? or "
@@ -175,9 +176,20 @@ public class PictrueFragment extends BaseFragment {
                         new String[]{"image/jpeg", "image/png"}, MediaStore.Images.Media.DATE_MODIFIED);
 
                 while (mCursor.moveToNext()) {
+//                    ImageBean mImageBean = new ImageBean();
                     //获取图片的路径
                     String path = mCursor.getString(mCursor
                             .getColumnIndex(MediaStore.Images.Media.DATA));
+//                    String iconName = mCursor.getString(mCursor
+//                            .getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME));
+//                    //设置图片的名称
+//                    mImageBean.setIconName(iconName);
+//                    Long iconSize = mCursor.getLong(mCursor
+//                            .getColumnIndex(MediaStore.Images.Media.SIZE));
+//                    //设置图片的大小
+//                    mImageBean.setIconSize(iconSize);
+                    //将内容添加到集合中
+//                    list.add(mImageBean);
                     //获取该图片的父路径名
                     String parentName = new File(path).getParentFile().getName();
                     //根据父路径名将图片放入到mGruopMap中

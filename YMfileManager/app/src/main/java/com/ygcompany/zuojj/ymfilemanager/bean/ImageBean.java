@@ -1,6 +1,7 @@
 package com.ygcompany.zuojj.ymfilemanager.bean;
 
 /**
+ * 设备图片信息
  * Created by zuojj on 16-5-10.
  */
 public class ImageBean {
@@ -13,9 +14,33 @@ public class ImageBean {
      */
     private String folderName;
     /**
+     * 图片名称
+     */
+    private String iconName;
+    /**
      * 文件夹中的图片数
      */
     private int imageCounts;
+    /**
+     * 图片大小
+     */
+    private long iconSize;
+
+    public long getIconSize() {
+        return iconSize;
+    }
+
+    public void setIconSize(long iconSize) {
+        this.iconSize = iconSize;
+    }
+
+    public String getIconName() {
+        return iconName;
+    }
+
+    public void setIconName(String iconName) {
+        this.iconName = iconName;
+    }
 
     public String getTopImagePath() {
         return topImagePath;

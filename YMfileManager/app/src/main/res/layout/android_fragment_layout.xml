@@ -57,7 +57,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_android"
+                    android:id="@+id/tv_computer"
                     style="@style/textSet"
                     android:layout_marginTop="5dp"
                     android:text="安卓系统"
@@ -65,12 +65,14 @@
 
                 <ProgressBar
                     android:id="@+id/pb_system"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
+                    style="@style/my_pb_style"
+                    android:layout_width="180dp"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_gravity="center_vertical"
-                    android:max="100"
-                    android:progress="50" />
+                    android:progress="80"
+                 />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -79,68 +81,33 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="总存储："
+                        android:text="大小："
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15sp" />
+                        android:textSize="13sp" />
                     <TextView
                         android:id="@+id/tv_system_total"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15sp" />
+                        android:textSize="13sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
-                        android:text="可用存储："
+                        android:text="可用："
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15sp" />
+                        android:textSize="13sp" />
                     <TextView
                         android:id="@+id/tv_system_avail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
             </LinearLayout>
         </RelativeLayout>
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="20dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:text="移动设备"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="18sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="20dp"
-            android:background="#E6E6E6" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
-        android:visibility="visible">
 
         <RelativeLayout
             android:id="@+id/rl_sd_space"
@@ -170,9 +137,11 @@
 
                 <ProgressBar
                     android:id="@+id/pb_sd"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
+                    style="@style/my_pb_style"
+                    android:layout_width="180dp"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_gravity="center_vertical"
                     android:max="100"
                     android:progress="50" />
@@ -185,36 +154,70 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="总存储："
+                        android:text="大小："
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15sp" />
+                        android:textSize="13sp" />
                     <TextView
                         android:id="@+id/tv_sd_total"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15sp" />
+                        android:textSize="13sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
-                        android:text="可用存储："
+                        android:text="可用："
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15sp" />
+                        android:textSize="13sp" />
                     <TextView
                         android:id="@+id/tv_sd_avail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/darker_gray"
-                        android:textSize="15sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="移动设备"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="13sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="20dp"
+            android:background="#E6E6E6" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
         <RelativeLayout
-            android:id="@+id/rl_mount_space"
-            android:layout_marginLeft="80dp"
+            android:id="@+id/rl_mount_space_one"
+            android:layout_marginLeft="50dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone">
@@ -240,21 +243,122 @@
                     android:textColor="@android:color/black"/>
 
                 <ProgressBar
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/pb_usb"
+                    style="@style/my_pb_style"
+                    android:layout_width="180dp"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_gravity="center_vertical"
                     android:max="100"
                     android:progress="50" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="内存存储：1.0G"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="15sp" />
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="大小："
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="13sp" />
+                    <TextView
+                        android:id="@+id/tv_usb_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:text="可用："
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="13sp" />
+                    <TextView
+                        android:id="@+id/tv_usb_avail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="13sp" />
+                </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_mount_space_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp">
+
+            <ImageView
+                android:id="@+id/iv_mount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:src="@mipmap/storage" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@id/iv_mount"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/textSet"
+                    android:layout_marginTop="5dp"
+                    android:text="磁盘存储"
+                    android:textColor="@android:color/black"/>
+
+                <ProgressBar
+                    android:id="@+id/pb_mount"
+                    style="@style/my_pb_style"
+                    android:layout_width="180dp"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:max="100"
+                    android:progress="50" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="大小："
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="13sp" />
+                    <TextView
+                        android:id="@+id/tv_mount_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:text="可用："
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="13sp" />
+                    <TextView
+                        android:id="@+id/tv_mount_avail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -271,7 +375,7 @@
             android:layout_marginTop="8dp"
             android:text="云服务"
             android:textColor="@android:color/darker_gray"
-            android:textSize="18sp" />
+            android:textSize="13sp" />
 
         <View
             android:layout_width="match_parent"
@@ -316,9 +420,11 @@
                     android:textColor="@android:color/black" />
 
                 <ProgressBar
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="180dp"
+                    android:layout_height="10dp"
+                    style="@style/my_pb_style"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_gravity="center_vertical"
                     android:max="100"
                     android:progress="50" />
@@ -328,7 +434,7 @@
                     android:layout_height="wrap_content"
                     android:text="设备存储：1.22G"
                     android:textColor="@android:color/darker_gray"
-                    android:textSize="15sp" />
+                    android:textSize="13sp" />
             </LinearLayout>
         </RelativeLayout>
 

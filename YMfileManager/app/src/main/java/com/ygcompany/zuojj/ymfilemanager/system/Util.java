@@ -5,6 +5,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
@@ -19,19 +21,21 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
  * 这个文件夹里面存储的内容是app2sd产生的文件夹，也就是是你手机上所有安装到SD卡的应用程序的缓存文件夹。
  * androidsecure文件夹可以删除吗？
- *如果删除之后，软件不能正常使用，和系统没有关系。
- *删的话除了会可能导致移动至sd卡的程序损坏，数据丢失，并不会造成什么严重后果。
+ * 如果删除之后，软件不能正常使用，和系统没有关系。
+ * 删的话除了会可能导致移动至sd卡的程序损坏，数据丢失，并不会造成什么严重后果。
  * 只要把移动到sd卡的损坏程序卸载，重装，手机就完全没有损伤，文件夹也会在再次app2sd时自动重建的。
  */
 public class Util {
     private static String ANDROID_SECURE = "/mnt/sdcard/.android_secure";
 
     private static final String LOG_TAG = "Util";
+
     //获得SD卡的存储状态，“mounted”表示已经就绪
     public static boolean isSDCardReady() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
@@ -51,6 +55,7 @@ public class Util {
 
         return false;
     }
+
     //2个路径相加的时候，是否需要加上文件分隔符
     public static String makePath(String path1, String path2) {
         if (path1.endsWith(File.separator))
@@ -58,14 +63,17 @@ public class Util {
 
         return path1 + File.separator + path2;
     }
+
     //获得SD卡的存储目录
     public static String getSdDirectory() {
         return Environment.getExternalStorageDirectory().getPath();
     }
+
     //判断1个文件是否为“普通文件”，ANDROID_SECURE下的文件都不是普通的
     public static boolean isNormalFile(String fullName) {
         return !fullName.equals(ANDROID_SECURE);
     }
+
     //根据文件路径，获得Java文件File，再包装成FileInfo
     public static FileInfo GetFileInfo(String filePath) {
         File lFile = new File(filePath);
@@ -144,6 +152,7 @@ public class Util {
         }
         return null;
     }
+
     //获得文件的扩展名
     public static String getExtFromFilename(String filename) {
         int dotPosition = filename.lastIndexOf('.');
@@ -152,6 +161,7 @@ public class Util {
         }
         return "";
     }
+
     //获得去掉“文件后缀”的文件名字，比如“C:/a/b/c.png”，输出“C:/a/b/c”
     public static String getNameFromFilename(String filename) {
         int dotPosition = filename.lastIndexOf('.');
@@ -160,6 +170,7 @@ public class Util {
         }
         return "";
     }
+
     //从文件路径中，获得路径
     public static String getPathFromFilepath(String filepath) {
         int pos = filepath.lastIndexOf('/');
@@ -168,6 +179,7 @@ public class Util {
         }
         return "";
     }
+
     //从文件路径中，获得文件名（带后缀，如果有）
     public static String getNameFromFilepath(String filepath) {
         int pos = filepath.lastIndexOf('/');
@@ -238,13 +250,15 @@ public class Util {
     }
 
     // does not include sd card folder
-    private static String[] SysFileDirs = new String[] {
-        "miren_browser/imagecaches"
+    private static String[] SysFileDirs = new String[]{
+            "miren_browser/imagecaches"
     };
+
     //判断一个文件是否需要显示，根据Setting中的设置。特别说明：某个系统文件目录，不显示。
     public static boolean shouldShowFile(String path) {
         return shouldShowFile(new File(path));
     }
+
     //判断一个文件是否需要显示，根据Setting中的设置。特别说明：某个系统文件目录，不显示。
     public static boolean shouldShowFile(File file) {
         boolean show = Settings.instance().getShowDotAndHiddenFiles();
@@ -265,16 +279,7 @@ public class Util {
 
         return true;
     }
-    //根据上下文对象Context，获得默认的收藏集合
-//    public static ArrayList<FavoriteItem> getDefaultFavorites(Context context) {
-//        ArrayList<FavoriteItem> list = new ArrayList<FavoriteItem>();
-//        list.add(new FavoriteItem(context.getString(R.string.favorite_photo), makePath(getSdDirectory(), "DCIM/Camera")));
-//        list.add(new FavoriteItem(context.getString(R.string.favorite_sdcard), getSdDirectory()));
-//        //list.add(new FavoriteItem(context.getString(R.string.favorite_root), getSdDirectory()));
-//        list.add(new FavoriteItem(context.getString(R.string.favorite_screen_cap), makePath(getSdDirectory(), "MIUI/screen_cap")));
-//        list.add(new FavoriteItem(context.getString(R.string.favorite_ringtone), makePath(getSdDirectory(), "MIUI/ringtone")));
-//        return list;
-//    }
+
     //向View中的某个TextView设置文本
     public static boolean setText(View view, int id, String text) {
         TextView textView = (TextView) view.findViewById(id);
@@ -284,6 +289,7 @@ public class Util {
         textView.setText(text);
         return true;
     }
+
     //向View中的某个TextView设置文本
     public static boolean setText(View view, int id, int text) {
         TextView textView = (TextView) view.findViewById(id);
@@ -323,13 +329,27 @@ public class Util {
 
         public long free;
     }
+
+    //外接usb常量信息
+    public static class UsbMemoryInfo {
+        public long usbTotal;
+
+        public long usbFree;
+    }
+
+    //System常量信息
+    public static class SystemInfo {
+        public long romMemory;
+
+        public long avilMemory;
+    }
+
     //获得SD卡的各种信息，总容量大小和剩余容量大小等
     public static SDCardInfo getSDCardInfo() {
-        String sDcString = Environment.getExternalStorageState();
-
-        if (sDcString.equals(Environment.MEDIA_MOUNTED)) {
+//        String sDcString = Environment.getExternalStorageState();
+//
+//        if (sDcString.equals(Environment.MEDIA_MOUNTED)) {
             File pathFile = Environment.getExternalStorageDirectory();
-
             try {
                 android.os.StatFs statfs = new android.os.StatFs(pathFile.getPath());
 
@@ -356,31 +376,24 @@ public class Util {
             } catch (IllegalArgumentException e) {
                 Log.e(LOG_TAG, e.toString());
             }
-        }
+//        }
         return null;
     }
 
-    //System常量信息
-    public static class SystemInfo {
-        public long romMemory;
-
-        public long avilMemory;
-    }
     //获得system ROM的各种信息，总容量大小和剩余容量大小等
     public static SystemInfo getRomMemory() {
         try {
-        SystemInfo systemInfo = new SystemInfo();
-        //Total rom memory
-        systemInfo.romMemory = getTotalInternalMemorySize();
+            SystemInfo systemInfo = new SystemInfo();
+            //Total rom memory
+            systemInfo.romMemory = getTotalInternalMemorySize();
 
-        //Available rom memory
-        File path = Environment.getDataDirectory();
-        StatFs stat = new StatFs(path.getPath());
-        long blockSize = stat.getBlockSize();
-        long availableBlocks = stat.getAvailableBlocks();
-        systemInfo.avilMemory = blockSize * availableBlocks;
-        return systemInfo;
-
+            //Available rom memory
+            File path = Environment.getDataDirectory();
+            StatFs stat = new StatFs(path.getPath());
+            long blockSize = stat.getBlockSize();
+            long availableBlocks = stat.getAvailableBlocks();
+            systemInfo.avilMemory = blockSize * availableBlocks;
+            return systemInfo;
         } catch (IllegalArgumentException e) {
             Log.e(LOG_TAG, e.toString());
         }
@@ -394,19 +407,46 @@ public class Util {
         long totalBlocks = stat.getBlockCount();
         return totalBlocks * blockSize;
     }
-    //显示一条系统通知
-//    public static void showNotification(Context context, Intent intent, String title, String body, int drawableId) {
-//        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-//        Notification notification = new Notification(drawableId, body, System.currentTimeMillis());
-//        notification.flags = Notification.FLAG_AUTO_CANCEL;
-//        notification.defaults = Notification.DEFAULT_SOUND;
-//        if (intent == null) {
-//            // FIXEME: category tab is disabled
-//            intent = new Intent(context, FileViewActivity.class);
-//        }
-//        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-//        manager.notify(drawableId, notification);
-//    }
+
+    //获得USB的各种信息，总容量大小和剩余容量大小等
+    public static UsbMemoryInfo getUsbMemoryInfo() {
+        Context context = null;
+        //android作为host时,usbManager获取是否有usb连接的管理器
+        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        //获取设备列表返回HashMap
+        HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
+        if (deviceList.size() > 0) {
+            String pathFile = "";
+            for (int i = 0; i < deviceList.size(); i++){
+                //usb设备路径
+                pathFile = "/storage/usb"+i;
+            }
+            try {
+                android.os.StatFs statfs = new android.os.StatFs(pathFile);
+
+                // 获取SDCard上BLOCK总数
+                long nTotalBlocks = statfs.getBlockCount();
+                // 获取SDCard上每个block的SIZE
+                long nBlocSize = statfs.getBlockSize();
+                // 获取可供程序使用的Block的数量
+                long nAvailaBlock = statfs.getAvailableBlocks();
+                // 获取剩下的所有Block的数量(包括预留的一般程序无法使用的块)
+                long nFreeBlock = statfs.getFreeBlocks();
+
+                UsbMemoryInfo usbInfo = new UsbMemoryInfo();
+                // 计算SDCard 总容量大小MB
+                usbInfo.usbTotal = nTotalBlocks * nBlocSize;
+                // 计算 SDCard 剩余大小MB
+                usbInfo.usbFree = nAvailaBlock * nBlocSize;
+
+                return usbInfo;
+            } catch (IllegalArgumentException e) {
+                Log.e(LOG_TAG, e.toString());
+            }
+        }
+        return null;
+    }
+
     //格式化毫秒格式的时间
     public static String formatDateString(Context context, long time) {
         DateFormat dateFormat = android.text.format.DateFormat
@@ -417,15 +457,7 @@ public class Util {
         return dateFormat.format(date) + " " + timeFormat.format(date);
     }
 
-//    public static void updateActionModeTitle(ActionMode mode, Context context, int selectedNum) {
-//        if (mode != null) {
-//            mode.setTitle(context.getString(R.string.multi_select_title,selectedNum));
-//            if(selectedNum == 0){
-//                mode.finish();
-//            }
-//        }
-//    }
-//對sDocMimeTypesSet查詢拼接條件是
+    //對sDocMimeTypesSet查詢拼接條件是
     public static HashSet<String> sDocMimeTypesSet = new HashSet<String>() {
         {
             add("text/plain");
@@ -436,7 +468,7 @@ public class Util {
             add("application/vnd.ms-excel");
         }
     };
-//对于压缩文件（Zip）的查詢條件是：
+    //对于压缩文件（Zip）的查詢條件是：
     public static String sZipFileMimeType = "application/zip";
 
     public static int CATEGORY_TAB_INDEX = 0;

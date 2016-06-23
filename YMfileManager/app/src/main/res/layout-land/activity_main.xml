@@ -9,7 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5">
+        android:layout_weight="0.7">
 
         <include layout="@layout/title_bar" />
 
@@ -30,7 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_marginTop="30dp">
+            android:layout_marginTop="3dp">
 
             <include layout="@layout/left_bar" />
 
@@ -45,6 +45,7 @@
         <FrameLayout
             android:id="@+id/fl_mian"
             android:layout_width="0dp"
+            android:background="@android:color/white"
             android:layout_height="match_parent"
             android:layout_weight="6" />
 

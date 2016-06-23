@@ -179,10 +179,16 @@
         <item name="android:windowExitAnimation">@anim/push_out</item>
     </style>
 
+    <!--侧边栏textview样式-->
     <style name="textSet">
         <item name="android:layout_marginTop">15dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!--自定义progressbar-->
+    <style name="my_pb_style" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/my_progressbar</item>
     </style>
 </resources>

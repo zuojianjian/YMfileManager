@@ -11,12 +11,11 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -34,6 +33,7 @@ import com.ygcompany.zuojj.ymfilemanager.system.FileViewInteractionHub;
 import com.ygcompany.zuojj.ymfilemanager.system.IFileInteractionListener;
 import com.ygcompany.zuojj.ymfilemanager.system.Settings;
 import com.ygcompany.zuojj.ymfilemanager.system.Util;
+import com.ygcompany.zuojj.ymfilemanager.utils.LocalCache;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -48,7 +48,7 @@ import butterknife.ButterKnife;
  * Created by zuojj on 16-5-19.
  */
 public class SystemSpaceFragment extends BaseFragment implements
-        IFileInteractionListener ,MainActivity.IBackPressedListener {
+        IFileInteractionListener, MainActivity.IBackPressedListener {
     public static final String EXT_FILTER_KEY = "ext_filter";
 
     private static final String LOG_TAG = "SystemSpaceFragment";
@@ -80,10 +80,9 @@ public class SystemSpaceFragment extends BaseFragment implements
     //获得SD卡的存储目录
     private static final String sdDir = Util.getSdDirectory();
 
-    //传入的标识和路径
+    //传入的标识和路径区分加载文件目录位置
     private String sdOrSystem;
     private String directorPath;
-
     // 传进来的根目录
     private String curRootDir = "";
     // 传进来的选中文件列表
@@ -94,13 +93,22 @@ public class SystemSpaceFragment extends BaseFragment implements
     // memorize the scroll positions of previous paths
     private ArrayList<PathScrollPositionItem> mScrollPositionList = new ArrayList<PathScrollPositionItem>();
     private String mPreviousPath;
+    //广播接收器,根据（MainActivity）发送广播的action匹配
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             String action = intent.getAction();
-            Log.v(LOG_TAG, "received broadcast:" + intent.toString());
-            if (action.equals(Intent.ACTION_MEDIA_MOUNTED) || action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
+            if (action.equals("com.switchview")) {
+                //清空数据集合，重新加载数据和布局（view视图的切换）
+                mAdapter.clear();
+                initView();
+                mFileViewInteractionHub.clearSelection();
+            } else if (action.equals("com.switchmenu")){// 顶部菜单栏操作
+                if (null != intent.getExtras().getString("pop_menu")){
+                    String pop_menu = intent.getExtras().getString("pop_menu");
+                    selectorMenuId(pop_menu);
+                }
+            } else if (action.equals(Intent.ACTION_MEDIA_MOUNTED) || action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -111,10 +119,31 @@ public class SystemSpaceFragment extends BaseFragment implements
         }
     };
 
+    //根据广播接收器收到的menu字段执行相应的操作
+    private void selectorMenuId(String pop_menu) {
+        if (pop_menu.equals("pop_refresh")){
+            mFileViewInteractionHub.onOperationReferesh();
+        }else if (pop_menu.equals("pop_cancel_all")){
+            mFileViewInteractionHub.onOperationSelectAllOrCancel();
+        }else if (pop_menu.equals("pop_copy")){
+            mFileViewInteractionHub.onOperationCopy();
+        }else if (pop_menu.equals("pop_delete")){
+            mFileViewInteractionHub.onOperationDelete();
+        }else if (pop_menu.equals("pop_send")){
+            mFileViewInteractionHub.onOperationSend();
+        }else if (pop_menu.equals("pop_create")){
+            mFileViewInteractionHub.onOperationCreateFolder();
+        }else if (pop_menu.equals("pop_exit")){
+            ((MainActivity) mActivity).finish();
+        }
+    }
+
     private boolean mBackspaceExit;
 
     @Bind(R.id.file_path_list)
     ListView file_path_list;
+    @Bind(R.id.file_path_grid)
+    GridView file_path_grid;
     @Bind(R.id.pick_operation_bar)
     LinearLayout pick_operation_bar;
     @Bind(R.id.button_pick_confirm)
@@ -122,7 +151,14 @@ public class SystemSpaceFragment extends BaseFragment implements
     @Bind(R.id.button_pick_cancel)
     Button button_pick_cancel;
 
-    public SystemSpaceFragment(String sdSpaceFragment,String directPath, ArrayList<FileInfo> fileInfoList, FileViewInteractionHub.CopyOrMove copyOrMove) {
+    /**
+     * 各个页面的构造参数
+     * @param sdSpaceFragment  传入的标识和路径区分加载文件目录位置
+     * @param directPath
+     * @param fileInfoList    传进来的选中文件列表
+     * @param copyOrMove      传进来的复制和移动模式的标志
+     */
+    public SystemSpaceFragment(String sdSpaceFragment, String directPath, ArrayList<FileInfo> fileInfoList, FileViewInteractionHub.CopyOrMove copyOrMove) {
         this.sdOrSystem = sdSpaceFragment;
         this.fileInfoList = fileInfoList;
         this.copyOrMove = copyOrMove;
@@ -137,7 +173,7 @@ public class SystemSpaceFragment extends BaseFragment implements
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.system_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         initView();
@@ -145,6 +181,7 @@ public class SystemSpaceFragment extends BaseFragment implements
     }
 
     private void initView() {
+
         mActivity = getActivity();
         mFileCagetoryHelper = new FileCategoryHelper(mActivity);
         mFileViewInteractionHub = new FileViewInteractionHub(this);
@@ -185,10 +222,15 @@ public class SystemSpaceFragment extends BaseFragment implements
             mFileViewInteractionHub.setMode(FileViewInteractionHub.Mode.View);
         }
 
-//        file_path_list = (GridView) view.findViewById(R.id.file_path_list);
         mFileIconHelper = new FileIconHelper(mActivity);
-        mAdapter = new FileListAdapter(mActivity, R.layout.file_browser_item, mFileNameList, mFileViewInteractionHub,
-                mFileIconHelper);
+        if ("list".equals(LocalCache.getInstance(getContext()).getViewTag())) {
+            mAdapter = new FileListAdapter(mActivity, R.layout.file_browser_item_list, mFileNameList, mFileViewInteractionHub,
+                    mFileIconHelper);
+
+        } else if ("grid".equals(LocalCache.getInstance(getContext()).getViewTag())) {
+            mAdapter = new FileListAdapter(mActivity, R.layout.file_browser_item_grid, mFileNameList, mFileViewInteractionHub,
+                    mFileIconHelper);
+        }
 
         boolean baseSd = intent.getBooleanExtra(Constants.KEY_BASE_SD, !FileManagerPreferenceActivity.isReadRoot(mActivity));
         Log.i(LOG_TAG, "baseSd = " + baseSd);
@@ -204,7 +246,7 @@ public class SystemSpaceFragment extends BaseFragment implements
         mFileViewInteractionHub.setRootPath(rootDir);
 
         //获取currentDir路径为根路径 sdOrSystem为路径选择标识
-        String currentDir = FileManagerPreferenceActivity.getPrimaryFolder(mActivity,sdOrSystem,directorPath);
+        String currentDir = FileManagerPreferenceActivity.getPrimaryFolder(mActivity, sdOrSystem, directorPath);
         Uri uri = intent.getData();
         if (uri != null) {
             if (baseSd && this.sdDir.startsWith(uri.getPath())) {
@@ -221,7 +263,16 @@ public class SystemSpaceFragment extends BaseFragment implements
                 && (TextUtils.isEmpty(action)
                 || (!action.equals(Intent.ACTION_PICK) && !action.equals(Intent.ACTION_GET_CONTENT)));
 
-        file_path_list.setAdapter(mAdapter);
+        if ("list".equals(LocalCache.getInstance(getContext()).getViewTag())) {
+            file_path_list.setVisibility(View.VISIBLE);
+            file_path_grid.setVisibility(View.GONE);
+            file_path_list.setAdapter(mAdapter);
+        } else if ("grid".equals(LocalCache.getInstance(getContext()).getViewTag())) {
+            file_path_list.setVisibility(View.GONE);
+            file_path_grid.setVisibility(View.VISIBLE);
+            file_path_grid.setAdapter(mAdapter);
+        }
+
         mFileViewInteractionHub.refreshFileList();
 
         if (fileInfoList != null && fileInfoList.size() > 0) {
@@ -230,9 +281,11 @@ public class SystemSpaceFragment extends BaseFragment implements
 
         //设置意图过滤器，接收SD卡是否挂载的广播
         IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.switchview");
+        intentFilter.addAction("com.switchmenu");
         intentFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
-        intentFilter.addDataScheme("file");
+//        intentFilter.addDataScheme("file");
         mActivity.registerReceiver(mReceiver, intentFilter);
 
         //更新UI
@@ -257,23 +310,24 @@ public class SystemSpaceFragment extends BaseFragment implements
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        //当页面销毁时解绑广播接收器和当前view
         mActivity.unregisterReceiver(mReceiver);
         ButterKnife.unbind(this);
     }
 
-    //准备创建optionmenu
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        mFileViewInteractionHub.onPrepareOptionsMenu(menu);
-        super.onPrepareOptionsMenu(menu);
-    }
-
-    //创建optionmenu
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        mFileViewInteractionHub.onCreateOptionsMenu(menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+//    //准备创建optionmenu
+//    @Override
+//    public void onPrepareOptionsMenu(Menu menu) {
+//        mFileViewInteractionHub.onPrepareOptionsMenu(menu);
+//        super.onPrepareOptionsMenu(menu);
+//    }
+//
+//    //创建optionmenu
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        mFileViewInteractionHub.onCreateOptionsMenu(menu);
+//        super.onCreateOptionsMenu(menu, inflater);
+//    }
 
     //回退操作
     @Override
@@ -287,6 +341,7 @@ public class SystemSpaceFragment extends BaseFragment implements
     private class PathScrollPositionItem {
         String path;
         int pos;
+
         PathScrollPositionItem(String s, int p) {
             path = s;
             pos = p;
@@ -297,9 +352,14 @@ public class SystemSpaceFragment extends BaseFragment implements
     //返回滚动前的位置
     private int computeScrollPosition(String path) {
         int pos = 0;
-        if(mPreviousPath!=null) {
+        if (mPreviousPath != null) {
             if (path.startsWith(mPreviousPath)) {
-                int firstVisiblePosition = file_path_list.getFirstVisiblePosition();
+                int firstVisiblePosition = 0;
+                if ("list".equals(LocalCache.getInstance(getContext()).getViewTag())) {
+                    firstVisiblePosition = file_path_list.getFirstVisiblePosition();
+                } else if ("grid".equals(LocalCache.getInstance(getContext()).getViewTag())) {
+                    firstVisiblePosition = file_path_grid.getFirstVisiblePosition();
+                }
                 if (mScrollPositionList.size() != 0
                         && mPreviousPath.equals(mScrollPositionList.get(mScrollPositionList.size() - 1).path)) {
                     mScrollPositionList.get(mScrollPositionList.size() - 1).pos = firstVisiblePosition;
@@ -324,7 +384,7 @@ public class SystemSpaceFragment extends BaseFragment implements
                     pos = mScrollPositionList.get(i - 1).pos;
                 }
 
-                for (int j = mScrollPositionList.size() - 1; j >= i-1 && j>=0; j--) {
+                for (int j = mScrollPositionList.size() - 1; j >= i - 1 && j >= 0; j--) {
                     mScrollPositionList.remove(j);
                 }
             }
@@ -366,12 +426,21 @@ public class SystemSpaceFragment extends BaseFragment implements
 
         sortCurrentList(sort);
         showEmptyView(fileList.size() == 0);
-        file_path_list.post(new Runnable() {
-            @Override
-            public void run() {
-                file_path_list.setSelection(pos);
-            }
-        });
+        if ("list".equals(LocalCache.getInstance(getContext()).getViewTag())) {
+            file_path_list.post(new Runnable() {
+                @Override
+                public void run() {
+                    file_path_list.setSelection(pos);
+                }
+            });
+        } else if ("grid".equals(LocalCache.getInstance(getContext()).getViewTag())) {
+            file_path_grid.post(new Runnable() {
+                @Override
+                public void run() {
+                    file_path_grid.setSelection(pos);
+                }
+            });
+        }
         return true;
     }
 
@@ -382,9 +451,13 @@ public class SystemSpaceFragment extends BaseFragment implements
 
         View navigationBar = view.findViewById(R.id.navigation_bar);
         navigationBar.setVisibility(sdCardReady ? View.VISIBLE : View.GONE);
-        file_path_list.setVisibility(sdCardReady ? View.VISIBLE : View.GONE);
+        if ("list".equals(LocalCache.getInstance(getContext()).getViewTag())) {
+            file_path_list.setVisibility(sdCardReady ? View.VISIBLE : View.GONE);
+        } else if ("grid".equals(LocalCache.getInstance(getContext()).getViewTag())) {
+            file_path_grid.setVisibility(sdCardReady ? View.VISIBLE : View.GONE);
+        }
 
-        if(sdCardReady) {
+        if (sdCardReady) {
             mFileViewInteractionHub.refreshFileList();
         }
     }
@@ -439,7 +512,7 @@ public class SystemSpaceFragment extends BaseFragment implements
         return false;
     }
 
-//    //显示底部导航栏
+    //    //显示底部导航栏
 //    @Override
 //    public String getDisplayPath(String path) {
 //        if (path.startsWith(this.sdDir) && !FileManagerPreferenceActivity.showRealPath(mActivity)) {
@@ -453,22 +526,21 @@ public class SystemSpaceFragment extends BaseFragment implements
     public String getDisplayPath(String path) {
         int id = 0;
         String paths = path;
-        if (sdOrSystem.equals("system_space_fragment")){
+        if (sdOrSystem.equals("system_space_fragment")) {
             id = R.string.tab_system_category;
-            paths = path.substring(7);
-        }else if (sdOrSystem.equals("sd_space_fragment")){
-            paths = path.substring(11);
+//            paths = path.substring(1);
+        } else if (sdOrSystem.equals("sd_space_fragment")) {//  /storage/disk0
+//            paths = path.substring(14);
             id = R.string.tab_sd_category;
-        }else if (sdOrSystem.equals("usb_space_fragment")){
+        } else if (sdOrSystem.equals("usb_space_fragment")) {
             id = R.string.tab_usb_category;
             paths = "";
-        }else if (sdOrSystem.equals("yun_space_fragment")){
+        } else if (sdOrSystem.equals("yun_space_fragment")) {
             id = R.string.tab_yun_category;
             paths = "";
-        }else if (sdOrSystem.equals("search_fragment")){
+        } else if (sdOrSystem.equals("search_fragment")) {
             id = R.string.qi_ta;
         }
-
         return getString(id) + paths;
     }
 
@@ -486,6 +558,7 @@ public class SystemSpaceFragment extends BaseFragment implements
     public boolean onNavigation(String path) {
         return false;
     }
+
     //TODO
     @Override
     public boolean shouldHideMenu(int menu) {
@@ -564,8 +637,10 @@ public class SystemSpaceFragment extends BaseFragment implements
     public void runOnUiThread(Runnable r) {
         mActivity.runOnUiThread(r);
     }
+
     /**
      * 当前是否可以发生回退操作
+     *
      * @return
      */
     public boolean canGoBack() {
@@ -580,11 +655,11 @@ public class SystemSpaceFragment extends BaseFragment implements
      * 执行回退操作
      */
     public void goBack() {
-       mFileViewInteractionHub.onBackPressed();
+        mFileViewInteractionHub.onBackPressed();
     }
 
     // 获取当前选中的文件列表
-    public ArrayList<FileInfo> getFileInfoList(){
+    public ArrayList<FileInfo> getFileInfoList() {
         return mFileViewInteractionHub.getCheckedFileList();
     }
 

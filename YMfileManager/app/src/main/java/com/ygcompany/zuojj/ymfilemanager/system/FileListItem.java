@@ -60,23 +60,12 @@ public class FileListItem {
 
             FileInfo tag = (FileInfo) img.getTag();
             tag.Selected = !tag.Selected;
-//            ActionMode actionMode = ((FileExplorerTabActivity) mContext).getActionMode();
-//            if (actionMode == null) {
-//                actionMode = ((FileExplorerTabActivity) mContext)
-//                        .startActionMode(new ModeCallback(mContext,
-//                                mFileViewInteractionHub));
-//                ((FileExplorerTabActivity) mContext).setActionMode(actionMode);
-//            } else {
-//                actionMode.invalidate();
-//            }
             if (mFileViewInteractionHub.onCheckItem(tag, v)) {
                 img.setImageResource(tag.Selected ? R.drawable.btn_check_on_holo_light
                         : R.drawable.btn_check_off_holo_light);
             } else {
                 tag.Selected = !tag.Selected;
             }
-//            Util.updateActionModeTitle(actionMode, mContext,
-//                    mFileViewInteractionHub.getSelectedFileList().size());
         }
     }
 

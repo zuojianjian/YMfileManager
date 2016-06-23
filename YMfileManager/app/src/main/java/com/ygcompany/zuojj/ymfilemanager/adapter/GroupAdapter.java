@@ -83,7 +83,6 @@ public class GroupAdapter extends BaseAdapter{
         //给ImageView设置路径Tag,这是异步加载图片的小技巧
         viewHolder.mImageView.setTag(path);
 
-
         //利用NativeImageLoader类加载本地图片
         Bitmap bitmap = NativeImageLoader.getInstance().loadNativeImage(path, mPoint, new NativeImageLoader.NativeImageCallBack() {
 

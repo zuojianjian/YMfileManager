@@ -1,6 +1,7 @@
 package com.ygcompany.zuojj.ymfilemanager.bean;
 
 /**
+ * 音频item信息
  * Created by zuojj on 16-5-18.
  */
 public class AudioItem {

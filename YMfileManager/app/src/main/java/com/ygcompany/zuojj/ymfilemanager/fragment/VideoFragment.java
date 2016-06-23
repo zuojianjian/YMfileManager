@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.R;
@@ -29,16 +28,14 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
+ * 视频列表页面
  * Created by zuojj on 16-5-18.
  */
 public class VideoFragment extends BaseFragment implements AdapterView.OnItemClickListener {
-    private static final String VIDEO_PLAY = "video_play";
     private View view;
     private ArrayList<VideoItem> videoItems;
     //播放视频专用
-    private VideoView vv_media_player;
     private ProgressDialog mProgressDialog;
-
 
     @Bind(R.id.tv_no_video)
     TextView tv_no_video;
@@ -75,6 +72,7 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
 
     private void initView() {
         getVideoList();
+        //点击item播放视频
         gv_video_pager.setOnItemClickListener(this);
     }
 
@@ -83,7 +81,7 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
         //子线程准备数据
         new Thread(){
             public void run(){
-                videoItems = new ArrayList<VideoItem>();
+                videoItems = new ArrayList<>();
                 Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 ContentResolver contentResolver = getContext().getContentResolver();
                 String[] projection = {
@@ -115,6 +113,7 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        //点击item播放视频
         VideoItem videoItem = videoItems.get(i);
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
         Uri data = Uri.parse(videoItem.getData());

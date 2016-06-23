@@ -17,13 +17,14 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="30dp"
             android:gravity="center"
+            android:textColor="@android:color/darker_gray"
             android:text="收藏"
             android:textSize="15sp" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:orientation="vertical"
             android:visibility="visible">
             <LinearLayout
@@ -35,7 +36,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
+                    android:layout_marginTop="21dp"
                     android:layout_marginRight="10dp"
                     android:src="@mipmap/desk"/>
 
@@ -54,7 +55,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
+                    android:layout_marginTop="21dp"
                     android:layout_marginRight="10dp"
                     android:src="@mipmap/music"/>
 
@@ -74,7 +75,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
+                    android:layout_marginTop="21dp"
                     android:layout_marginRight="10dp"
                     android:src="@mipmap/video"/>
                 <TextView
@@ -92,7 +93,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
+                    android:layout_marginTop="21dp"
                     android:layout_marginRight="10dp"
                     android:src="@mipmap/picture"/>
 
@@ -112,18 +113,19 @@
             android:layout_marginTop="30dp"
             android:gravity="center"
             android:text="本机"
+            android:textColor="@android:color/darker_gray"
             android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:orientation="vertical"
             android:visibility="visible">
 
             <LinearLayout
-                android:id="@+id/tv_android"
+                android:id="@+id/tv_computer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -131,7 +133,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
+                    android:layout_marginTop="21dp"
                     android:layout_marginRight="10dp"
                     android:src="@mipmap/computer"/>
 
@@ -149,7 +151,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
+                    android:layout_marginTop="21dp"
                     android:layout_marginRight="10dp"
                     android:src="@mipmap/usb"/>
 
@@ -169,6 +171,7 @@
             android:layout_marginTop="30dp"
             android:gravity="center"
             android:text="网络"
+            android:textColor="@android:color/darker_gray"
             android:textSize="15sp" />
 
         <LinearLayout
@@ -176,7 +179,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:orientation="vertical"
             android:visibility="visible">
 
@@ -189,7 +192,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
+                    android:layout_marginTop="21dp"
                     android:layout_marginRight="10dp"
                     android:src="@mipmap/internet"/>
 

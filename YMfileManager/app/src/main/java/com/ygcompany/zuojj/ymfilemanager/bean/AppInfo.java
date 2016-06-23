@@ -3,6 +3,7 @@ package com.ygcompany.zuojj.ymfilemanager.bean;
 import android.graphics.drawable.Drawable;
 
 /**
+ * 设备上安装应用信息
  * Created by zuojj on 16-5-11.
  */
 public class AppInfo {

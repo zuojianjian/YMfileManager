@@ -1,5 +1,6 @@
 package com.ygcompany.zuojj.ymfilemanager.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -29,9 +30,11 @@ public class SearchFragment extends BaseFragment{
     //文件list集合
     private ArrayList<SearchInfo> mSearchList = new ArrayList<>();
     FragmentManager manager = getFragmentManager();
+    private SearchAdapter searchAdapter;
 
     @Bind(R.id.lv_mian_search)
     ListView lv_mian_search;
+    private Context context;
 
     public SearchFragment(FragmentManager manager, ArrayList<SearchInfo> mFileList) {
         this.mSearchList = mFileList;
@@ -53,7 +56,8 @@ public class SearchFragment extends BaseFragment{
     }
 
     private void initData() {
-        lv_mian_search.setAdapter(new SearchAdapter());
+        searchAdapter = new SearchAdapter();
+        lv_mian_search.setAdapter(searchAdapter);
         lv_mian_search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -78,7 +82,6 @@ public class SearchFragment extends BaseFragment{
     public void goBack() {
 
     }
-
     private class SearchAdapter extends BaseAdapter {
 
         @Override
@@ -98,7 +101,7 @@ public class SearchFragment extends BaseFragment{
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            view = View.inflate(getContext(),R.layout.search_file_item,null);
+            view = View.inflate(getContext(), R.layout.search_file_item,null);
             TextView search_file_name = (TextView) view.findViewById(R.id.search_file_name);
             search_file_name.setText(mSearchList.get(i).fileName);
             return view;

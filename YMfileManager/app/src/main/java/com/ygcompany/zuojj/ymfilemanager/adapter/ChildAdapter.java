@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+
 import com.ygcompany.zuojj.ymfilemanager.R;
-import com.ygcompany.zuojj.ymfilemanager.component.NativeImageLoader;
 import com.ygcompany.zuojj.ymfilemanager.component.MyImageView;
+import com.ygcompany.zuojj.ymfilemanager.component.NativeImageLoader;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,7 +34,6 @@ public class ChildAdapter extends BaseAdapter {
     private GridView mGridView;
     private List<String> list;
     protected LayoutInflater mInflater;
-    private ImageView imageView;
 
     public ChildAdapter(Context context, List<String> list, GridView mGridView) {
         this.list = list;
@@ -65,6 +66,7 @@ public class ChildAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.grid_child_item, null);
             viewHolder = new ViewHolder();
             viewHolder.mImageView = (MyImageView) convertView.findViewById(R.id.child_image);
+//            viewHolder.mTextView = (TextView) convertView.findViewById(R.id.tv_icon_name);
 
             //用来监听ImageView的宽和高
             viewHolder.mImageView.setOnMeasureListener(new MyImageView.OnMeasureListener() {
@@ -97,6 +99,7 @@ public class ChildAdapter extends BaseAdapter {
         }else{
             viewHolder.mImageView.setImageResource(R.mipmap.pictures_no);
         }
+//        viewHolder.mTextView.setText(imageBean.getIconName());
 
         return convertView;
     }
@@ -133,7 +136,10 @@ public class ChildAdapter extends BaseAdapter {
 
 
     class ViewHolder{
+        //要显示的图片
         public MyImageView mImageView;
+//        //图片名字
+//        public TextView mTextView;
     }
 
 }

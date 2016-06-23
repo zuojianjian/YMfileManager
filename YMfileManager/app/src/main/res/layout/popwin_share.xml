@@ -7,17 +7,18 @@
     android:gravity="center_horizontal">
 
     <TextView
-        android:id="@+id/pop_select_all"
+        android:id="@+id/pop_refresh"
         style="@style/wrap"
         android:textColor="@drawable/tv_item_selector"
         android:textSize="@dimen/text18"
-        android:text="全选" />
+        android:text="刷新" />
+
     <TextView
-        android:id="@+id/pop_select_cancel"
+        android:id="@+id/pop_cancel_all"
         style="@style/wrap"
         android:textColor="@drawable/tv_item_selector"
         android:textSize="@dimen/text18"
-        android:text="取消" />
+        android:text="全选(取消)" />
     <TextView
         android:id="@+id/pop_copy"
         style="@style/wrap"
@@ -30,12 +31,7 @@
         android:textColor="@drawable/tv_item_selector"
         android:textSize="@dimen/text18"
         android:text="删除" />
-    <TextView
-        android:id="@+id/pop_move"
-        style="@style/wrap"
-        android:textColor="@drawable/tv_item_selector"
-        android:textSize="@dimen/text18"
-        android:text="移动" />
+
     <TextView
         android:id="@+id/pop_send"
         style="@style/wrap"
@@ -47,7 +43,13 @@
         style="@style/wrap"
         android:textColor="@drawable/tv_item_selector"
         android:textSize="@dimen/text18"
-        android:text="发送" />
+        android:text="创建文件夹" />
+    <TextView
+        android:id="@+id/pop_exit"
+        style="@style/wrap"
+        android:textColor="@drawable/tv_item_selector"
+        android:textSize="@dimen/text18"
+        android:text="退出" />
 
 
 </LinearLayout>

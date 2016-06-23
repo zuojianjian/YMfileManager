@@ -20,18 +20,22 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.ygcompany.zuojj.ymfilemanager.MainActivity;
 import com.ygcompany.zuojj.ymfilemanager.R;
+import com.ygcompany.zuojj.ymfilemanager.utils.L;
+import com.ygcompany.zuojj.ymfilemanager.utils.LocalCache;
+import com.ygcompany.zuojj.ymfilemanager.utils.T;
 import com.ygcompany.zuojj.ymfilemanager.view.SystemSpaceFragment;
 
 import java.io.File;
@@ -42,7 +46,8 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     private IFileInteractionListener mFileViewListener;
 
-    private ArrayList<FileInfo> mCheckedFileNameList = new ArrayList<FileInfo>();
+    //被选中的item集合
+    private ArrayList<FileInfo> mCheckedFileNameList = new ArrayList<>();
 
     private FileOperationHelper mFileOperationHelper;
 
@@ -63,11 +68,11 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     public enum Mode {
         View, Pick
-    };
+    }
 
     public enum CopyOrMove {
         Copy, Move
-    };
+    }
 
     public FileViewInteractionHub(IFileInteractionListener fileViewListener) {
         assert (fileViewListener != null);
@@ -110,17 +115,17 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
-    // 獲取選中的文件列表
+    // 获取选中的文件列表
     public ArrayList<FileInfo> getSelectedFileList() {
         return mCheckedFileNameList;
     }
 
-    // 獲取選中的文件列表
+    // 获取checkbox选中的文件列表
     public ArrayList<FileInfo> getCheckedFileList() {
         return mFileOperationHelper.getFileList();
     }
 
-    // 設置選中的文件列表
+    // 设置选中的文件列表
     public void setCheckedFileList(ArrayList<FileInfo> fileInfoList, CopyOrMove copyOrMove) {
         if (fileInfoList != null && fileInfoList.size() > 0)
             mCheckedFileNameList.addAll(fileInfoList);
@@ -135,8 +140,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
-    public CopyOrMove getCurCopyOrMoveMode()
-    {
+    public CopyOrMove getCurCopyOrMoveMode() {
         return copyOrMoveMode;
     }
 
@@ -195,13 +199,14 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         setupClick(mConfirmOperationBar, R.id.button_moving_cancel);
     }
 
+    //底部contextmenu显示时的点击事件
     private void setupClick(View v, int id) {
         View button = (v != null ? v.findViewById(id) : mFileViewListener.getViewById(id));
         if (button != null)
             button.setOnClickListener(buttonClick);
     }
 
-    private OnClickListener buttonClick = new OnClickListener() {
+    private View.OnClickListener buttonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
@@ -217,7 +222,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                 case R.id.button_operation_delete://删除
                     onOperationDelete();
                     break;
-                case R.id.button_operation_cancel://退出
+                case R.id.button_operation_cancel://取消
                     onOperationSelectAllOrCancel();
                     break;
                 case R.id.button_moving_confirm://提交
@@ -232,13 +237,14 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     };
 
     //刷新列表
-    private void onOperationReferesh() {
+    public void onOperationReferesh() {
         refreshFileList();
     }
 
+    //启动设置页面
     private void onOperationSetting() {
         Intent intent = new Intent(mContext, FileManagerPreferenceActivity.class);
-        if (intent != null) {
+        if (null != intent) {
             try {
                 mContext.startActivity(intent);
                 clearSelection();
@@ -248,6 +254,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
+    //设置系统文件的显示和隐藏
     private void onOperationShowSysFiles() {
         Settings.instance().setShowDotAndHiddenFiles(!Settings.instance().getShowDotAndHiddenFiles());
         refreshFileList();
@@ -271,6 +278,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         mFileViewListener.onDataChanged();
     }
 
+    //TODO  返回上一级
     public boolean onOperationUpLevel() {
         if (mFileViewListener.onOperation(Constants.OPERATION_UP_LEVEL)) {
             return true;
@@ -288,11 +296,11 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         TextInputDialog dialog = new TextInputDialog(mContext, mContext.getString(
                 R.string.operation_create_folder), mContext.getString(R.string.operation_create_folder_message),
                 mContext.getString(R.string.new_folder_name), new TextInputDialog.OnFinishListener() {
-                    @Override
-                    public boolean onFinish(String text) {
-                        return doCreateFolder(text);
-                    }
-                });
+            @Override
+            public boolean onFinish(String text) {
+                return doCreateFolder(text);
+            }
+        });
 
         dialog.show();
     }
@@ -313,14 +321,19 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     //着手创建文件夹
     private boolean doCreateFolder(String text) {
-        if (TextUtils.isEmpty(text)){
+        if (TextUtils.isEmpty(text)) {
             clearSelection();
             return false;
         }
 
         if (mFileOperationHelper.CreateFolder(mCurrentPath, text)) {
             mFileViewListener.addSingleFile(Util.GetFileInfo(Util.makePath(mCurrentPath, text)));
-            mFileListView.setSelection(mFileListView.getCount() - 1);
+            if ("list".equals(LocalCache.getInstance(mContext).getViewTag())) {
+                mFileListView.setSelection(mFileListView.getCount() - 1);
+            } else if ("grid".equals(LocalCache.getInstance(mContext).getViewTag())) {
+                mFileGridView.setSelection(mFileGridView.getCount() - 1);
+            }
+
             clearSelection();
         } else {
             new AlertDialog.Builder(mContext).setMessage(mContext.getString(R.string.fail_to_create_folder))
@@ -331,9 +344,10 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
         return true;
     }
+
     //着手创建文件
     private boolean doCreateFile(String text) {
-        if (TextUtils.isEmpty(text)){
+        if (TextUtils.isEmpty(text)) {
             clearSelection();
             return false;
         }
@@ -362,6 +376,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
+    //复制操作
     public void onOperationCopy() {
         copyOrMoveMode = CopyOrMove.Copy;
         onOperationCopy(getSelectedFileList());
@@ -378,6 +393,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         refreshFileList();
     }
 
+    //复制路径操作
     public void onOperationCopyPath() {
         if (getSelectedFileList().size() == 1) {
             copy(getSelectedFileList().get(0).filePath);
@@ -397,6 +413,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
+    //移动操作
     public void onOperationMove() {
         mFileOperationHelper.StartMove(getSelectedFileList());
         clearSelection();
@@ -419,6 +436,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         updateConfirmButtons();
     }
 
+    //更新选择那种方式的提交按钮显示
     private void updateConfirmButtons() {
         if (mConfirmOperationBar.getVisibility() == View.GONE)
             return;
@@ -441,6 +459,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         mNavigationBarText.setText(mFileViewListener.getDisplayPath(mCurrentPath));
     }
 
+    //发送
     public void onOperationSend() {
         ArrayList<FileInfo> selectedFileList = getSelectedFileList();
         for (FileInfo f : selectedFileList) {
@@ -463,6 +482,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         clearSelection();
     }
 
+    //重命名
     public void onOperationRename() {
         int pos = mListViewContextMenuSelectedItem;
         if (pos == -1)
@@ -476,12 +496,12 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
         TextInputDialog dialog = new TextInputDialog(mContext, mContext.getString(R.string.operation_rename),
                 mContext.getString(R.string.operation_rename_message), f.fileName, new TextInputDialog.OnFinishListener() {
-                    @Override
-                    public boolean onFinish(String text) {
-                        return doRename(f, text);
-                    }
+            @Override
+            public boolean onFinish(String text) {
+                return doRename(f, text);
+            }
 
-                });
+        });
 
         dialog.show();
     }
@@ -526,6 +546,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
+    //删除操作
     public void onOperationDelete() {
         doOperationDelete(getSelectedFileList());
     }
@@ -541,7 +562,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     }
 
     private void doOperationDelete(final ArrayList<FileInfo> selectedFileList) {
-        final ArrayList<FileInfo> selectedFiles = new ArrayList<FileInfo>(selectedFileList);
+        final ArrayList<FileInfo> selectedFiles = new ArrayList<>(selectedFileList);
         Dialog dialog = new AlertDialog.Builder(mContext)
                 .setMessage(mContext.getString(R.string.operation_delete_confirm_message))
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
@@ -560,6 +581,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         dialog.show();
     }
 
+    //显示当前文件的信息
     public void onOperationInfo() {
         if (getSelectedFileList().size() == 0)
             return;
@@ -588,6 +610,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
+    //退出
     public void onOperationButtonCancel() {
         mFileOperationHelper.clear();
         showConfirmOperationBar(false);
@@ -628,8 +651,8 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
             addMenuItem(menu, Constants.MENU_NEW_FILE, 0, R.string.operation_create_file);
             addMenuItem(menu, Constants.MENU_COPY, 0, R.string.operation_copy);
             addMenuItem(menu, Constants.MENU_COPY_PATH, 0, R.string.operation_copy_path);
-             addMenuItem(menu, Constants.MENU_PASTE, 0,
-             R.string.operation_paste);
+            addMenuItem(menu, Constants.MENU_PASTE, 0,
+                    R.string.operation_paste);
             addMenuItem(menu, Constants.MENU_MOVE, 0, R.string.operation_move);
             addMenuItem(menu, MENU_SEND, 0, R.string.operation_send);
             addMenuItem(menu, MENU_RENAME, 0, R.string.operation_rename);
@@ -642,6 +665,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                     R.drawable.ic_menu_refresh);
             addMenuItem(menu, MENU_SETTING, 0, R.string.menu_setting, drawable.ic_menu_preferences);
 //            addMenuItem(menu, MENU_SELECTALL, 0, R.string.operation_selectall);
+            addMenuItem(menu, MENU_EXIT, 8, R.string.menu_exit, drawable.ic_menu_close_clear_cancel);
 
             if (!canPaste()) {
                 MenuItem menuItem = menu.findItem(Constants.MENU_PASTE);
@@ -652,20 +676,23 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     };
 
     // File List view setup
+    private GridView mFileGridView;
     private ListView mFileListView;
 
     private int mListViewContextMenuSelectedItem;
 
     private void setupFileListView() {
-        mFileListView = (ListView) mFileViewListener.getViewById(R.id.file_path_list);
-        mFileListView.setLongClickable(true);
-        mFileListView.setOnCreateContextMenuListener(mListViewContextMenuListener);
-        mFileListView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onListItemClick(parent, view, position, id);
-            }
-        });
+        final String title = LocalCache.getInstance(mContext).getViewTag();
+        if ("list".equals(title)) {
+            mFileListView = (ListView) mFileViewListener.getViewById(R.id.file_path_list);
+            //设置list鼠标动作的事件监听
+            mFileListView.setOnGenericMotionListener(new ListOnGenericMotionListener());
+        } else if ("grid".equals(title)) {
+            mFileGridView = (GridView) mFileViewListener.getViewById(R.id.file_path_grid);
+            //设置grid鼠标动作的事件监听
+            mFileGridView.setOnGenericMotionListener(new GridOnGenericMotionListener());
+        }
+
     }
 
     // menu
@@ -682,6 +709,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     private static final int MENU_REFRESH = 15;
     private static final int MENU_SELECTALL = 16;
     private static final int MENU_SETTING = 17;
+    private static final int MENU_EXIT = 18;
 
     //the bottom and context menu的点击事件
     private OnMenuItemClickListener menuItemClick = new OnMenuItemClickListener() {
@@ -717,6 +745,9 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                     break;
                 case MENU_SETTING://设置页面
                     onOperationSetting();
+                    break;
+                case MENU_EXIT://退出
+                    ((MainActivity) mContext).finish();
                     break;
                 case MENU_SORT_NAME:// sort分类二级选择目录
                     item.setChecked(true);
@@ -776,27 +807,28 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     private SystemSpaceFragment.SelectFilesCallback mSelectFilesCallback;
 
-    //  创建list底部menu 设置返回true
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
-    }
+//    //  创建list底部menu 设置返回true
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        return true;
+//    }
+//
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        updateMenuItems(menu);
+//        return true;
+//    }
 
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        updateMenuItems(menu);
-        return true;
-    }
+//    private void updateMenuItems(Menu menu) {
+//        menu.findItem(MENU_SELECTALL).setTitle(
+//                isSelectedAll() ? R.string.operation_cancel_selectall : R.string.operation_selectall);
+//        menu.findItem(MENU_SELECTALL).setEnabled(mCurrentMode != Mode.Pick);
+//
+//        MenuItem menuItem = menu.findItem(Constants.MENU_SHOWHIDE);
+//        if (menuItem != null) {
+//            menuItem.setTitle(Settings.instance().getShowDotAndHiddenFiles() ? R.string.operation_hide_sys
+//                    : R.string.operation_show_sys);
+//        }
+//    }
 
-        private void updateMenuItems(Menu menu) {
-        menu.findItem(MENU_SELECTALL).setTitle(
-                isSelectedAll() ? R.string.operation_cancel_selectall : R.string.operation_selectall);
-        menu.findItem(MENU_SELECTALL).setEnabled(mCurrentMode != Mode.Pick);
-
-        MenuItem menuItem = menu.findItem(Constants.MENU_SHOWHIDE);
-        if (menuItem != null) {
-            menuItem.setTitle(Settings.instance().getShowDotAndHiddenFiles() ? R.string.operation_hide_sys
-                    : R.string.operation_show_sys);
-        }
-    }
     private void addMenuItem(Menu menu, int itemId, int order, int string) {
         addMenuItem(menu, itemId, order, string, -1);
     }
@@ -814,9 +846,9 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         return mFileOperationHelper.isFileSelected(filePath);
     }
 
+    //listview或gridview的item点击事件监听
     public void onListItemClick(AdapterView<?> parent, View view, int position, long id) {
         FileInfo lFileInfo = mFileViewListener.getItem(position);
-
         if (lFileInfo == null) {
             Log.e(LOG_TAG, "file does not exist on position:" + position);
             return;
@@ -843,6 +875,11 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
 
         mCurrentPath = getAbsoluteName(mCurrentPath, lFileInfo.fileName);
+        refreshFileList();
+    }
+
+    //listview或gridview的item点击事件监听
+    public void onListItemRightClick(AdapterView<?> parent, View view, int position, long id) {
         refreshFileList();
     }
 
@@ -883,7 +920,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         if (isMoveState())
             return false;
 
-        if(isSelectingFiles() && f.IsDir)
+        if (isSelectingFiles() && f.IsDir)
             return false;
 
         if (f.Selected) {
@@ -898,15 +935,12 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         return mSelectFilesCallback != null;
     }
 
-    public boolean isSelectedAll() {  //      全选
+    public boolean isSelectedAll() {  //      是否全部选中
         return mFileViewListener.getItemCount() != 0 && mCheckedFileNameList.size() == mFileViewListener.getItemCount();
     }
 
-    public boolean isSelected() {  //       选中
-        return mCheckedFileNameList.size() != 0;
-    }
-
-    public void clearSelection() {   //     清除选择
+    //清空集合选中数据通知更新
+    public void clearSelection() {
         if (mCheckedFileNameList.size() > 0) {
             for (FileInfo f : mCheckedFileNameList) {
                 if (f == null) {
@@ -962,4 +996,105 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         updateConfirmButtons();
     }
 
+    private class ListOnGenericMotionListener implements View.OnGenericMotionListener {
+        //根据MotionEvent事件来判断鼠标的操作执行对应的动作
+        @Override
+        public boolean onGenericMotion(View view, MotionEvent event) {
+            switch (event.getButtonState()) {
+                case MotionEvent.BUTTON_PRIMARY:   // BUTTON_PRIMARY鼠标左键点击
+                    mFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            onListItemClick(parent, view, position, id);
+                        }
+                    });
+                    T.showShort(mContext, "鼠标左键单击事件");
+                    break;
+                case MotionEvent.BUTTON_SECONDARY:    //BUTTON_SECONDARY鼠标右键点击
+                    //点击鼠标右键且让点击事件不起作用只弹出contextmenu
+                    mFileListView.setLongClickable(true);
+                    mFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            onListItemRightClick(parent, view, position, id);
+                        }
+                    });
+                    mFileListView.setOnCreateContextMenuListener(mListViewContextMenuListener);
+                    T.showShort(mContext, "鼠标右键单击事件");
+                    break;
+                case MotionEvent.BUTTON_TERTIARY:   //BUTTON_TERTIARY鼠标滚轮点击
+                    mFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            onListItemClick(parent, view, position, id);
+                        }
+                    });
+                    T.showShort(mContext, "鼠标滑轮单击事件");
+                    break;
+                case MotionEvent.ACTION_SCROLL:   //ACTION_SCROLL鼠标滚轮滑动
+                    if (event.getAxisValue(MotionEvent.AXIS_VSCROLL) < 0.0f) {
+                        L.i("fortest::onGenericMotionEvent", "down");
+                        T.showShort(mContext, "向下滚动...");
+                    }
+                    //获得垂直坐标上的滚动方向,也就是滚轮向上滚
+                    else {
+                        L.i("fortest::onGenericMotionEvent", "up");
+                        T.showShort(mContext, "向上滚动...");
+                    }
+                    break;
+            }
+            return false;
+        }
+    }
+
+    private class GridOnGenericMotionListener implements View.OnGenericMotionListener {
+        //根据MotionEvent事件来判断鼠标的操作执行对应的动作
+        @Override
+        public boolean onGenericMotion(View view, MotionEvent event) {
+            switch (event.getButtonState()) {
+                case MotionEvent.BUTTON_PRIMARY:   // BUTTON_PRIMARY鼠标左键点击
+                    mFileGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            onListItemClick(parent, view, position, id);
+                        }
+                    });
+                    T.showShort(mContext, "鼠标左键单击事件");
+                    break;
+                case MotionEvent.BUTTON_SECONDARY:    //BUTTON_SECONDARY鼠标右键点击
+                    //点击鼠标右键且让点击事件不起作用只弹出contextmenu
+                    mFileGridView.setLongClickable(true);
+                    mFileGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            onListItemRightClick(parent, view, position, id);
+                        }
+                    });
+                    mFileGridView.setOnCreateContextMenuListener(mListViewContextMenuListener);
+                    T.showShort(mContext, "鼠标右键单击事件");
+                    break;
+                case MotionEvent.BUTTON_TERTIARY:   //BUTTON_TERTIARY鼠标滚轮点击
+                    mFileGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            onListItemClick(parent, view, position, id);
+                        }
+                    });
+                    T.showShort(mContext, "鼠标滑轮单击事件");
+                    break;
+                case MotionEvent.ACTION_SCROLL:   //ACTION_SCROLL鼠标滚轮滑动
+                    if (event.getAxisValue(MotionEvent.AXIS_VSCROLL) < 0.0f) {
+                        L.i("fortest::onGenericMotionEvent", "down");
+                        T.showShort(mContext, "向下滚动...");
+                    }
+                    //获得垂直坐标上的滚动方向,也就是滚轮向上滚
+                    else {
+                        L.i("fortest::onGenericMotionEvent", "up");
+                        T.showShort(mContext, "向上滚动...");
+                    }
+                    break;
+            }
+            return false;
+        }
+    }
 }
