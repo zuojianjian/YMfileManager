@@ -169,9 +169,17 @@
     </style>
 
     <style name="wrap">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">13dp</item>
+        <item name="android:textColor">@drawable/popcolor_selector</item>
+        <item name="android:background">@drawable/pop_bg_selector</item>
+        <item name="android:textSize">@dimen/text16</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:layout_marginLeft">2dp</item>
+        <item name="android:layout_marginRight">2dp</item>
+        <item name="android:layout_marginTop">2dp</item>
     </style>
 
     <style name="AnimTools" parent="@android:style/Animation">
@@ -181,14 +189,15 @@
 
     <!--侧边栏textview样式-->
     <style name="textSet">
-        <item name="android:layout_marginTop">15dp</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:background">@drawable/text_bg_selector</item>
+        <item name="android:textColor">@drawable/textcolor_selector</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16sp</item>
-    </style>
-
-    <!--自定义progressbar-->
-    <style name="my_pb_style" parent="@android:style/Widget.ProgressBar.Horizontal">
-        <item name="android:progressDrawable">@drawable/my_progressbar</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingLeft">30dp</item>
     </style>
 </resources>

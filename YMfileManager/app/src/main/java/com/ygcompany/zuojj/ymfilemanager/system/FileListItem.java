@@ -5,8 +5,13 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.ygcompany.zuojj.ymfilemanager.R;
+import com.ygcompany.zuojj.ymfilemanager.utils.LocalCache;
+
+import static com.ygcompany.zuojj.ymfilemanager.R.mipmap.btn_check_off_holo_light;
+import static com.ygcompany.zuojj.ymfilemanager.R.mipmap.btn_check_on_holo_light;
 
 public class FileListItem {
+
     public static void setupFileListItemInfo(Context context, View view,
                                              FileInfo fileInfo, FileIconHelper fileIcon,
                                              FileViewInteractionHub fileViewInteractionHub) {
@@ -21,8 +26,12 @@ public class FileListItem {
             checkbox.setVisibility(View.GONE);
         } else {
             checkbox.setVisibility(fileViewInteractionHub.canShowCheckBox() ? View.VISIBLE : View.GONE);
-            checkbox.setImageResource(fileInfo.Selected ? R.drawable.btn_check_on_holo_light
-                    : R.drawable.btn_check_off_holo_light);
+            if ("grid".equals(LocalCache.getInstance(context).getViewTag())){
+                checkbox.setBackgroundResource(fileInfo.Selected ? btn_check_on_holo_light
+                        : btn_check_off_holo_light);
+            }
+            checkbox.setImageResource(fileInfo.Selected ? btn_check_on_holo_light
+                    : btn_check_off_holo_light);
             checkbox.setTag(fileInfo);
             view.setSelected(fileInfo.Selected);
         }
@@ -57,12 +66,15 @@ public class FileListItem {
         public void onClick(View v) {
             ImageView img = (ImageView) v.findViewById(R.id.file_checkbox);
             assert (img != null && img.getTag() != null);
-
             FileInfo tag = (FileInfo) img.getTag();
             tag.Selected = !tag.Selected;
             if (mFileViewInteractionHub.onCheckItem(tag, v)) {
-                img.setImageResource(tag.Selected ? R.drawable.btn_check_on_holo_light
-                        : R.drawable.btn_check_off_holo_light);
+                if ("grid".equals(LocalCache.getInstance(mContext).getViewTag())){
+                    img.setBackgroundResource(tag.Selected ? R.mipmap.btn_check_on_holo_light
+                            : R.mipmap.btn_check_off_holo_light);
+                }
+                img.setImageResource(tag.Selected ? R.mipmap.btn_check_on_holo_light
+                        : R.mipmap.btn_check_off_holo_light);
             } else {
                 tag.Selected = !tag.Selected;
             }

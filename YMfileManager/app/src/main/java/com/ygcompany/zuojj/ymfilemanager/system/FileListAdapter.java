@@ -42,7 +42,6 @@ public class FileListAdapter extends ArrayAdapter<FileInfo> {
                 view = mInflater.inflate(R.layout.file_browser_item_grid, parent, false);
             }
         }
-
         FileInfo lFileInfo = mFileViewInteractionHub.getItem(position);
         FileListItem.setupFileListItemInfo(mContext, view, lFileInfo,
                 mFileIcon, mFileViewInteractionHub);

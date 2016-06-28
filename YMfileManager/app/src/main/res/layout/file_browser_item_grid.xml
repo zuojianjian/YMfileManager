@@ -6,41 +6,55 @@
     android:orientation="vertical"
     android:gravity="center_horizontal">
 
-    <FrameLayout
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/rl_folder_bg"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/file_checkbox"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:scaleType="fitCenter"
-            android:gravity="center"
-            android:layout_marginLeft="50dp"/>
-        <ImageView
-            android:id="@+id/file_image_frame"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/image_icon_bg"
+        android:background="@drawable/folder_bg_selector"
+        android:gravity="center"
+        android:padding="5dp">
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="gone" />
-        <ImageView
-            android:id="@+id/file_image"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:layout_marginTop="5dp"
             android:gravity="center"
-            android:padding="5dp"
-            android:layout_gravity="center" />
-    </FrameLayout>
+            >
+
+            <ImageView
+                android:id="@+id/file_image"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_marginTop="1dp"
+                android:src="@mipmap/folder"
+                android:gravity="center"
+                android:padding="5dp"
+                android:layout_gravity="center" />
+            <ImageView
+                android:padding="10dp"
+                android:id="@+id/file_image_frame"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:gravity="center"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/image_icon_bg"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+            <ImageView
+                android:id="@+id/file_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/btn_check_on_holo_light"
+                android:gravity="center"
+                android:layout_marginLeft="45dp"
+                android:layout_marginTop="7dp"/>
+        </FrameLayout>
+    </RelativeLayout>
     <LinearLayout
-        android:id="@+id/file_info_layout"
+        android:id="@+id/ll_folder_text_bg"
+        android:background="@drawable/folder_text_bg_selector"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="-3dp"
         android:orientation="vertical">
 
         <LinearLayout

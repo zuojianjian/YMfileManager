@@ -388,7 +388,7 @@ public class Util {
             systemInfo.romMemory = getTotalInternalMemorySize();
 
             //Available rom memory
-            File path = Environment.getDataDirectory();
+            File path = Environment.getRootDirectory();
             StatFs stat = new StatFs(path.getPath());
             long blockSize = stat.getBlockSize();
             long availableBlocks = stat.getAvailableBlocks();
@@ -401,7 +401,7 @@ public class Util {
     }
 
     public static long getTotalInternalMemorySize() {
-        File path = Environment.getDataDirectory();
+        File path = Environment.getRootDirectory();
         StatFs stat = new StatFs(path.getPath());
         long blockSize = stat.getBlockSize();
         long totalBlocks = stat.getBlockCount();

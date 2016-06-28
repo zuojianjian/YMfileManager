@@ -97,6 +97,8 @@
     <string name="favorite_ringtone">铃声</string>
     <string name="multi_select_title">已选择 <xliff:g id="number">%1$s</xliff:g> 个</string>
     <string name="menu_setting">设置</string>
+    <string name="menu_help">帮助和反馈</string>
+    <string name="menu_about">关于</string>
     <string name="menu_exit">退出</string>
     <string name="preference_title">常规设置</string>
     <string name="pref_primary_folder">主页文件夹</string>
@@ -105,10 +107,17 @@
     <string name="pref_primary_folder_summary">程序启动时显示的文件夹，当前路径为<xliff:g id="string">%1$s</xliff:g></string>
     <string name="pref_show_real_path_summary">在导航栏中显示真实路径</string>
     <string name="default_system_primary_folder">/</string>
-    <string name="default_sd_primary_folder">/storage/sdcard0</string>
+    <string name="default_sd_primary_folder">/mnt/sdcard</string>
     <string name="default_usb_primary_folder">/storage/disk0</string>
     <string name="default_yun_primary_folder">待定</string>
     <string name="default_system_primary_folder_cn">安卓系统</string>
     <string name="default_sd_primary_folder_cn">磁盘空间</string>
     <string name="qi_ta">搜索</string>
+    <string name="video">视频</string>
+    <string name="picture">图片</string>
+    <string name="desk">桌面</string>
+    <string name="music">音乐</string>
+    <string name="computer">计算机</string>
+    <string name="usb">USB</string>
+    <string name="internet">网上邻居</string>
 </resources>

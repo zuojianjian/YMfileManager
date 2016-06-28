@@ -75,7 +75,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     TextView tv_sd_avail;
     @Bind(R.id.pb_sd)
     ProgressBar pb_sd;
-    //usb存储
+    //可移动磁盘
     @Bind(R.id.tv_usb_total)
     TextView tv_usb_total;
     @Bind(R.id.tv_usb_avail)
@@ -142,12 +142,13 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         if (null != systemInfo) {
             tv_system_total.setText(Util.convertStorage(systemInfo.romMemory));
             tv_system_avail.setText(Util.convertStorage(systemInfo.avilMemory));
-//            L.e("tv_system_total",Util.convertStorage(systemInfo.romMemory).substring(0,3));
-//            L.e("tv_system_avail",Util.convertStorage(systemInfo.avilMemory).substring(0,3));
+            L.e("tv_system_total",Util.convertStorage(systemInfo.romMemory).substring(0,3));
+            L.e("tv_system_avail",Util.convertStorage(systemInfo.avilMemory).substring(0,3));
 //
-//            pb_system.setMax((int) Double.parseDouble(Util.convertStorage(systemInfo.romMemory).substring(0,3))*10);
+            pb_system.setMax((int) Double.parseDouble(Util.convertStorage(systemInfo.romMemory).substring(0,3))*10);
 //            pb_system.setProgress(100);
-//            pb_system.setSecondaryProgress((int) (Double.parseDouble(Util.convertStorage(systemInfo.romMemory-systemInfo.avilMemory).substring(0,3))*10));
+            pb_system.setSecondaryProgress((int) (Double.parseDouble(Util.convertStorage(systemInfo.romMemory-systemInfo.avilMemory).substring(0,3))*10));
+
         }
         //设置sd卡用量信息
         Util.SDCardInfo sdCardInfo = Util.getSDCardInfo();
@@ -158,8 +159,8 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
             L.e("tv_sd_total",Util.convertStorage(sdCardInfo.total).substring(0,3));
             L.e("tv_sd_avail",Util.convertStorage(sdCardInfo.free).substring(0,3));
 
-//            pb_sd.setMax((int) Double.parseDouble(Util.convertStorage(sdCardInfo.total).substring(0,3))*10);
-//            pb_sd.setProgress((int) (Double.parseDouble(Util.convertStorage(sdCardInfo.total-sdCardInfo.free).substring(0,3))*10));
+            pb_sd.setMax((int) Double.parseDouble(Util.convertStorage(sdCardInfo.total).substring(0,3))*10);
+            pb_sd.setProgress((int) (Double.parseDouble(Util.convertStorage(sdCardInfo.total-sdCardInfo.free).substring(0,3))*10));
         }
 //        //设置usb用量信息
 //        Util.UsbMemoryInfo usbMemoryInfo = Util.getUsbMemoryInfo();
@@ -222,6 +223,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
+    //computer页面各个盘符的点击事件集合
     @Override
     public void onClick(View view) {
         ArrayList<FileInfo> fileInfoArrayList = null;
@@ -243,12 +245,10 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
                     copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
                 }
                 curFragment = new SystemSpaceFragment(SD_SPACE_FRAGMENT,null, fileInfoArrayList, copyOrMove);
-                T.showShort(getContext(), "磁盘空间");
                 manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
                         .addToBackStack(null).commit();
                 break;
             case R.id.rl_mount_space_one:   //移动磁盘
-                T.showShort(getContext(), "可移动磁盘");
                 if (curFragment != null) {
                     fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
                     copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();

@@ -239,6 +239,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     //刷新列表
     public void onOperationReferesh() {
         refreshFileList();
+        T.showShort(mContext,"刷新成功！");
     }
 
     //启动设置页面
@@ -255,7 +256,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     }
 
     //设置系统文件的显示和隐藏
-    private void onOperationShowSysFiles() {
+    public void onOperationShowSysFiles() {
         Settings.instance().setShowDotAndHiddenFiles(!Settings.instance().getShowDotAndHiddenFiles());
         refreshFileList();
     }
@@ -846,7 +847,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         return mFileOperationHelper.isFileSelected(filePath);
     }
 
-    //listview或gridview的item点击事件监听
+    //listview或gridview的item左键点击事件监听
     public void onListItemClick(AdapterView<?> parent, View view, int position, long id) {
         FileInfo lFileInfo = mFileViewListener.getItem(position);
         if (lFileInfo == null) {
@@ -878,7 +879,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         refreshFileList();
     }
 
-    //listview或gridview的item点击事件监听
+    //listview或gridview的item鼠标右键点击不做任何操作只刷新
     public void onListItemRightClick(AdapterView<?> parent, View view, int position, long id) {
         refreshFileList();
     }
@@ -1008,11 +1009,11 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                             onListItemClick(parent, view, position, id);
                         }
                     });
-                    T.showShort(mContext, "鼠标左键单击事件");
+//                    T.showShort(mContext, "鼠标左键单击事件");
                     break;
                 case MotionEvent.BUTTON_SECONDARY:    //BUTTON_SECONDARY鼠标右键点击
                     //点击鼠标右键且让点击事件不起作用只弹出contextmenu
-                    mFileListView.setLongClickable(true);
+//                    mFileListView.setLongClickable(true);
                     mFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -1020,7 +1021,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                         }
                     });
                     mFileListView.setOnCreateContextMenuListener(mListViewContextMenuListener);
-                    T.showShort(mContext, "鼠标右键单击事件");
+//                    T.showShort(mContext, "鼠标右键单击事件");
                     break;
                 case MotionEvent.BUTTON_TERTIARY:   //BUTTON_TERTIARY鼠标滚轮点击
                     mFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -1029,18 +1030,10 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                             onListItemClick(parent, view, position, id);
                         }
                     });
-                    T.showShort(mContext, "鼠标滑轮单击事件");
+//                    T.showShort(mContext, "鼠标滑轮单击事件");
                     break;
                 case MotionEvent.ACTION_SCROLL:   //ACTION_SCROLL鼠标滚轮滑动
-                    if (event.getAxisValue(MotionEvent.AXIS_VSCROLL) < 0.0f) {
-                        L.i("fortest::onGenericMotionEvent", "down");
-                        T.showShort(mContext, "向下滚动...");
-                    }
-                    //获得垂直坐标上的滚动方向,也就是滚轮向上滚
-                    else {
-                        L.i("fortest::onGenericMotionEvent", "up");
-                        T.showShort(mContext, "向上滚动...");
-                    }
+                    MouseScrollAction(event);
                     break;
             }
             return false;
@@ -1059,11 +1052,10 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                             onListItemClick(parent, view, position, id);
                         }
                     });
-                    T.showShort(mContext, "鼠标左键单击事件");
                     break;
                 case MotionEvent.BUTTON_SECONDARY:    //BUTTON_SECONDARY鼠标右键点击
                     //点击鼠标右键且让点击事件不起作用只弹出contextmenu
-                    mFileGridView.setLongClickable(true);
+//                    mFileGridView.setLongClickable(true);
                     mFileGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -1071,7 +1063,6 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                         }
                     });
                     mFileGridView.setOnCreateContextMenuListener(mListViewContextMenuListener);
-                    T.showShort(mContext, "鼠标右键单击事件");
                     break;
                 case MotionEvent.BUTTON_TERTIARY:   //BUTTON_TERTIARY鼠标滚轮点击
                     mFileGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -1080,21 +1071,25 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                             onListItemClick(parent, view, position, id);
                         }
                     });
-                    T.showShort(mContext, "鼠标滑轮单击事件");
                     break;
                 case MotionEvent.ACTION_SCROLL:   //ACTION_SCROLL鼠标滚轮滑动
-                    if (event.getAxisValue(MotionEvent.AXIS_VSCROLL) < 0.0f) {
-                        L.i("fortest::onGenericMotionEvent", "down");
-                        T.showShort(mContext, "向下滚动...");
-                    }
-                    //获得垂直坐标上的滚动方向,也就是滚轮向上滚
-                    else {
-                        L.i("fortest::onGenericMotionEvent", "up");
-                        T.showShort(mContext, "向上滚动...");
-                    }
+                    MouseScrollAction(event);
                     break;
             }
             return false;
+        }
+    }
+
+    //鼠标滚轮滑动
+    private void MouseScrollAction(MotionEvent event) {
+        if (event.getAxisValue(MotionEvent.AXIS_VSCROLL) < 0.0f) {
+            L.i("fortest::onGenericMotionEvent", "down");
+            T.showShort(mContext, "向下滚动...");
+        }
+        //获得垂直坐标上的滚动方向,也就是滚轮向上滚
+        else {
+            L.i("fortest::onGenericMotionEvent", "up");
+            T.showShort(mContext, "向上滚动...");
         }
     }
 }

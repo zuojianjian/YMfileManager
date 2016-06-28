@@ -11,30 +11,37 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/iv_back"
-            android:layout_width="23dp"
-            android:layout_height="23dp"
-            android:padding="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/back_bg_selector"
             android:src="@mipmap/iv_back"
+            android:paddingTop="8dp"
+            android:paddingBottom="9dp"
             android:layout_weight="0.8"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#E6E6E6"/>
 
         <ImageView
             android:id="@+id/iv_fresh"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:src="@drawable/fresh_selector"
-            android:layout_weight="0.5"/>
+            android:layout_weight="0.3"/>
         <ImageView
             android:id="@+id/iv_setting"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:src="@drawable/setting_selector"
-            android:layout_weight="0.5"/>
+            android:layout_weight="0.3"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="10"/>
+            android:layout_weight="12"/>
 
 
         <FrameLayout
@@ -63,7 +70,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:padding="5dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="60dp"
             android:background="@android:color/white"
             android:src="@drawable/view_switch_selector"
             android:layout_weight="0.3"/>

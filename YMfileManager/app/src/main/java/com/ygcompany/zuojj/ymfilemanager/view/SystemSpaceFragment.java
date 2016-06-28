@@ -108,6 +108,11 @@ public class SystemSpaceFragment extends BaseFragment implements
                     String pop_menu = intent.getExtras().getString("pop_menu");
                     selectorMenuId(pop_menu);
                 }
+            } else if (action.equals("com.refreshview")){
+                // 顶部菜单栏刷新操作
+                mFileViewInteractionHub.onOperationReferesh();
+                mAdapter.clear();
+                initView();
             } else if (action.equals(Intent.ACTION_MEDIA_MOUNTED) || action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -133,8 +138,8 @@ public class SystemSpaceFragment extends BaseFragment implements
             mFileViewInteractionHub.onOperationSend();
         }else if (pop_menu.equals("pop_create")){
             mFileViewInteractionHub.onOperationCreateFolder();
-        }else if (pop_menu.equals("pop_exit")){
-            ((MainActivity) mActivity).finish();
+        }else if (pop_menu.equals("view_or_dismiss")){
+            mFileViewInteractionHub.onOperationShowSysFiles();
         }
     }
 
@@ -154,7 +159,7 @@ public class SystemSpaceFragment extends BaseFragment implements
     /**
      * 各个页面的构造参数
      * @param sdSpaceFragment  传入的标识和路径区分加载文件目录位置
-     * @param directPath
+     * @param directPath       传入的外接U盘的地址
      * @param fileInfoList    传进来的选中文件列表
      * @param copyOrMove      传进来的复制和移动模式的标志
      */
@@ -181,7 +186,6 @@ public class SystemSpaceFragment extends BaseFragment implements
     }
 
     private void initView() {
-
         mActivity = getActivity();
         mFileCagetoryHelper = new FileCategoryHelper(mActivity);
         mFileViewInteractionHub = new FileViewInteractionHub(this);

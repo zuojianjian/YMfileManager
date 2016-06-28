@@ -7,14 +7,15 @@
 
     <ImageView
         android:id="@+id/iv_video"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_centerInParent="true"
         android:src="@mipmap/video_default_icon"/>
     <TextView
         android:id="@+id/tv_video_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:layout_below="@id/iv_video"
         android:ellipsize="end"
         android:maxEms="6"

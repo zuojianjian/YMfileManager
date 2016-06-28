@@ -23,6 +23,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
+ * 数据搜索页面
  * Created by zuojj on 16-6-12.
  */
 public class SearchFragment extends BaseFragment{
