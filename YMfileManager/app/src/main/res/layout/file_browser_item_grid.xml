@@ -4,7 +4,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:padding="3dp">
 
     <RelativeLayout
         android:id="@+id/rl_folder_bg"
@@ -45,15 +46,15 @@
                 android:layout_height="wrap_content"
                 android:background="@mipmap/btn_check_on_holo_light"
                 android:gravity="center"
-                android:layout_marginLeft="45dp"
-                android:layout_marginTop="7dp"/>
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="3dp"/>
         </FrameLayout>
     </RelativeLayout>
     <LinearLayout
         android:id="@+id/ll_folder_text_bg"
         android:background="@drawable/folder_text_bg_selector"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_marginTop="-3dp"
         android:orientation="vertical">
 
@@ -74,27 +75,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
+                android:ellipsize="end"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
         </LinearLayout>
+        <!--android:layout_gravity="center_vertical"-->
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="center_vertical">
+            >
             <TextView
                 android:id="@+id/modified_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
                 android:singleLine="true"
+                android:layout_gravity="center_horizontal"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
             <TextView
                 android:id="@+id/file_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:singleLine="true"
+                android:layout_gravity="center_horizontal"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
         </LinearLayout>

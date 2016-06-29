@@ -156,7 +156,6 @@ public class SystemSpaceFragment extends BaseFragment implements
     }
 
     private boolean mBackspaceExit;
-
     @Bind(R.id.file_path_list)
     ListView file_path_list;
     @Bind(R.id.file_path_grid)

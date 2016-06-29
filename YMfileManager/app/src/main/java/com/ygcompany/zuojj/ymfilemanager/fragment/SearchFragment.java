@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.ygcompany.zuojj.ymfilemanager.BaseFragment;
 import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.bean.SearchInfo;
+import com.ygcompany.zuojj.ymfilemanager.utils.L;
+import com.ygcompany.zuojj.ymfilemanager.utils.LocalCache;
 import com.ygcompany.zuojj.ymfilemanager.view.SystemSpaceFragment;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import butterknife.ButterKnife;
  * Created by zuojj on 16-6-12.
  */
 public class SearchFragment extends BaseFragment{
+    private String LOG_TAG = "SearchFragment";
     //文件list集合
     private ArrayList<SearchInfo> mSearchList = new ArrayList<>();
     FragmentManager manager = getFragmentManager();
@@ -43,7 +46,6 @@ public class SearchFragment extends BaseFragment{
         super.onCreate(savedInstanceState);
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_fragment_layout, container, false);
@@ -53,6 +55,7 @@ public class SearchFragment extends BaseFragment{
     }
 
     private void initData() {
+        L.e("initData"+LOG_TAG,mSearchList.size()+""); //  1
         SearchAdapter searchAdapter = new SearchAdapter();
         lv_mian_search.setAdapter(searchAdapter);
         lv_mian_search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -64,8 +67,9 @@ public class SearchFragment extends BaseFragment{
                 String fileRealPath = filePath.substring(0, filePath.lastIndexOf("/") + 1);
 
                 //开启事务替换当前fragment
-                manager.beginTransaction().replace(R.id.fl_mian, new SystemSpaceFragment("search_fragment",fileRealPath,null,null))
-                        .addToBackStack(null).commit();
+                manager.popBackStack();
+                manager.beginTransaction().replace(R.id.fl_mian,
+                        new SystemSpaceFragment("search_fragment",fileRealPath,null,null)).commit();
             }
         });
     }
@@ -83,6 +87,7 @@ public class SearchFragment extends BaseFragment{
 
         @Override
         public int getCount() {
+//            L.e("mSearchList"+LOG_TAG,mSearchList.size()+"");
             return mSearchList.size();
         }
 
@@ -103,5 +108,12 @@ public class SearchFragment extends BaseFragment{
             search_file_name.setText(mSearchList.get(i).fileName);
             return view;
         }
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        LocalCache.setSearchText(null);
     }
 }

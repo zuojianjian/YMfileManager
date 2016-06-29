@@ -78,10 +78,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
         //绑定view
         ButterKnife.bind(MainActivity.this);
+        //默认选中computer页面
+        tv_computer.setSelected(true);
         //初始化时默认传入grid视图,实例化不能去掉,否则会报空指针异常
         LocalCache.getInstance(MainActivity.this).setViewTag("grid");
-        //默认选中computer
-        tv_computer.setSelected(true);
         //初始化fragment
         initFragemnt();
         //初始化数据设置点击监听
@@ -125,87 +125,46 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_desk:   //桌面页面
+                //设置选中文本背景
+                setSelectedBackground(R.id.tv_desk);
                 //当回退到主界面时，再执行回退时清空回退栈结束当前页面
-                tv_desk.setSelected(true);
-                tv_music.setSelected(false);
-                tv_video.setSelected(false);
-                tv_computer.setSelected(false);
-                tv_picture.setSelected(false);
-                tv_storage.setSelected(false);
-                tv_net_service.setSelected(false);
                 manager.popBackStack();
                 curFragment = deskFragment;
                 //替换当前fragment并加入回退栈
                 manager.beginTransaction().replace(R.id.fl_mian, deskFragment).commit();
                 break;
             case R.id.tv_music:  //音乐页面
-                tv_music.setSelected(true);
-                tv_desk.setSelected(false);
-                tv_video.setSelected(false);
-                tv_computer.setSelected(false);
-                tv_picture.setSelected(false);
-                tv_storage.setSelected(false);
-                tv_net_service.setSelected(false);
+                setSelectedBackground(R.id.tv_music);
                 manager.popBackStack();
                 curFragment = musicFragment;
                 manager.beginTransaction().replace(R.id.fl_mian, musicFragment).commit();
                 break;
             case R.id.tv_video:  //视频页面
-                tv_music.setSelected(false);
-                tv_desk.setSelected(false);
-                tv_video.setSelected(true);
-                tv_computer.setSelected(false);
-                tv_picture.setSelected(false);
-                tv_storage.setSelected(false);
-                tv_net_service.setSelected(false);
+                setSelectedBackground(R.id.tv_video);
                 manager.popBackStack();
                 curFragment = videoFragment;
                 manager.beginTransaction().replace(R.id.fl_mian, videoFragment).commit();
                 break;
             case R.id.tv_picture:   //图片页面
-                tv_music.setSelected(false);
-                tv_desk.setSelected(false);
-                tv_video.setSelected(false);
-                tv_computer.setSelected(false);
-                tv_picture.setSelected(true);
-                tv_storage.setSelected(false);
-                tv_net_service.setSelected(false);
+                setSelectedBackground(R.id.tv_picture);
                 manager.popBackStack();
                 curFragment = pictrueFragment;
                 manager.beginTransaction().replace(R.id.fl_mian, pictrueFragment).commit();
                 break;
             case R.id.tv_computer:  //计算机页面
-                tv_music.setSelected(false);
-                tv_desk.setSelected(false);
-                tv_video.setSelected(false);
-                tv_computer.setSelected(true);
-                tv_picture.setSelected(false);
-                tv_storage.setSelected(false);
-                tv_net_service.setSelected(false);
+                setSelectedBackground(R.id.tv_computer);
                 manager.popBackStack();
                 curFragment = sdStorageFragment;
                 manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
                 break;
             case R.id.tv_storage:    //USB页面
-                tv_music.setSelected(false);
-                tv_desk.setSelected(false);
-                tv_video.setSelected(false);
-                tv_computer.setSelected(false);
-                tv_picture.setSelected(false);
-                tv_storage.setSelected(true);
-                tv_net_service.setSelected(false);
+                setSelectedBackground(R.id.tv_storage);
                 manager.popBackStack();
                 curFragment = usbStorageFragment;
                 manager.beginTransaction().replace(R.id.fl_mian, usbStorageFragment).commit();
                 break;
             case R.id.tv_net_service:   //网上邻居页面
-                tv_music.setSelected(false);
-                tv_desk.setSelected(false);
-                tv_video.setSelected(false);
-                tv_computer.setSelected(false);
-                tv_picture.setSelected(false);
-                tv_storage.setSelected(false);
-                tv_net_service.setSelected(true);
+                setSelectedBackground(R.id.tv_net_service);
                 manager.popBackStack();
                 curFragment = onlineNeighborFragment;
                 manager.beginTransaction().replace(R.id.fl_mian, onlineNeighborFragment).commit();
@@ -234,6 +193,78 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 switchListOrgrid();
                 //发送广播通知视图切换
                 sendBroadcastMessage("iv_switch_view");
+                break;
+        }
+    }
+
+    //设置选中文本背景（左侧侧边栏）
+    private void setSelectedBackground(int id) {
+        switch (id){
+            //默认选择computer页面
+            case R.id.tv_computer:
+                tv_music.setSelected(false);
+                tv_desk.setSelected(false);
+                tv_video.setSelected(false);
+                tv_computer.setSelected(true);
+                tv_picture.setSelected(false);
+                tv_storage.setSelected(false);
+                tv_net_service.setSelected(false);
+                break;
+            case R.id.tv_desk:
+                tv_desk.setSelected(true);
+                tv_music.setSelected(false);
+                tv_video.setSelected(false);
+                tv_computer.setSelected(false);
+                tv_picture.setSelected(false);
+                tv_storage.setSelected(false);
+                tv_net_service.setSelected(false);
+                break;
+            case R.id.tv_music:
+                tv_music.setSelected(true);
+                tv_desk.setSelected(false);
+                tv_video.setSelected(false);
+                tv_computer.setSelected(false);
+                tv_picture.setSelected(false);
+                tv_storage.setSelected(false);
+                tv_net_service.setSelected(false);
+                break;
+            case R.id.tv_video:
+                tv_music.setSelected(false);
+                tv_desk.setSelected(false);
+                tv_video.setSelected(true);
+                tv_computer.setSelected(false);
+                tv_picture.setSelected(false);
+                tv_storage.setSelected(false);
+                tv_net_service.setSelected(false);
+                break;
+            case R.id.tv_picture:
+                tv_music.setSelected(false);
+                tv_desk.setSelected(false);
+                tv_video.setSelected(false);
+                tv_computer.setSelected(false);
+                tv_picture.setSelected(true);
+                tv_storage.setSelected(false);
+                tv_net_service.setSelected(false);
+                break;
+            case R.id.tv_storage:
+                tv_music.setSelected(false);
+                tv_desk.setSelected(false);
+                tv_video.setSelected(false);
+                tv_computer.setSelected(false);
+                tv_picture.setSelected(false);
+                tv_storage.setSelected(true);
+                tv_net_service.setSelected(false);
+                break;
+            case R.id.tv_net_service:
+                tv_music.setSelected(false);
+                tv_desk.setSelected(false);
+                tv_video.setSelected(false);
+                tv_computer.setSelected(false);
+                tv_picture.setSelected(false);
+                tv_storage.setSelected(false);
+                tv_net_service.setSelected(true);
+                break;
+            default:
                 break;
         }
     }
@@ -271,7 +302,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void shownPopWidndow(String menu_tag) {
         popWinShare = null;
         //自定义的单击事件
-        PopOnClickLintener paramOnClickListener = new PopOnClickLintener(menu_tag,MainActivity.this);
+        PopOnClickLintener paramOnClickListener = new PopOnClickLintener(menu_tag,MainActivity.this,manager);
         if (menu_tag.equals("iv_menu")){
             popWinShare = new PopWinShare(MainActivity.this, paramOnClickListener,
                     DisplayUtil.dip2px(MainActivity.this, 125), DisplayUtil.dip2px(MainActivity.this, 260), menu_tag);

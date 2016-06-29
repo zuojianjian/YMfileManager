@@ -1,10 +1,12 @@
 package com.ygcompany.zuojj.ymfilemanager.component;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import com.ygcompany.zuojj.ymfilemanager.MainActivity;
 import com.ygcompany.zuojj.ymfilemanager.R;
+import com.ygcompany.zuojj.ymfilemanager.utils.T;
 
 /**
  * poupwindow的点击事件监听
@@ -22,10 +24,17 @@ public class PopOnClickLintener implements View.OnClickListener {
     //选项菜单的点击监听
     private String menu_tag;
     private MainActivity mainActivity;
+    private FragmentManager manager;
 
-    public PopOnClickLintener(String menu_tag, MainActivity mainActivity) {
+    /**
+     * @param menu_tag  pop菜单选中按钮标识
+     * @param mainActivity 上下文
+     * @param manager  fragment管理器
+     */
+    public PopOnClickLintener(String menu_tag, MainActivity mainActivity, FragmentManager manager) {
         this.menu_tag = menu_tag;
         this.mainActivity = mainActivity;
+        this.manager = manager;
     }
 
     @Override
@@ -61,6 +70,9 @@ public class PopOnClickLintener implements View.OnClickListener {
             switch (view.getId()) {
                 case R.id.pop_setting_view: //显示隐藏文件
                     //发送广播通知选中哪个item
+                    if (manager.getBackStackEntryCount()<1){
+                        T.showShort(mainActivity,"当前页面不支持此操作！");
+                    }
                     sendBroadcastMessage("iv_menu", VIEW_OR_DISMISS);
                     break;
                 case R.id.pop_setting_relative:  //关于

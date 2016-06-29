@@ -9,6 +9,7 @@ import com.ygcompany.zuojj.ymfilemanager.MainActivity;
 import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.bean.SearchInfo;
 import com.ygcompany.zuojj.ymfilemanager.fragment.SearchFragment;
+import com.ygcompany.zuojj.ymfilemanager.utils.L;
 import com.ygcompany.zuojj.ymfilemanager.utils.LocalCache;
 import com.ygcompany.zuojj.ymfilemanager.utils.T;
 
@@ -20,7 +21,7 @@ import java.util.ArrayList;
  * Created by zuojj on 16-6-24.
  */
 public class SearchOnQueryTextListener implements SearchView.OnQueryTextListener {
-    //搜索的dialog
+    private String LOG_TAG = "SearchOnQueryTextListener";
     private ProgressDialog progressDialog;
     //文件list集合
     private ArrayList<SearchInfo> mFileList = new ArrayList<>();
@@ -38,37 +39,35 @@ public class SearchOnQueryTextListener implements SearchView.OnQueryTextListener
         this.mainActivity = mainActivity;
     }
 
-
     @Override
     public boolean onQueryTextSubmit(String query) {   // 当点击搜索按钮时触发该方法
-        if (null!= LocalCache.getSearchText() &&
-                !LocalCache.getSearchText().equals(query.trim())){
-           mFileList.clear();
+        if (mFileList != null && LocalCache.getSearchText() != null) {
+            mFileList.clear();
             startSearch(query.trim());
             //开启searchfragment
             if (mFileList.size() > 0) {
-                progressDialog.dismiss();
                 startSearchFragment();
             } else {
                 progressDialog.dismiss();
                 T.showShort(mainActivity, "没有发现文件，请检查后重新输入！");
             }
         }
+        assert mFileList != null;
+        mFileList.clear();
         LocalCache.setSearchText(query.trim());
         //搜索dialog
         showDialog();
         //开始搜索
         startSearch(query.trim());
+        L.e(LOG_TAG, mFileList.size() + "");
         //开启searchfragment
         if (mFileList.size() > 0) {
-            progressDialog.dismiss();
             startSearchFragment();
         } else {
             progressDialog.dismiss();
             T.showShort(mainActivity, "没有发现文件，请检查后重新输入！");
         }
-
-        return true;
+        return false;
     }
 
     // 当搜索内容改变时触发该方法
@@ -81,7 +80,6 @@ public class SearchOnQueryTextListener implements SearchView.OnQueryTextListener
     //搜索dialog
     private void showDialog() {
         progressDialog = new ProgressDialog(mainActivity);
-        progressDialog.setTitle("搜索中");
         progressDialog.setMessage("loading...");
         //显示dialog
         progressDialog.show();
@@ -91,8 +89,10 @@ public class SearchOnQueryTextListener implements SearchView.OnQueryTextListener
     //搜索fragment
     private void startSearchFragment() {
         SearchFragment searchFragment = new SearchFragment(manager, mFileList);
-        manager.beginTransaction().replace(R.id.fl_mian, searchFragment)
-                .addToBackStack(null).commit();
+        manager.popBackStack();
+        manager.beginTransaction().replace(R.id.fl_mian, searchFragment).commit();
+        //移除dialog
+        progressDialog.dismiss();
     }
 
     // 开始搜索

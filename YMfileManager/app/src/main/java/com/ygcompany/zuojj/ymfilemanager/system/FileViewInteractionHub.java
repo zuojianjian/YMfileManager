@@ -786,7 +786,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                 case MENU_DELETE://删除
                     onOperationDelete();
                     break;
-                case MENU_INFO://属性
+                case MENU_INFO://详情
                     onOperationInfo();
                     break;
                 default:
