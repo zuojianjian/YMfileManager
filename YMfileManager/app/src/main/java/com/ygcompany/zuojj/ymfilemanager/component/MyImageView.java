@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
+ * 自定义imageview
  * Created by zuojj on 16-5-10.
  */
 public class MyImageView extends ImageView {
@@ -33,6 +34,6 @@ public class MyImageView extends ImageView {
     }
 
     public interface OnMeasureListener{
-        public void onMeasureSize(int width, int height);
+        void onMeasureSize(int width, int height);
     }
 }

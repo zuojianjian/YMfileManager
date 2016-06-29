@@ -1,6 +1,7 @@
 package com.ygcompany.zuojj.ymfilemanager.adapter;
 
 /**
+ * 视频实体类集合item
  * Created by zuojj on 16-5-18.
  */
 public class VideoItem {

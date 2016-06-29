@@ -14,10 +14,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
+ * 网络邻居页面
  * Created by zuojj on 16-6-8.
  */
 public class OnlineNeighborFragment extends Fragment{
-    private View view;
 
     @Bind(R.id.tv_internet)
     TextView tv_internet;
@@ -29,7 +29,7 @@ public class OnlineNeighborFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.personal_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.personal_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         initView();
         return view;

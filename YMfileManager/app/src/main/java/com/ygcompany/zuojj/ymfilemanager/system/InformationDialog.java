@@ -66,11 +66,10 @@ public class InformationDialog extends AlertDialog {
                     long size = data.getLong("SIZE");
                     ((TextView) mView.findViewById(R.id.information_size)).setText(formatFileSizeString(size));
             }
-        };
+        }
     };
 
     private AsyncTask task;
-
     @SuppressWarnings("unchecked")
     private void asyncGetSize() {
         task = new AsyncTask() {
@@ -119,7 +118,7 @@ public class InformationDialog extends AlertDialog {
     }
 
     private String formatFileSizeString(long size) {
-        String ret = "";
+        String ret;
         if (size >= 1024) {
             ret = Util.convertStorage(size);
             ret += (" (" + mContext.getResources().getString(R.string.file_size, size) + ")");

@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="帮助和反馈"
+            android:text="@string/text_help"
             android:textSize="@dimen/text16"
             android:layout_marginLeft="15dp"/>
 
@@ -41,51 +41,29 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="180dp"
             android:textSize="@dimen/text16"
-            android:text="您可以直接在此发送反馈，也可以去论坛反馈，还可以在帮助中心快速寻找答案。"/>
+            android:text="@string/text_help_title"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:textSize="@dimen/text14"
             android:textColor="@android:color/holo_blue_light"
-            android:text="去官网反馈"/>
+            android:text="@string/text_to_public"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:textSize="@dimen/text14"
             android:textColor="@android:color/holo_blue_light"
-            android:text="去官网帮助中心"/>
+            android:text="@string/text_help_center"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text14"
             android:layout_marginTop="25dp"
-            android:text="http://www.emindsoft.com.cn"
+            android:text="@string/text_address"
             android:textColor="@android:color/darker_gray"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_marginTop="100dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@android:color/white"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/iv_back"
-            android:layout_marginLeft="10dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="帮助和反馈"
-            android:textSize="@dimen/text16"
-            android:layout_marginLeft="10dp"/>
-
     </LinearLayout>
 
 </LinearLayout>

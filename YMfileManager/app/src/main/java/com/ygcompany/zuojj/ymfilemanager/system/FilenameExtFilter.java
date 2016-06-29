@@ -11,7 +11,7 @@ import java.util.HashSet;
  */
 public class FilenameExtFilter implements FilenameFilter {
 
-    private HashSet<String> mExts = new HashSet<String>();
+    private HashSet<String> mExts = new HashSet<>();
 
     // using lower case
     public FilenameExtFilter(String[] exts) {

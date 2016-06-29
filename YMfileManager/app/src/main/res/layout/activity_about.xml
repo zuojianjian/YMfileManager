@@ -11,6 +11,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:paddingLeft="5dp"
+        android:background="@android:color/white"
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
@@ -22,7 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="关于"
+            android:text="@string/text_about"
             android:textSize="@dimen/text16"
             android:layout_marginLeft="15dp"/>
 
@@ -49,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="一铭文件管理器"
+                android:text="@string/text_app_name"
                 android:textSize="@dimen/text23"/>
         </LinearLayout>
 
@@ -58,14 +59,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:textSize="@dimen/text14"
-            android:text="于潮流中经典永存"
+            android:text="@string/text_theme"
             android:textColor="@android:color/darker_gray"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:textSize="@dimen/text14"
-            android:text="版本号： 1.0"
+            android:text="@string/text_version"
             android:textColor="@android:color/darker_gray"/>
 
         <LinearLayout
@@ -79,7 +80,7 @@
                 android:id="@+id/tv_public"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="官网"
+                android:text="@string/text_public"
                 android:layout_marginRight="3dp"
                 android:layout_marginLeft="8dp"
                 android:textSize="@dimen/text14"
@@ -93,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
-                android:text="论坛"
+                android:text="@string/text_discuss"
                 android:textSize="@dimen/text14"
                 android:textColor="@android:color/holo_orange_dark"/>
         </LinearLayout>
@@ -103,7 +104,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/text14"
             android:layout_marginTop="180dp"
-            android:text="http://www.emindsoft.com.cn"
+            android:text="@string/text_address"
             android:textColor="@android:color/darker_gray"/>
     </LinearLayout>
 

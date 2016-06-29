@@ -25,7 +25,7 @@ public class FileOperationHelper {
     private static final String TAG = FileOperationHelper.class.getSimpleName();
 
     //当前文件集合
-    private ArrayList<FileInfo> mCurFileNameList = new ArrayList<FileInfo>();
+    private final ArrayList<FileInfo> mCurFileNameList = new ArrayList<FileInfo>();
 
     private boolean mMoving;
 
@@ -296,7 +296,7 @@ public class FileOperationHelper {
     private boolean MoveFile(FileInfo f, String dest) {
         Log.v(LOG_TAG, "MoveFile >>> " + f.filePath + "," + dest);
 
-        if (f == null || dest == null) {
+        if (dest == null) {
             Log.e(LOG_TAG, "CopyFile: null parameter");
             return false;
         }
@@ -325,13 +325,13 @@ public class FileOperationHelper {
      */
     public static List<File> getALLMemoryFile() {
         try {
-            List<File> list = new ArrayList<File>();
+            List<File> list = new ArrayList<>();
             Runtime runtime = Runtime.getRuntime();
             Process proc = runtime.exec("mount");
             InputStream is = proc.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             String line;
-            String mount = new String();
+            String mount = "";
             BufferedReader br = new BufferedReader(isr);
             while ((line = br.readLine()) != null) {
                 if (line.contains("secure"))
@@ -340,13 +340,13 @@ public class FileOperationHelper {
                     continue;
                 if (line.contains("fat")) {
                     String columns[] = line.split(" ");
-                    if (columns != null && columns.length > 1) {
+                    if (columns.length > 1) {
                         mount = mount.concat(columns[1] + "*");
                     }
                 }
                 else if (line.contains("fuse")) {
                     String columns[] = line.split(" ");
-                    if (columns != null && columns.length > 1) {
+                    if (columns.length > 1) {
                         mount = mount.concat(columns[1] + "*");
                     }
                 }

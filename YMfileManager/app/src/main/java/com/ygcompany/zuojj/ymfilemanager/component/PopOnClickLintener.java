@@ -7,9 +7,10 @@ import com.ygcompany.zuojj.ymfilemanager.MainActivity;
 import com.ygcompany.zuojj.ymfilemanager.R;
 
 /**
+ * poupwindow的点击事件监听
  * Created by zuojj on 16-6-24.
  */
-public class OnClickLintener implements View.OnClickListener {
+public class PopOnClickLintener implements View.OnClickListener {
     //顶部poupwindow各个item标识
     private static final String POP_REFRESH = "pop_refresh";
     private static final String POP_CANCEL_ALL = "pop_cancel_all";
@@ -21,9 +22,8 @@ public class OnClickLintener implements View.OnClickListener {
     //选项菜单的点击监听
     private String menu_tag;
     private MainActivity mainActivity;
-    private Intent intent;
 
-    public OnClickLintener(String menu_tag, MainActivity mainActivity) {
+    public PopOnClickLintener(String menu_tag, MainActivity mainActivity) {
         this.menu_tag = menu_tag;
         this.mainActivity = mainActivity;
     }
@@ -64,7 +64,7 @@ public class OnClickLintener implements View.OnClickListener {
                     sendBroadcastMessage("iv_menu", VIEW_OR_DISMISS);
                     break;
                 case R.id.pop_setting_relative:  //关于
-                    intent = new Intent(mainActivity,AboutActivity.class);
+                    Intent intent = new Intent(mainActivity, AboutActivity.class);
                     mainActivity.startActivity(intent);
                     break;
                 case R.id.pop_setting_help:  //帮助和反馈

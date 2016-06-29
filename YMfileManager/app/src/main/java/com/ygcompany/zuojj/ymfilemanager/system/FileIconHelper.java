@@ -10,11 +10,9 @@ import java.util.HashMap;
 
 public class FileIconHelper implements FileIconLoader.IconLoadFinishListener {
 
-    private static final String LOG_TAG = "FileIconHelper";
+    private static HashMap<ImageView, ImageView> imageFrames = new HashMap<>();
 
-    private static HashMap<ImageView, ImageView> imageFrames = new HashMap<ImageView, ImageView>();
-
-    private static HashMap<String, Integer> fileExtToIcons = new HashMap<String, Integer>();
+    private static HashMap<String, Integer> fileExtToIcons = new HashMap<>();
 
     private FileIconLoader mIconLoader;
 
@@ -72,7 +70,7 @@ public class FileIconHelper implements FileIconLoader.IconLoadFinishListener {
     public static int getFileIcon(String ext) {
         Integer i = fileExtToIcons.get(ext.toLowerCase());
         if (i != null) {
-            return i.intValue();
+            return i;
         } else {
             return R.mipmap.file_icon_default;
         }
@@ -86,7 +84,7 @@ public class FileIconHelper implements FileIconLoader.IconLoadFinishListener {
         FileCategoryHelper.FileCategory fc = FileCategoryHelper.getCategoryFromPath(filePath);
         fileImageFrame.setVisibility(View.GONE);
 
-        boolean set = false;
+        boolean set;
         int id = getFileIcon(extFromFilename);
         fileImage.setImageResource(id);
 

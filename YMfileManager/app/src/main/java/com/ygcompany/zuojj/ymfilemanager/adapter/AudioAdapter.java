@@ -14,6 +14,7 @@ import com.ygcompany.zuojj.ymfilemanager.bean.AudioItem;
 import java.util.ArrayList;
 
 /**
+ * 音频数据设置
  * Created by zuojj on 16-5-18.
  */
 public class AudioAdapter extends BaseAdapter {
@@ -43,10 +44,10 @@ public class AudioAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View convertView, ViewGroup viewGroup) {
-        ViewHodler hodler = null;
+        ViewHodler hodler;
         if (convertView == null){
             hodler = new ViewHodler();
-            convertView = convertView.inflate(context, R.layout.audio_item,null);
+            convertView = View.inflate(context, R.layout.audio_item,null);
             hodler.iv_audio = (ImageView) convertView.findViewById(R.id.iv_audio);
             hodler.tv_audio_name = (TextView) convertView.findViewById(R.id.tv_audio_name);
             hodler.tv_audio_size = (TextView) convertView.findViewById(R.id.tv_audio_size);

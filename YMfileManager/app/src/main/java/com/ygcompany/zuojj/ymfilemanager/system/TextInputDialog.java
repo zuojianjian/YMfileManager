@@ -15,7 +15,6 @@ public class TextInputDialog extends AlertDialog {
     private String mMsg;
     private OnFinishListener mListener;
     private Context mContext;
-    private View mView;
     private EditText mFolderName;
 
     public interface OnFinishListener {
@@ -37,7 +36,7 @@ public class TextInputDialog extends AlertDialog {
     }
 
     protected void onCreate(Bundle savedInstanceState) {
-        mView = getLayoutInflater().inflate(R.layout.textinput_dialog, null);
+        View mView = getLayoutInflater().inflate(R.layout.textinput_dialog, null);
 
         setTitle(mTitle);
         setMessage(mMsg);

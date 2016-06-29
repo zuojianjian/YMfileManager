@@ -29,7 +29,6 @@ import com.ygcompany.zuojj.ymfilemanager.view.GvDetailFragment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +45,6 @@ public class PictrueFragment extends BaseFragment {
     private static final int SCAN_OK = 1;
     private static final String GV_DETAIL = "gv_detail";
 
-    private View view;
     @Bind(R.id.gv_pictrue)
     GridView gv_pictrue;
     @Bind(R.id.tv_no_pictrue)
@@ -87,7 +85,7 @@ public class PictrueFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.pictrue_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.pictrue_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         initView();
         return view;
@@ -135,9 +133,7 @@ public class PictrueFragment extends BaseFragment {
         if (mGruopMap.size() == 0) {
             return null;
         }
-        Iterator<Map.Entry<String, List<String>>> it = mGruopMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, List<String>> entry = it.next();
+        for (Map.Entry<String, List<String>> entry : mGruopMap.entrySet()) {
             ImageBean mImageBean = new ImageBean();
             String key = entry.getKey();
             List<String> value = entry.getValue();
@@ -170,11 +166,13 @@ public class PictrueFragment extends BaseFragment {
 //                        MediaStore.Images.Media.SIZE//图片的大小
 //                };
                 //只查询jpeg和png的图片
+                assert mContentResolver != null;
                 Cursor mCursor = mContentResolver.query(mImageUri, null,
                         MediaStore.Images.Media.MIME_TYPE + "=? or "
                                 + MediaStore.Images.Media.MIME_TYPE + "=?",
                         new String[]{"image/jpeg", "image/png"}, MediaStore.Images.Media.DATE_MODIFIED);
 
+                assert mCursor != null;
                 while (mCursor.moveToNext()) {
 //                    ImageBean mImageBean = new ImageBean();
                     //获取图片的路径
@@ -194,7 +192,7 @@ public class PictrueFragment extends BaseFragment {
                     String parentName = new File(path).getParentFile().getName();
                     //根据父路径名将图片放入到mGruopMap中
                     if (!mGruopMap.containsKey(parentName)) {
-                        List<String> chileList = new ArrayList<String>();
+                        List<String> chileList = new ArrayList<>();
                         chileList.add(path);
                         mGruopMap.put(parentName, chileList);
                     } else {

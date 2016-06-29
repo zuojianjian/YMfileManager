@@ -19,6 +19,7 @@ import com.ygcompany.zuojj.ymfilemanager.component.MyImageView;
 import java.util.List;
 
 /**
+ * 用来设置分类图片集合
  * Created by zuojj on 16-5-10.
  */
 public class GroupAdapter extends BaseAdapter{

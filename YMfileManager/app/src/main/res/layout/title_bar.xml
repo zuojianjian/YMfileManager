@@ -19,7 +19,7 @@
             android:src="@mipmap/iv_back"
             android:paddingTop="8dp"
             android:paddingBottom="9dp"
-            android:layout_weight="0.8"/>
+            android:layout_weight="0.5"/>
 
         <View
             android:layout_width="1dp"
@@ -30,8 +30,9 @@
             android:id="@+id/iv_fresh"
             android:layout_width="25dp"
             android:layout_height="25dp"
+            android:layout_marginLeft="5dp"
             android:src="@drawable/fresh_selector"
-            android:layout_weight="0.3"/>
+            android:layout_weight="0.5"/>
         <ImageView
             android:id="@+id/iv_setting"
             android:layout_width="25dp"

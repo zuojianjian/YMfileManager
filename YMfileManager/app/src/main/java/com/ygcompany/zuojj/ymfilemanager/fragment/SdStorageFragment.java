@@ -27,7 +27,6 @@ import com.ygcompany.zuojj.ymfilemanager.view.SystemSpaceFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,9 +45,9 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
 
     // 启动各个fragment的标识
     private static final String SYSTEM_SPACE_FRAGMENT_TAG = "System_Space_Fragment_tag";
-    private static final String PERSONAL_SPACE_FRAGMENT_TAG = "Personal_Space_Fragment_tag";
-    private static final String USB_SPACE_FRAGMENT_TAG = "usb_space_fragment_tag";
-    private static final String YUN_SPACE_FRAGMENT_TAG = "yun_space_fragment_tag";
+//    private static final String PERSONAL_SPACE_FRAGMENT_TAG = "Personal_Space_Fragment_tag";
+//    private static final String USB_SPACE_FRAGMENT_TAG = "usb_space_fragment_tag";
+//    private static final String YUN_SPACE_FRAGMENT_TAG = "yun_space_fragment_tag";
 
     //初始化控件
     @Bind(R.id.rl_android_system)
@@ -83,20 +82,13 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     @Bind(R.id.pb_usb)
     ProgressBar pb_usb;
 
-    private View view;
     // 当前的主界面
     private BaseFragment curFragment;
-    //sdStorageFragment页面标识
-    private String sdStorageFragment;
     //fragament管理器
     FragmentManager manager = getFragmentManager();
-    //设备列表集合
-//    ArrayList<DeviceInfo> deviceInfos = new ArrayList<>();
-    private String mountPath;
 
-    public SdStorageFragment(FragmentManager manager, String sdStorageFragment) {
+    public SdStorageFragment(FragmentManager manager) {
         this.manager = manager;
-        this.sdStorageFragment = sdStorageFragment;
     }
 
 //    //定时器功能
@@ -130,7 +122,8 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.android_fragment_layout, container, false);
+
+        View view = inflater.inflate(R.layout.android_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         initView();
         return view;
@@ -185,14 +178,11 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         UsbManager usbManager = (UsbManager) getContext().getSystemService(Context.USB_SERVICE);
         //获取设备列表返回HashMap
         HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
-        Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
         //遍历usb设备列表
-        mountPath = "/storage/usb2";
-        while (deviceIterator.hasNext()) {
-            UsbDevice device = deviceIterator.next();
-//            DeviceInfo deviceInfo = new DeviceInfo();
+        for (UsbDevice device : deviceList.values()) {
+            //            DeviceInfo deviceInfo = new DeviceInfo();
             //设备名称
-            String deviceName = device.getDeviceName();
+//            String deviceName = device.getDeviceName();
             //当前内存不为空时赋值路径
 //            deviceInfo.deviceName = deviceName;
 //            deviceInfo.devicePath = mountPath;

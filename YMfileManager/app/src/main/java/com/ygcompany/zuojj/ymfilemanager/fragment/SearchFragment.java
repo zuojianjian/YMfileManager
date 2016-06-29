@@ -1,6 +1,5 @@
 package com.ygcompany.zuojj.ymfilemanager.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -27,15 +26,12 @@ import butterknife.ButterKnife;
  * Created by zuojj on 16-6-12.
  */
 public class SearchFragment extends BaseFragment{
-    private View view;
     //文件list集合
     private ArrayList<SearchInfo> mSearchList = new ArrayList<>();
     FragmentManager manager = getFragmentManager();
-    private SearchAdapter searchAdapter;
 
     @Bind(R.id.lv_mian_search)
     ListView lv_mian_search;
-    private Context context;
 
     public SearchFragment(FragmentManager manager, ArrayList<SearchInfo> mFileList) {
         this.mSearchList = mFileList;
@@ -50,14 +46,14 @@ public class SearchFragment extends BaseFragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.search_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.search_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         initData();
         return view;
     }
 
     private void initData() {
-        searchAdapter = new SearchAdapter();
+        SearchAdapter searchAdapter = new SearchAdapter();
         lv_mian_search.setAdapter(searchAdapter);
         lv_mian_search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

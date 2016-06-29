@@ -27,7 +27,6 @@ import butterknife.ButterKnife;
  * Created by zuojj on 16-5-18.
  */
 public class GvDetailFragment extends Fragment {
-    private View view;
 
     @Bind(R.id.gv_detail_pictrue)
     GridView gv_detail_pictrue;
@@ -35,7 +34,6 @@ public class GvDetailFragment extends Fragment {
     private int i;
     private List<String> childList;
     private List<ImageBean> list;
-    private ChildAdapter adapter;
     HashMap<String,List<String>> mGruopMap;
 
     public GvDetailFragment(HashMap<String, List<String>> mGruopMap, List<ImageBean> list, int i) {
@@ -52,7 +50,7 @@ public class GvDetailFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.gv_detail_layout, container, false);
+        View view = inflater.inflate(R.layout.gv_detail_layout, container, false);
         ButterKnife.bind(this, view);
         initView();
         return view;
@@ -60,7 +58,7 @@ public class GvDetailFragment extends Fragment {
 
     private void initView() {
         childList = mGruopMap.get(list.get(i).getFolderName());
-        adapter = new ChildAdapter(getContext(), childList, gv_detail_pictrue);
+        ChildAdapter adapter = new ChildAdapter(getContext(), childList, gv_detail_pictrue);
         gv_detail_pictrue.setAdapter(adapter);
         gv_detail_pictrue.setOnItemClickListener(new DetailOnItemClickListener());
     }

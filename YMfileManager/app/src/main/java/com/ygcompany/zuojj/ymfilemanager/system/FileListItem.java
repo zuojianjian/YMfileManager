@@ -26,7 +26,7 @@ public class FileListItem {
             checkbox.setVisibility(View.GONE);
         } else {
             checkbox.setVisibility(fileViewInteractionHub.canShowCheckBox() ? View.VISIBLE : View.GONE);
-            if ("grid".equals(LocalCache.getInstance(context).getViewTag())){
+            if ("grid".equals(LocalCache.getViewTag())){
                 checkbox.setBackgroundResource(fileInfo.Selected ? btn_check_on_holo_light
                         : btn_check_off_holo_light);
             }
@@ -53,12 +53,9 @@ public class FileListItem {
     }
 
     public static class FileItemOnClickListener implements View.OnClickListener {
-        private Context mContext;
         private FileViewInteractionHub mFileViewInteractionHub;
 
-        public FileItemOnClickListener(Context context,
-                                       FileViewInteractionHub fileViewInteractionHub) {
-            mContext = context;
+        public FileItemOnClickListener(FileViewInteractionHub fileViewInteractionHub) {
             mFileViewInteractionHub = fileViewInteractionHub;
         }
 
@@ -69,7 +66,7 @@ public class FileListItem {
             FileInfo tag = (FileInfo) img.getTag();
             tag.Selected = !tag.Selected;
             if (mFileViewInteractionHub.onCheckItem(tag, v)) {
-                if ("grid".equals(LocalCache.getInstance(mContext).getViewTag())){
+                if ("grid".equals(LocalCache.getViewTag())){
                     img.setBackgroundResource(tag.Selected ? R.mipmap.btn_check_on_holo_light
                             : R.mipmap.btn_check_off_holo_light);
                 }

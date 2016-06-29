@@ -14,12 +14,9 @@ public class LocalCache {
     // 存储对象
     private static SharedPreferences sp;
 
-    private Context context;
-
     private LocalCache(Context context) {
         sp = context.getSharedPreferences(context.getPackageName(),
                 Context.MODE_PRIVATE);
-        this.context = context;
     }
 
     /**
@@ -38,7 +35,7 @@ public class LocalCache {
     public static void setViewTag(String tag){
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("viewTag", tag);
-        editor.commit();
+        editor.apply();
     }
 
     public static String getViewTag(){
@@ -49,7 +46,7 @@ public class LocalCache {
     public static void setSearchText(String query){
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("searchText", query);
-        editor.commit();
+        editor.apply();
     }
 
     public static String getSearchText(){

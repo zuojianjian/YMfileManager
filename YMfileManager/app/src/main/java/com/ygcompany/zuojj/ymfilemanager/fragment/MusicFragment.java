@@ -29,14 +29,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
+ * 音乐显示页面
  * Created by zuojj on 16-5-18.
  */
 public class MusicFragment  extends BaseFragment implements AdapterView.OnItemClickListener {
     private static final String TAG = MusicFragment.class.getSimpleName();
-    private View view;
     private static final int MUSIC_OK = 0;
     private ArrayList<AudioItem> audioItems;
-    private String currentPath;
     private ContentResolver contentResolver;
     private ProgressDialog mProgressDialog;
 
@@ -64,6 +63,9 @@ public class MusicFragment  extends BaseFragment implements AdapterView.OnItemCl
         }
     };
 
+    public MusicFragment() {
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +74,7 @@ public class MusicFragment  extends BaseFragment implements AdapterView.OnItemCl
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.music_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.music_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         initView();
         return view;
@@ -86,8 +88,7 @@ public class MusicFragment  extends BaseFragment implements AdapterView.OnItemCl
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 //        MediaPlayer mediaPlayer = new MediaPlayer();
-        AudioItem audioItem = audioItems.get(i);
-//            mediaPlayer.release();
+        //            mediaPlayer.release();
 //            mediaPlayer = null;
 //        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 //        try {
@@ -108,7 +109,7 @@ public class MusicFragment  extends BaseFragment implements AdapterView.OnItemCl
         //子线程准备数据
         new Thread() {
             public void run() {
-                audioItems = new ArrayList<AudioItem>();
+                audioItems = new ArrayList<>();
                 Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                 contentResolver = getContext().getContentResolver();
                 String[] projection = {

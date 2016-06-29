@@ -8,6 +8,7 @@ import android.view.Window;
 import com.ygcompany.zuojj.ymfilemanager.component.AppManager;
 
 /**
+ * activity基类
  * Created by zuojj on 16-5-18.
  */
 public class BaseActivity extends FragmentActivity{

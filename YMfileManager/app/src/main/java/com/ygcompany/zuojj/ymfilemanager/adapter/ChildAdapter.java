@@ -1,7 +1,5 @@
 package com.ygcompany.zuojj.ymfilemanager.adapter;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -16,13 +14,10 @@ import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.component.MyImageView;
 import com.ygcompany.zuojj.ymfilemanager.component.NativeImageLoader;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
+ * 图片显示页面数据
  * Created by zuojj on 16-5-10.
  */
 public class ChildAdapter extends BaseAdapter {
@@ -30,7 +25,7 @@ public class ChildAdapter extends BaseAdapter {
     /**
      * 用来存储图片的选中情况
      */
-    private HashMap<Integer, Boolean> mSelectMap = new HashMap<Integer, Boolean>();
+//    private HashMap<Integer, Boolean> mSelectMap = new HashMap<>();
     private GridView mGridView;
     private List<String> list;
     protected LayoutInflater mInflater;
@@ -104,35 +99,35 @@ public class ChildAdapter extends BaseAdapter {
         return convertView;
     }
 
-    /**
-     * 给CheckBox加点击动画，利用开源库nineoldandroids设置动画
-     * @param view
-     */
-    private void addAnimation(View view){
-        float [] vaules = new float[]{0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 1.1f, 1.2f, 1.3f, 1.25f, 1.2f, 1.15f, 1.1f, 1.0f};
-        AnimatorSet set = new AnimatorSet();
-        set.playTogether(ObjectAnimator.ofFloat(view, "scaleX", vaules),
-                ObjectAnimator.ofFloat(view, "scaleY", vaules));
-        set.setDuration(150);
-        set.start();
-    }
+//    /**
+//     * 给CheckBox加点击动画，利用开源库nineoldandroids设置动画
+//     * @param view
+//     */
+//    private void addAnimation(View view){
+//        float [] vaules = new float[]{0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 1.1f, 1.2f, 1.3f, 1.25f, 1.2f, 1.15f, 1.1f, 1.0f};
+//        AnimatorSet set = new AnimatorSet();
+//        set.playTogether(ObjectAnimator.ofFloat(view, "scaleX", vaules),
+//                ObjectAnimator.ofFloat(view, "scaleY", vaules));
+//        set.setDuration(150);
+//        set.start();
+//    }
 
 
-    /**
-     * 获取选中的Item的position
-     * @return
-     */
-    public List<Integer> getSelectItems(){
-        List<Integer> list = new ArrayList<Integer>();
-        for(Iterator<Map.Entry<Integer, Boolean>> it = mSelectMap.entrySet().iterator(); it.hasNext();){
-            Map.Entry<Integer, Boolean> entry = it.next();
-            if(entry.getValue()){
-                list.add(entry.getKey());
-            }
-        }
-
-        return list;
-    }
+//    /**
+//     * 获取选中的Item的position
+//     * @return
+//     */
+//    public List<Integer> getSelectItems(){
+//        List<Integer> list = new ArrayList<Integer>();
+//        for(Iterator<Map.Entry<Integer, Boolean>> it = mSelectMap.entrySet().iterator(); it.hasNext();){
+//            Map.Entry<Integer, Boolean> entry = it.next();
+//            if(entry.getValue()){
+//                list.add(entry.getKey());
+//            }
+//        }
+//
+//        return list;
+//    }
 
 
     class ViewHolder{

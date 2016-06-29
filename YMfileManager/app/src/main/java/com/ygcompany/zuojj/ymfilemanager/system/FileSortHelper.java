@@ -13,13 +13,43 @@ public class FileSortHelper {
 
     private boolean mFileFirst;
 
-    private HashMap<SortMethod, Comparator> mComparatorList = new HashMap<SortMethod, Comparator>();
+    private HashMap<SortMethod, Comparator> mComparatorList = new HashMap<>();
 
     public FileSortHelper() {
         mSort = SortMethod.name;
+        Comparator cmpName = new FileComparator() {
+            @Override
+            public int doCompare(FileInfo object1, FileInfo object2) {
+                return object1.fileName.compareToIgnoreCase(object2.fileName);
+            }
+        };
         mComparatorList.put(SortMethod.name, cmpName);
+        Comparator cmpSize = new FileComparator() {
+            @Override
+            public int doCompare(FileInfo object1, FileInfo object2) {
+                return longToCompareInt(object1.fileSize - object2.fileSize);
+            }
+        };
         mComparatorList.put(SortMethod.size, cmpSize);
+        Comparator cmpDate = new FileComparator() {
+            @Override
+            public int doCompare(FileInfo object1, FileInfo object2) {
+                return longToCompareInt(object2.ModifiedDate - object1.ModifiedDate);
+            }
+        };
         mComparatorList.put(SortMethod.date, cmpDate);
+        Comparator cmpType = new FileComparator() {
+            @Override
+            public int doCompare(FileInfo object1, FileInfo object2) {
+                int result = Util.getExtFromFilename(object1.fileName).compareToIgnoreCase(
+                        Util.getExtFromFilename(object2.fileName));
+                if (result != 0)
+                    return result;
+
+                return Util.getNameFromFilename(object1.fileName).compareToIgnoreCase(
+                        Util.getNameFromFilename(object2.fileName));
+            }
+        };
         mComparatorList.put(SortMethod.type, cmpType);
     }
 
@@ -59,41 +89,8 @@ public class FileSortHelper {
         protected abstract int doCompare(FileInfo object1, FileInfo object2);
     }
 
-    private Comparator cmpName = new FileComparator() {
-        @Override
-        public int doCompare(FileInfo object1, FileInfo object2) {
-            return object1.fileName.compareToIgnoreCase(object2.fileName);
-        }
-    };
-
-    private Comparator cmpSize = new FileComparator() {
-        @Override
-        public int doCompare(FileInfo object1, FileInfo object2) {
-            return longToCompareInt(object1.fileSize - object2.fileSize);
-        }
-    };
-
-    private Comparator cmpDate = new FileComparator() {
-        @Override
-        public int doCompare(FileInfo object1, FileInfo object2) {
-            return longToCompareInt(object2.ModifiedDate - object1.ModifiedDate);
-        }
-    };
-
     private int longToCompareInt(long result) {
         return result > 0 ? 1 : (result < 0 ? -1 : 0);
     }
 
-    private Comparator cmpType = new FileComparator() {
-        @Override
-        public int doCompare(FileInfo object1, FileInfo object2) {
-            int result = Util.getExtFromFilename(object1.fileName).compareToIgnoreCase(
-                    Util.getExtFromFilename(object2.fileName));
-            if (result != 0)
-                return result;
-
-            return Util.getNameFromFilename(object1.fileName).compareToIgnoreCase(
-                    Util.getNameFromFilename(object2.fileName));
-        }
-    };
 }

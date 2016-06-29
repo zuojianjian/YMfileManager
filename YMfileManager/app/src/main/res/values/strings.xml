@@ -60,9 +60,9 @@
     <string name="file_info_ishidden">隐藏:</string>
     <string name="yes">是</string>
     <string name="no">否</string>
-    <string name="operation_deleting">正在删除...</string>
-    <string name="operation_pasting">正在复制...</string>
-    <string name="operation_moving">正在移动...</string>
+    <string name="operation_deleting">正在删除…</string>
+    <string name="operation_pasting">正在复制…</string>
+    <string name="operation_moving">正在移动…</string>
     <string name="confirm_know">知道了</string>
     <string name="install_successful">安装成功</string>
     <string name="install_failed">安装失败</string>
@@ -120,4 +120,15 @@
     <string name="computer">计算机</string>
     <string name="usb">USB</string>
     <string name="internet">网上邻居</string>
+    <string name="text_about">关于</string>
+    <string name="text_app_name">一铭文件管理器</string>
+    <string name="text_theme">于潮流中经典永存</string>
+    <string name="text_version">版本号： 1.0</string>
+    <string name="text_public">官网</string>
+    <string name="text_discuss">论坛</string>
+    <string name="text_address">http://www.emindsoft.com.cn</string>
+    <string name="text_help">帮助和反馈</string>
+    <string name="text_help_title">您可以直接在此发送反馈，也可以去论坛反馈，还可以在帮助中心快速寻找答案。</string>
+    <string name="text_to_public">去官网反馈</string>
+    <string name="text_help_center">去官网帮助中心</string>
 </resources>

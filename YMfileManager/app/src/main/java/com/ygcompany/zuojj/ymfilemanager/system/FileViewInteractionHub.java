@@ -245,13 +245,11 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     //启动设置页面
     private void onOperationSetting() {
         Intent intent = new Intent(mContext, FileManagerPreferenceActivity.class);
-        if (null != intent) {
-            try {
-                mContext.startActivity(intent);
-                clearSelection();
-            } catch (ActivityNotFoundException e) {
-                Log.e(LOG_TAG, "fail to start setting: " + e.toString());
-            }
+        try {
+            mContext.startActivity(intent);
+            clearSelection();
+        } catch (ActivityNotFoundException e) {
+            Log.e(LOG_TAG, "fail to start setting: " + e.toString());
         }
     }
 
@@ -329,9 +327,9 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
         if (mFileOperationHelper.CreateFolder(mCurrentPath, text)) {
             mFileViewListener.addSingleFile(Util.GetFileInfo(Util.makePath(mCurrentPath, text)));
-            if ("list".equals(LocalCache.getInstance(mContext).getViewTag())) {
+            if ("list".equals(LocalCache.getViewTag())) {
                 mFileListView.setSelection(mFileListView.getCount() - 1);
-            } else if ("grid".equals(LocalCache.getInstance(mContext).getViewTag())) {
+            } else if ("grid".equals(LocalCache.getViewTag())) {
                 mFileGridView.setSelection(mFileGridView.getCount() - 1);
             }
 
@@ -527,8 +525,9 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         if (path == null)
             return;
         final File f = new File(path);
-        if (Build.VERSION.SDK_INT >= 19 /*Build.VERSION_CODES.KITKAT*/) { //添加此判断，判断SDK版本是不是4.4或者高于4.4
-            String[] paths = new String[]{Environment.getExternalStorageDirectory().toString()};
+        /*Build.VERSION_CODES.KITKAT*/
+        if (Build.VERSION.SDK_INT >= 19) { //添加此判断，判断SDK版本是不是4.4或者高于4.4
+            String[] paths;
             paths = new String[]{path};
             MediaScannerConnection.scanFile(mContext, paths, null, null);
         } else {
@@ -551,16 +550,16 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     public void onOperationDelete() {
         doOperationDelete(getSelectedFileList());
     }
-
-    public void onOperationDelete(int position) {
-        FileInfo file = mFileViewListener.getItem(position);
-        if (file == null)
-            return;
-
-        ArrayList<FileInfo> selectedFileList = new ArrayList<FileInfo>();
-        selectedFileList.add(file);
-        doOperationDelete(selectedFileList);
-    }
+//
+//    public void onOperationDelete(int position) {
+//        FileInfo file = mFileViewListener.getItem(position);
+//        if (file == null)
+//            return;
+//
+//        ArrayList<FileInfo> selectedFileList = new ArrayList<FileInfo>();
+//        selectedFileList.add(file);
+//        doOperationDelete(selectedFileList);
+//    }
 
     private void doOperationDelete(final ArrayList<FileInfo> selectedFileList) {
         final ArrayList<FileInfo> selectedFiles = new ArrayList<>(selectedFileList);
@@ -597,6 +596,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         clearSelection();
     }
 
+    //确定
     public void onOperationButtonConfirm() {
         if (isSelectingFiles()) {
             mSelectFilesCallback.selected(mCheckedFileNameList);
@@ -611,7 +611,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
-    //退出
+    //取消
     public void onOperationButtonCancel() {
         mFileOperationHelper.clear();
         showConfirmOperationBar(false);
@@ -635,8 +635,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
             if (isInSelection() || isMoveState())
                 return;
             clearSelection();
-
-            AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+//            AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
             //二级分类menu
             SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, R.string.menu_item_sort).setIcon(
                     R.drawable.ic_menu_sort);
@@ -683,7 +682,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     private int mListViewContextMenuSelectedItem;
 
     private void setupFileListView() {
-        final String title = LocalCache.getInstance(mContext).getViewTag();
+        final String title = LocalCache.getViewTag();
         if ("list".equals(title)) {
             mFileListView = (ListView) mFileViewListener.getViewById(R.id.file_path_list);
             //设置list鼠标动作的事件监听
@@ -896,10 +895,10 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         mRoot = path;
         mCurrentPath = path;
     }
-
-    public String getRootPath() {
-        return mRoot;
-    }
+//
+//    public String getRootPath() {
+//        return mRoot;
+//    }
 
     //获取当前路径
     public String getCurrentPath() {
@@ -973,29 +972,28 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         return true;
     }
 
-    //
-    public void copyFile(ArrayList<FileInfo> files) {
-        mFileOperationHelper.Copy(files);
-    }
-
-    public void moveFileFrom(ArrayList<FileInfo> files) {
-        mFileOperationHelper.StartMove(files);
-        showConfirmOperationBar(true);
-        updateConfirmButtons();
-        // refresh to hide selected files
-        refreshFileList();
-    }
+//    public void copyFile(ArrayList<FileInfo> files) {
+//        mFileOperationHelper.Copy(files);
+//    }
+//
+//    public void moveFileFrom(ArrayList<FileInfo> files) {
+//        mFileOperationHelper.StartMove(files);
+//        showConfirmOperationBar(true);
+//        updateConfirmButtons();
+//        // refresh to hide selected files
+//        refreshFileList();
+//    }
 
     @Override
     public void onFileChanged(String path) {
         notifyFileSystemChanged(path);
     }
-
-    public void startSelectFiles(SystemSpaceFragment.SelectFilesCallback callback) {
-        mSelectFilesCallback = callback;
-        showConfirmOperationBar(true);
-        updateConfirmButtons();
-    }
+//
+//    public void startSelectFiles(SystemSpaceFragment.SelectFilesCallback callback) {
+//        mSelectFilesCallback = callback;
+//        showConfirmOperationBar(true);
+//        updateConfirmButtons();
+//    }
 
     private class ListOnGenericMotionListener implements View.OnGenericMotionListener {
         //根据MotionEvent事件来判断鼠标的操作执行对应的动作

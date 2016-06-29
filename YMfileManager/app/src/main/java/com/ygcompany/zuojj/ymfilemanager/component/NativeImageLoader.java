@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * 本地图片加载类
  * Created by zuojj on 16-5-10.
  */
 public class NativeImageLoader {
@@ -146,7 +147,7 @@ public class NativeImageLoader {
      */
     private int computeScale(BitmapFactory.Options options, int viewWidth, int viewHeight){
         int inSampleSize = 1;
-        if(viewWidth == 0 || viewWidth == 0){
+        if(viewWidth == 0){
             return inSampleSize;
         }
         int bitmapWidth = options.outWidth;
@@ -176,6 +177,6 @@ public class NativeImageLoader {
          * @param bitmap
          * @param path
          */
-        public void onImageLoader(Bitmap bitmap, String path);
+        void onImageLoader(Bitmap bitmap, String path);
     }
 }

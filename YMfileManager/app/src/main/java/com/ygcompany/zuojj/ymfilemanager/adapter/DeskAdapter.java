@@ -20,8 +20,6 @@ public class DeskAdapter extends BaseAdapter {
     //用来存储获取的应用信息数据
     private ArrayList<AppInfo> appInfos = new ArrayList<>();
     private Context context;
-    private ImageView iv_desk_icon;
-    private TextView tv_app_name;
 
     public DeskAdapter(ArrayList<AppInfo> appInfos, Context context) {
         this.appInfos = appInfos;
@@ -48,9 +46,9 @@ public class DeskAdapter extends BaseAdapter {
 //        Hodler hodler = null;
 //        if (convertView == null) {
 //            hodler = new Hodler();
-        convertView = convertView.inflate(context, R.layout.desk_icon_item, null);
-        iv_desk_icon = (ImageView) convertView.findViewById(R.id.iv_desk_icon);
-        tv_app_name = (TextView) convertView.findViewById(R.id.tv_app_name);
+        convertView = View.inflate(context, R.layout.desk_icon_item, null);
+        ImageView iv_desk_icon = (ImageView) convertView.findViewById(R.id.iv_desk_icon);
+        TextView tv_app_name = (TextView) convertView.findViewById(R.id.tv_app_name);
 //            convertView.setTag(hodler);
 //        } else {
 //            hodler = (Hodler) convertView.getTag();

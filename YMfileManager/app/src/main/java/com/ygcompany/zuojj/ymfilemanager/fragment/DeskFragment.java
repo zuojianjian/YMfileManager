@@ -32,11 +32,8 @@ import butterknife.ButterKnife;
  * Created by zuojj on 16-5-18.
  */
 public class DeskFragment extends BaseFragment {
-    private View view;
     //用来存储获取的应用信息数据
     private ArrayList<AppInfo> appInfos = new ArrayList<>();
-    //应用包信息集合
-    private List<PackageInfo> packages;
     //应用包名
     private String packageName;
     private DeskAdapter deskAdapter;
@@ -52,7 +49,7 @@ public class DeskFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.desk_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.desk_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         initData();
         return view;
@@ -78,8 +75,8 @@ public class DeskFragment extends BaseFragment {
         //获取包管理器
         pm = getActivity().getPackageManager();
         //通过管理器获取已安装应用
-        packages = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
-        for(int i=0;i<packages.size();i++) {
+        List<PackageInfo> packages = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
+        for(int i = 0; i< packages.size(); i++) {
             PackageInfo packageInfo = packages.get(i);
             AppInfo appInfo =new AppInfo();
             String appName = packageInfo.applicationInfo.loadLabel(getActivity().getPackageManager()).toString();

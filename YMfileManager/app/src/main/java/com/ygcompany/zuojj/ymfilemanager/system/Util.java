@@ -32,7 +32,6 @@ import java.util.HashSet;
  * 只要把移动到sd卡的损坏程序卸载，重装，手机就完全没有损伤，文件夹也会在再次app2sd时自动重建的。
  */
 public class Util {
-    private static String ANDROID_SECURE = "/mnt/sdcard/.android_secure";
 
     private static final String LOG_TAG = "Util";
 
@@ -71,6 +70,7 @@ public class Util {
 
     //判断1个文件是否为“普通文件”，ANDROID_SECURE下的文件都不是普通的
     public static boolean isNormalFile(String fullName) {
+        String ANDROID_SECURE = "/mnt/sdcard/.android_secure";
         return !fullName.equals(ANDROID_SECURE);
     }
 
@@ -222,7 +222,7 @@ public class Util {
             fo = new FileOutputStream(destFile);
             int count = 102400;
             byte[] buffer = new byte[count];
-            int read = 0;
+            int read;
             while ((read = fi.read(buffer, 0, count)) != -1) {
                 fo.write(buffer, 0, read);
             }

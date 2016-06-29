@@ -21,7 +21,6 @@ public class FileManagerPreferenceActivity extends PreferenceActivity implements
     private static final String READ_ROOT = "pref_key_read_root";
     private static final String SHOW_REAL_PATH = "pref_key_show_real_path";
     private static final String SYSTEM_SEPARATOR = File.separator;
-    private static String sdOrSystem = "";
 
     private EditTextPreference mEditTextPreference;
     private static String primaryFolder;
@@ -101,6 +100,7 @@ public class FileManagerPreferenceActivity extends PreferenceActivity implements
 
         boolean isReadRootFromSetting = settings.getBoolean(READ_ROOT, false);
         String directorPath = "";
+        String sdOrSystem = "";
         boolean isReadRootWhenSettingPrimaryFolderWithoutSdCardPrefix = !getPrimaryFolder(context, sdOrSystem, directorPath).startsWith(Util.getSdDirectory());
 
         return isReadRootFromSetting || isReadRootWhenSettingPrimaryFolderWithoutSdCardPrefix;

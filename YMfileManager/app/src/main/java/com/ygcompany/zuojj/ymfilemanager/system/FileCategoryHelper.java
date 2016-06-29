@@ -14,19 +14,18 @@ import com.ygcompany.zuojj.ymfilemanager.R;
 
 import java.io.FilenameFilter;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * 文件分类管理帮助类
  */
 public class FileCategoryHelper {
-    public static final int COLUMN_ID = 0;
-
-    public static final int COLUMN_PATH = 1;
-
-    public static final int COLUMN_SIZE = 2;
-
-    public static final int COLUMN_DATE = 3;
+//    public static final int COLUMN_ID = 0;
+//
+//    public static final int COLUMN_PATH = 1;
+//
+//    public static final int COLUMN_SIZE = 2;
+//
+//    public static final int COLUMN_DATE = 3;
 
     private static final String LOG_TAG = "FileCategoryHelper";
 //以枚举的形式定义不同文件类型
@@ -34,15 +33,13 @@ public class FileCategoryHelper {
         All, Music, Video, Picture, Theme, Doc, Zip, Apk, Custom, Other, Favorite
     }
 
-    private static String APK_EXT = "apk";
-    private static String THEME_EXT = "mtz";
     private static String[] ZIP_EXTS  = new String[] {
             "zip", "rar"
     };
 
-    public static HashMap<FileCategory, FilenameExtFilter> filters = new HashMap<FileCategory, FilenameExtFilter>();
+    public static HashMap<FileCategory, FilenameExtFilter> filters = new HashMap<>();
 
-    public static HashMap<FileCategory, Integer> categoryNames = new HashMap<FileCategory, Integer>();
+    public static HashMap<FileCategory, Integer> categoryNames = new HashMap<>();
 
     static {
         categoryNames.put(FileCategory.All, R.string.category_all);
@@ -97,7 +94,7 @@ public class FileCategoryHelper {
         return filters.get(mCategory);
     }
 
-    private HashMap<FileCategory, CategoryInfo> mCategoryInfo = new HashMap<FileCategory, CategoryInfo>();
+    private HashMap<FileCategory, CategoryInfo> mCategoryInfo = new HashMap<>();
 
     public HashMap<FileCategory, CategoryInfo> getCategoryInfos() {
         return mCategoryInfo;
@@ -132,15 +129,14 @@ public class FileCategoryHelper {
 //对于文档文件（Doc）的查詢條件是
     private String buildDocSelection() {
         StringBuilder selection = new StringBuilder();
-        Iterator<String> iter = Util.sDocMimeTypesSet.iterator();
-        while(iter.hasNext()) {
-            selection.append("(" + FileColumns.MIME_TYPE + "=='" + iter.next() + "') OR ");
+        for (String aSDocMimeTypesSet : Util.sDocMimeTypesSet) {
+            selection.append("(" + FileColumns.MIME_TYPE + "=='" + aSDocMimeTypesSet + "') OR ");
         }
         return  selection.substring(0, selection.lastIndexOf(")") + 1);
     }
 //因为只有MediaStore.Files中的文件内容需要区分，因此按条件查询只需要对这个进行即可。
     private String buildSelectionByCategory(FileCategory cat) {
-        String selection = null;
+        String selection;
         switch (cat) {
             case Theme:
                 selection = FileColumns.DATA + " LIKE '%.mtz'";
@@ -281,9 +277,11 @@ public class FileCategoryHelper {
         }
 
         String ext = path.substring(dotPosition + 1);
+        String APK_EXT = "apk";
         if (ext.equalsIgnoreCase(APK_EXT)) {
             return FileCategory.Apk;
         }
+        String THEME_EXT = "mtz";
         if (ext.equalsIgnoreCase(THEME_EXT)) {
             return FileCategory.Theme;
         }

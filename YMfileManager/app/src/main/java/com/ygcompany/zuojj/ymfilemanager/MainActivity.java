@@ -6,12 +6,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.ygcompany.zuojj.ymfilemanager.component.OnClickLintener;
+import com.ygcompany.zuojj.ymfilemanager.component.PopOnClickLintener;
 import com.ygcompany.zuojj.ymfilemanager.component.PopWinShare;
 import com.ygcompany.zuojj.ymfilemanager.component.SearchOnQueryTextListener;
 import com.ygcompany.zuojj.ymfilemanager.fragment.DeskFragment;
@@ -20,14 +19,10 @@ import com.ygcompany.zuojj.ymfilemanager.fragment.OnlineNeighborFragment;
 import com.ygcompany.zuojj.ymfilemanager.fragment.PictrueFragment;
 import com.ygcompany.zuojj.ymfilemanager.fragment.SdStorageFragment;
 import com.ygcompany.zuojj.ymfilemanager.fragment.VideoFragment;
-import com.ygcompany.zuojj.ymfilemanager.system.FileInfo;
-import com.ygcompany.zuojj.ymfilemanager.system.FileViewInteractionHub;
 import com.ygcompany.zuojj.ymfilemanager.utils.DisplayUtil;
 import com.ygcompany.zuojj.ymfilemanager.utils.LocalCache;
 import com.ygcompany.zuojj.ymfilemanager.utils.T;
 import com.ygcompany.zuojj.ymfilemanager.view.SystemSpaceFragment;
-
-import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,9 +31,6 @@ import butterknife.ButterKnife;
  * 主界面点击左侧边栏contentFragment进行切换
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
-    //初始化控件
-    @Bind(R.id.fl_mian)
-    FrameLayout fl_mian;
     @Bind(R.id.tv_desk)
     TextView tv_desk;
     @Bind(R.id.tv_music)
@@ -64,12 +56,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Bind(R.id.iv_setting)
     ImageView iv_setting;
 
-    private static final String SD_STORAGE_FRAGMENT = "sd_storage_fragment";
     private static final String USB_SPACE_FRAGMENT = "usb_space_fragment";
     //V4包下的fragment管理器
     FragmentManager manager = getSupportFragmentManager();
-    //搜索文件
-    private SearchView search_view;
     //选择控制栏
     private PopWinShare popWinShare;
     // 当前正在展示的页面
@@ -89,8 +78,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
         //绑定view
         ButterKnife.bind(MainActivity.this);
-        //初始化时默认传入grid视图
-        LocalCache.getInstance(this).setViewTag("grid");
+        //初始化时默认传入grid视图,实例化不能去掉,否则会报空指针异常
+        LocalCache.getInstance(MainActivity.this).setViewTag("grid");
         //默认选中computer
         tv_computer.setSelected(true);
         //初始化fragment
@@ -101,21 +90,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //初始化fragment
     private void initFragemnt() {
-        ArrayList<FileInfo> fileInfoArrayList = null;
-        FileViewInteractionHub.CopyOrMove copyOrMove = null;
-        sdStorageFragment = new SdStorageFragment(manager, SD_STORAGE_FRAGMENT);
+        sdStorageFragment = new SdStorageFragment(manager);
         deskFragment = new DeskFragment();
         musicFragment = new MusicFragment();
         videoFragment = new VideoFragment();
         pictrueFragment = new PictrueFragment();
-        usbStorageFragment = new SystemSpaceFragment(USB_SPACE_FRAGMENT, null, fileInfoArrayList, copyOrMove);
+        usbStorageFragment = new SystemSpaceFragment(USB_SPACE_FRAGMENT, null, null, null);
         onlineNeighborFragment = new OnlineNeighborFragment();
     }
 
     //设置左侧侧边栏的点击监听
     private void initView() {
         manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
-        search_view = (SearchView) findViewById(R.id.search_view);
+        SearchView search_view = (SearchView) findViewById(R.id.search_view);
         curFragment = sdStorageFragment;
         tv_desk.setOnClickListener(this);  //桌面
         tv_music.setOnClickListener(this);  //音乐
@@ -237,7 +224,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (manager.getBackStackEntryCount() < 1) {
                     T.showShort(MainActivity.this, "当前页面不支持刷新操作");
                 }
-                sendBroadcastMessage("iv_fresh",null);
+                sendBroadcastMessage("iv_fresh");
                 break;
             case R.id.iv_setting:   //设置
                 shownPopWidndow("iv_setting");
@@ -246,7 +233,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //顶部切换视图按钮
                 switchListOrgrid();
                 //发送广播通知视图切换
-                sendBroadcastMessage("iv_switch_view", null);
+                sendBroadcastMessage("iv_switch_view");
                 break;
         }
     }
@@ -254,9 +241,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     /**
      * 发送广播
      * @param name 按钮点击的标识
-     * @param tag  要传递的字段
      */
-    private void sendBroadcastMessage(String name, String tag) {
+    private void sendBroadcastMessage(String name) {
         Intent intent = new Intent();
         if (name.equals("iv_switch_view")) {
             intent.setAction("com.switchview");
@@ -267,12 +253,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
     //顶部切换视图按钮
     private void switchListOrgrid() {
-        if (LocalCache.getInstance(this).getViewTag() != "list") {
-            LocalCache.getInstance(this).setViewTag("list");
+        if (!"list".equals(LocalCache.getViewTag())) {
+            LocalCache.setViewTag("list");
             iv_switch_view.setSelected(true);
             T.showShort(MainActivity.this,"已切换为列表视图！");
-        } else if ((LocalCache.getInstance(this).getViewTag()) != "grid") {
-            LocalCache.getInstance(this).setViewTag("grid");
+        } else if (!"grid".equals(LocalCache.getViewTag())) {
+            LocalCache.setViewTag("grid");
             iv_switch_view.setSelected(false);
             T.showShort(MainActivity.this,"已切换为网格视图！");
         }
@@ -284,37 +270,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      */
     private void shownPopWidndow(String menu_tag) {
         popWinShare = null;
-        if (popWinShare == null) {
-            //自定义的单击事件
-            OnClickLintener paramOnClickListener = new OnClickLintener(menu_tag,MainActivity.this);
-            if (menu_tag.equals("iv_menu")){
-                popWinShare = new PopWinShare(MainActivity.this, paramOnClickListener,
-                        DisplayUtil.dip2px(MainActivity.this, 125), DisplayUtil.dip2px(MainActivity.this, 260), menu_tag);
-                //设置默认获取焦点
-                popWinShare.setFocusable(true);
-                //以某个控件的x和y的偏移量位置开始显示窗口
-                popWinShare.showAsDropDown(this.iv_menu, -60, 10);
+        //自定义的单击事件
+        PopOnClickLintener paramOnClickListener = new PopOnClickLintener(menu_tag,MainActivity.this);
+        if (menu_tag.equals("iv_menu")){
+            popWinShare = new PopWinShare(MainActivity.this, paramOnClickListener,
+                    DisplayUtil.dip2px(MainActivity.this, 125), DisplayUtil.dip2px(MainActivity.this, 260), menu_tag);
+            //设置默认获取焦点
+            popWinShare.setFocusable(true);
+            //以某个控件的x和y的偏移量位置开始显示窗口
+            popWinShare.showAsDropDown(this.iv_menu, -60, 10);
 
-            }else if (menu_tag.equals("iv_setting")){
-                popWinShare = new PopWinShare(MainActivity.this, paramOnClickListener,
-                        DisplayUtil.dip2px(MainActivity.this, 120), DisplayUtil.dip2px(MainActivity.this, 160),menu_tag);
-                //设置默认获取焦点
-                popWinShare.setFocusable(true);
-                //以某个控件的x和y的偏移量位置开始显示窗口
-                popWinShare.showAsDropDown(this.iv_setting, -15, 10);
-            }
-            //如果窗口存在，则更新
-            popWinShare.update();
-            //监听窗口的焦点事件，点击窗口外面则取消显示
-            popWinShare.getContentView().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus) {
-                        popWinShare.dismiss();
-                    }
-                }
-            });
+        }else if (menu_tag.equals("iv_setting")){
+            popWinShare = new PopWinShare(MainActivity.this, paramOnClickListener,
+                    DisplayUtil.dip2px(MainActivity.this, 120), DisplayUtil.dip2px(MainActivity.this, 160),menu_tag);
+            //设置默认获取焦点
+            popWinShare.setFocusable(true);
+            //以某个控件的x和y的偏移量位置开始显示窗口
+            popWinShare.showAsDropDown(this.iv_setting, -15, 10);
         }
+        //如果窗口存在，则更新
+        popWinShare.update();
+        //监听窗口的焦点事件，点击窗口外面则取消显示
+        popWinShare.getContentView().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    popWinShare.dismiss();
+                }
+            }
+        });
     }
 
     /**
@@ -346,12 +330,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //filelist页面的回退监听接口
     public interface IBackPressedListener {
-        /**
-         * 处理back事件。
-         *
-         * @return True: 表示已经处理; False: 没有处理，让基类处理。
-         */
-        boolean onBack();
     }
 }
 

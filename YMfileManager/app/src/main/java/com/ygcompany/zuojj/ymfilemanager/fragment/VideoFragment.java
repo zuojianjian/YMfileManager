@@ -32,7 +32,6 @@ import butterknife.ButterKnife;
  * Created by zuojj on 16-5-18.
  */
 public class VideoFragment extends BaseFragment implements AdapterView.OnItemClickListener {
-    private View view;
     private ArrayList<VideoItem> videoItems;
     //播放视频专用
     private ProgressDialog mProgressDialog;
@@ -53,7 +52,7 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
                 tv_no_video.setVisibility(View.VISIBLE);
             }
             handler.removeCallbacksAndMessages(null);
-        };
+        }
     };
 
     @Override
@@ -64,7 +63,7 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.video_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.video_fragment_layout, container, false);
         ButterKnife.bind(this, view);
         initView();
         return view;

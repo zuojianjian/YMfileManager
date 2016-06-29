@@ -13,6 +13,7 @@ import com.ygcompany.zuojj.ymfilemanager.R;
 import java.util.ArrayList;
 
 /**
+ * 视频数据集合adapter
  * Created by zuojj on 16-5-18.
  */
 public class VideoAdapter extends BaseAdapter {
@@ -40,10 +41,10 @@ public class VideoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View convertView, ViewGroup viewGroup) {
-        ViewHodler hodler = null;
+        ViewHodler hodler;
         if (convertView==null){
             hodler = new ViewHodler();
-            convertView = convertView.inflate(context, R.layout.video_item,null);
+            convertView = View.inflate(context, R.layout.video_item,null);
             hodler.iv_video = (ImageView) convertView.findViewById(R.id.iv_video);
             hodler.tv_video_name = (TextView) convertView.findViewById(R.id.tv_video_name);
             hodler.tv_video_size = (TextView) convertView.findViewById(R.id.tv_video_size);

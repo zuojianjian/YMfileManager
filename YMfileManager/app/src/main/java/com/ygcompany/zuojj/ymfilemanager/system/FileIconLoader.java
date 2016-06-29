@@ -57,7 +57,7 @@ public class FileIconLoader implements Callback {
             }
 
             return null;
-        };
+        }
 
         public abstract boolean setImageView(ImageView v);
 
@@ -84,7 +84,7 @@ public class FileIconLoader implements Callback {
 
         @Override
         public void setImage(Object image) {
-            bitmapRef = image == null ? null : new SoftReference<Bitmap>((Bitmap) image);
+            bitmapRef = image == null ? null : new SoftReference<>((Bitmap) image);
         }
     }
 
@@ -107,20 +107,20 @@ public class FileIconLoader implements Callback {
 
         @Override
         public void setImage(Object image) {
-            drawableRef = image == null ? null : new SoftReference<Drawable>((Drawable) image);
+            drawableRef = image == null ? null : new SoftReference<>((Drawable) image);
         }
     }
 
     /**
      * A soft cache for image thumbnails. the key is file path
      */
-    private final static ConcurrentHashMap<String, ImageHolder> mImageCache = new ConcurrentHashMap<String, ImageHolder>();
+    private final static ConcurrentHashMap<String, ImageHolder> mImageCache = new ConcurrentHashMap<>();
 
     /**
      * A map from ImageView to the corresponding photo ID. Please note that this
      * photo ID may change before the photo loading request is started.
      */
-    private final ConcurrentHashMap<ImageView, FileId> mPendingRequests = new ConcurrentHashMap<ImageView, FileId>();
+    private final ConcurrentHashMap<ImageView, FileId> mPendingRequests = new ConcurrentHashMap<>();
 
     /**
      * Handler for messages sent to the UI thread.
@@ -236,7 +236,6 @@ public class FileIconLoader implements Callback {
         String volumeName = "external";
         Uri uri = isVideo ? Video.Media.getContentUri(volumeName) : Images.Media.getContentUri(volumeName);
         String selection = FileColumns.DATA + "=?";
-        ;
         String[] selectionArgs = new String[] {
             path
         };
@@ -383,9 +382,7 @@ public class FileIconLoader implements Callback {
          * the main thread to process them.
          */
         public boolean handleMessage(Message msg) {
-            Iterator<FileId> iterator = mPendingRequests.values().iterator();
-            while (iterator.hasNext()) {
-                FileId id = iterator.next();
+            for (FileId id : mPendingRequests.values()) {
                 ImageHolder holder = mImageCache.get(id.mPath);
                 if (holder != null && holder.state == ImageHolder.NEEDED) {
                     // Assuming atomic behavior
