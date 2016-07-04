@@ -1,6 +1,10 @@
 package com.ygcompany.zuojj.ymfilemanager;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +24,7 @@ import com.ygcompany.zuojj.ymfilemanager.fragment.PictrueFragment;
 import com.ygcompany.zuojj.ymfilemanager.fragment.SdStorageFragment;
 import com.ygcompany.zuojj.ymfilemanager.fragment.VideoFragment;
 import com.ygcompany.zuojj.ymfilemanager.utils.DisplayUtil;
+import com.ygcompany.zuojj.ymfilemanager.utils.L;
 import com.ygcompany.zuojj.ymfilemanager.utils.LocalCache;
 import com.ygcompany.zuojj.ymfilemanager.utils.T;
 import com.ygcompany.zuojj.ymfilemanager.view.SystemSpaceFragment;
@@ -71,6 +76,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private PictrueFragment pictrueFragment;
     private SystemSpaceFragment usbStorageFragment;
     private OnlineNeighborFragment onlineNeighborFragment;
+    private UsbConnectReceiver receiver;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,11 +93,33 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         initFragemnt();
         //初始化数据设置点击监听
         initView();
+        registerReceiver();
+    }
+
+    /**
+     * 动态注册
+     */
+    private void registerReceiver() {
+        /*动态方式注册广播接收者*/
+        receiver = new UsbConnectReceiver();
+        IntentFilter filter = new IntentFilter();
+
+        filter.addAction("android.hardware.usb.action.USB_DEVICE_ATTACHED");
+        filter.addAction("android.hardware.usb.action.USB_DEVICE_DETACHED");
+        filter.addCategory("android.intent.category.DEFAULT");
+        this.registerReceiver(receiver, filter);
+    }
+
+    /**
+     * 解绑注册
+     */
+    private void unregisterReceiver() {
+        this.unregisterReceiver(receiver);
     }
 
     //初始化fragment
     private void initFragemnt() {
-        sdStorageFragment = new SdStorageFragment(manager);
+        sdStorageFragment = new SdStorageFragment(manager, null);
         deskFragment = new DeskFragment();
         musicFragment = new MusicFragment();
         videoFragment = new VideoFragment();
@@ -109,7 +138,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         tv_video.setOnClickListener(this);  //视频
         tv_computer.setOnClickListener(this);  //计算机
         tv_picture.setOnClickListener(this);  //图片
-        tv_storage.setOnClickListener(this);  //内存存储
         tv_net_service.setOnClickListener(this);  //网上邻居
         iv_menu.setOnClickListener(this);  //选项菜单的点击监听
         iv_switch_view.setOnClickListener(this);  //切换视图list或者grid
@@ -117,8 +145,47 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         iv_fresh.setOnClickListener(this);  //刷新操作
         iv_setting.setOnClickListener(this);  //设置中心
         // 设置搜索监听
-        search_view.setOnQueryTextListener(new SearchOnQueryTextListener(manager,MainActivity.this));
+        search_view.setOnQueryTextListener(new SearchOnQueryTextListener(manager, MainActivity.this));
 
+    }
+
+    /**
+     *usb 广播接收器
+     */
+    class UsbConnectReceiver extends BroadcastReceiver {
+
+        public UsbConnectReceiver() {
+        }
+
+        private static final String TAG = "UsbConnectReceiver";
+        private static final String USB_DEVICE_ATTACHED = "usb_device_attached";
+        private static final String USB_DEVICE_DETACHED = "usb_device_detached";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            L.d(TAG, "intent.getAction() ->" + action);
+
+            if (action.equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) { //usb连接
+//                T.showShort(context, USB_DEVICE_ATTACHED);
+                tv_storage.setVisibility(View.VISIBLE);
+                tv_storage.setOnClickListener(MainActivity.this);  //内存存储
+                sdStorageFragment = new SdStorageFragment(manager,USB_DEVICE_ATTACHED);
+                setSelectedBackground(R.id.tv_computer);
+                manager.popBackStack();
+                curFragment = sdStorageFragment;
+                manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
+
+            } else if (action.equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) { //usb断开
+//                T.showShort(context, USB_DEVICE_DETACHED);
+                tv_storage.setVisibility(View.GONE);
+                sdStorageFragment = new SdStorageFragment(manager,USB_DEVICE_DETACHED);
+                setSelectedBackground(R.id.tv_computer);
+                manager.popBackStack();
+                curFragment = sdStorageFragment;
+                manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
+            }
+        }
     }
 
     @Override
@@ -170,9 +237,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 manager.beginTransaction().replace(R.id.fl_mian, onlineNeighborFragment).commit();
                 break;
             case R.id.iv_menu:  //选项菜单popwindow
-                if (manager.getBackStackEntryCount() < 1){
-                    T.showShort(MainActivity.this,"当前页面不支持此操作！");
-                }else {
+                if (manager.getBackStackEntryCount() < 1) {
+                    T.showShort(MainActivity.this, "当前页面不支持此操作！");
+                } else {
                     shownPopWidndow("iv_menu");
                 }
                 break;
@@ -199,7 +266,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //设置选中文本背景（左侧侧边栏）
     private void setSelectedBackground(int id) {
-        switch (id){
+        switch (id) {
             //默认选择computer页面
             case R.id.tv_computer:
                 tv_music.setSelected(false);
@@ -271,39 +338,42 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     /**
      * 发送广播
+     *
      * @param name 按钮点击的标识
      */
     private void sendBroadcastMessage(String name) {
         Intent intent = new Intent();
         if (name.equals("iv_switch_view")) {
             intent.setAction("com.switchview");
-        } else if (name.equals("iv_fresh")){
+        } else if (name.equals("iv_fresh")) {
             intent.setAction("com.refreshview");
         }
         sendBroadcast(intent);
     }
+
     //顶部切换视图按钮
     private void switchListOrgrid() {
         if (!"list".equals(LocalCache.getViewTag())) {
             LocalCache.setViewTag("list");
             iv_switch_view.setSelected(true);
-            T.showShort(MainActivity.this,"已切换为列表视图！");
+            T.showShort(MainActivity.this, "已切换为列表视图！");
         } else if (!"grid".equals(LocalCache.getViewTag())) {
             LocalCache.setViewTag("grid");
             iv_switch_view.setSelected(false);
-            T.showShort(MainActivity.this,"已切换为网格视图！");
+            T.showShort(MainActivity.this, "已切换为网格视图！");
         }
     }
 
     /**
      * 选项菜单popwindow
+     *
      * @param menu_tag 根据tag选择按钮popwindow
      */
     private void shownPopWidndow(String menu_tag) {
         popWinShare = null;
         //自定义的单击事件
-        PopOnClickLintener paramOnClickListener = new PopOnClickLintener(menu_tag,MainActivity.this,manager);
-        if (menu_tag.equals("iv_menu")){
+        PopOnClickLintener paramOnClickListener = new PopOnClickLintener(menu_tag, MainActivity.this, manager);
+        if (menu_tag.equals("iv_menu")) {
             popWinShare = new PopWinShare(MainActivity.this, paramOnClickListener,
                     DisplayUtil.dip2px(MainActivity.this, 125), DisplayUtil.dip2px(MainActivity.this, 260), menu_tag);
             //设置默认获取焦点
@@ -311,9 +381,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             //以某个控件的x和y的偏移量位置开始显示窗口
             popWinShare.showAsDropDown(this.iv_menu, -60, 10);
 
-        }else if (menu_tag.equals("iv_setting")){
+        } else if (menu_tag.equals("iv_setting")) {
             popWinShare = new PopWinShare(MainActivity.this, paramOnClickListener,
-                    DisplayUtil.dip2px(MainActivity.this, 120), DisplayUtil.dip2px(MainActivity.this, 160),menu_tag);
+                    DisplayUtil.dip2px(MainActivity.this, 120), DisplayUtil.dip2px(MainActivity.this, 160), menu_tag);
             //设置默认获取焦点
             popWinShare.setFocusable(true);
             //以某个控件的x和y的偏移量位置开始显示窗口
@@ -362,6 +432,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     //filelist页面的回退监听接口
     public interface IBackPressedListener {
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver();
+    }
+
 }
 
 

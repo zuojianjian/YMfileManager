@@ -1,8 +1,6 @@
 package com.ygcompany.zuojj.ymfilemanager.fragment;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
@@ -22,6 +20,7 @@ import com.ygcompany.zuojj.ymfilemanager.system.FileInfo;
 import com.ygcompany.zuojj.ymfilemanager.system.FileViewInteractionHub;
 import com.ygcompany.zuojj.ymfilemanager.system.Util;
 import com.ygcompany.zuojj.ymfilemanager.utils.L;
+import com.ygcompany.zuojj.ymfilemanager.utils.LocalCache;
 import com.ygcompany.zuojj.ymfilemanager.utils.T;
 import com.ygcompany.zuojj.ymfilemanager.view.SystemSpaceFragment;
 
@@ -37,6 +36,9 @@ import butterknife.ButterKnife;
  */
 public class SdStorageFragment extends BaseFragment implements View.OnClickListener {
     private static final String TAG = SdStorageFragment.class.getSimpleName();
+    //usb是否连接的标识
+    private String usbDeviceIsAttached;
+
     //传入子页面字段标识（用于设置底部目录）
     private static final String SYSTEM_SPACE_FRAGMENT = "system_space_fragment";
     private static final String SD_SPACE_FRAGMENT = "sd_space_fragment";
@@ -87,32 +89,16 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     //fragament管理器
     FragmentManager manager = getFragmentManager();
 
-    public SdStorageFragment(FragmentManager manager) {
+    /**
+     * 构造器
+     * @param manager  fragment管理器
+     * @param usbDeviceIsAttached  usb是否连接的标识
+     */
+    public SdStorageFragment(FragmentManager manager, String usbDeviceIsAttached) {
         this.manager = manager;
+        this.usbDeviceIsAttached = usbDeviceIsAttached;
     }
 
-//    //定时器功能
-//    private final Timer timer = new Timer(true);
-//    private TimerTask task;
-//    public Handler handler = new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            // TODO Auto-generated method stub
-//            //要做的事情，比如更新UI
-//            switch (msg.what) {
-//                case 1:
-////                    T.showShort(getContext(),"更新UI");
-//                    if (null != rl_mount_space_one) {
-//                        rl_mount_space_one.setVisibility(View.VISIBLE);
-//                        timer.cancel(); //退出计时器
-//                    }
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-//
-//    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -135,12 +121,12 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         if (null != systemInfo) {
             tv_system_total.setText(Util.convertStorage(systemInfo.romMemory));
             tv_system_avail.setText(Util.convertStorage(systemInfo.avilMemory));
-            L.e("tv_system_total",Util.convertStorage(systemInfo.romMemory).substring(0,3));
-            L.e("tv_system_avail",Util.convertStorage(systemInfo.avilMemory).substring(0,3));
+            L.e("tv_system_total", Util.convertStorage(systemInfo.romMemory).substring(0, 3));
+            L.e("tv_system_avail", Util.convertStorage(systemInfo.avilMemory).substring(0, 3));
 //
-            pb_system.setMax((int) Double.parseDouble(Util.convertStorage(systemInfo.romMemory).substring(0,3))*10);
+            pb_system.setMax((int) Double.parseDouble(Util.convertStorage(systemInfo.romMemory).substring(0, 3)) * 10);
 //            pb_system.setProgress(100);
-            pb_system.setSecondaryProgress((int) (Double.parseDouble(Util.convertStorage(systemInfo.romMemory-systemInfo.avilMemory).substring(0,3))*10));
+            pb_system.setSecondaryProgress((int) (Double.parseDouble(Util.convertStorage(systemInfo.romMemory - systemInfo.avilMemory).substring(0, 3)) * 10));
 
         }
         //设置sd卡用量信息
@@ -149,11 +135,11 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
             tv_sd_total.setText(Util.convertStorage(sdCardInfo.total));
             tv_sd_avail.setText(Util.convertStorage(sdCardInfo.free));
 
-            L.e("tv_sd_total",Util.convertStorage(sdCardInfo.total).substring(0,3));
-            L.e("tv_sd_avail",Util.convertStorage(sdCardInfo.free).substring(0,3));
+            L.e("tv_sd_total", Util.convertStorage(sdCardInfo.total).substring(0, 3));
+            L.e("tv_sd_avail", Util.convertStorage(sdCardInfo.free).substring(0, 3));
 
-            pb_sd.setMax((int) Double.parseDouble(Util.convertStorage(sdCardInfo.total).substring(0,3))*10);
-            pb_sd.setProgress((int) (Double.parseDouble(Util.convertStorage(sdCardInfo.total-sdCardInfo.free).substring(0,3))*10));
+            pb_sd.setMax((int) Double.parseDouble(Util.convertStorage(sdCardInfo.total).substring(0, 3)) * 10);
+            pb_sd.setProgress((int) (Double.parseDouble(Util.convertStorage(sdCardInfo.total - sdCardInfo.free).substring(0, 3)) * 10));
         }
 //        //设置usb用量信息
 //        Util.UsbMemoryInfo usbMemoryInfo = Util.getUsbMemoryInfo();
@@ -168,49 +154,54 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     private void initView() {
         //设置各个盘符的容量信息
         setVolumSize();
-
         rl_android_system.setOnClickListener(this);
         rl_sd_space.setOnClickListener(this);
         rl_android_service.setOnClickListener(this);
-        rl_mount_space_one.setOnClickListener(this);
 
-        //android作为host时,usbManager获取是否有usb连接的管理器
         UsbManager usbManager = (UsbManager) getContext().getSystemService(Context.USB_SERVICE);
         //获取设备列表返回HashMap
         HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
-        //遍历usb设备列表
-        for (UsbDevice device : deviceList.values()) {
-            //            DeviceInfo deviceInfo = new DeviceInfo();
-            //设备名称
-//            String deviceName = device.getDeviceName();
-            //当前内存不为空时赋值路径
-//            deviceInfo.deviceName = deviceName;
-//            deviceInfo.devicePath = mountPath;
-//            deviceInfos.add(deviceInfo);
-        }
-        if (deviceList.size() > 0) {
-//            task = new TimerTask() {
-//                @Override
-//                public void run() {
-//                    // TODO Auto-generated method stub
-//                    Message message = new Message();
-//                    message.what = 1;
-//                    handler.sendMessage(message);
-//                }
-//            };
-//            timer.schedule(task, 1000, 3000); //延时1000ms后执行，3000ms执行一次
+        //设置移动磁盘的显示和隐藏
+        if (null != usbDeviceIsAttached && usbDeviceIsAttached.equals("usb_device_attached") || deviceList.size() > 2) {
+            T.showShort(getContext(), "USB设备已连接～");
             rl_mount_space_one.setVisibility(View.VISIBLE);
-        }else {
+            rl_mount_space_one.setOnClickListener(this);
+
+        } else if (null != usbDeviceIsAttached && usbDeviceIsAttached.equals("usb_device_detached")) {
             rl_mount_space_one.setVisibility(View.GONE);
+            T.showShort(getContext(), "USB设备已断开连接～");
         }
-    }
 
-    class UsbReceiver extends BroadcastReceiver {
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            T.showLong(getContext(),"接收静态广播成功！！！！");
-        }
+//        //android作为host时,usbManager获取是否有usb连接的管理器
+        //遍历usb设备列表
+//        for (UsbDevice device : deviceList.values()) {
+//                        DeviceInfo deviceInfo = new DeviceInfo();
+//            //设备名称
+//            String deviceName = device.getDeviceName();
+//            String mountPath = device.getDeviceName();
+//
+//            L.e(TAG,deviceName+"====================="+mountPath+"++++++++++++++++"+deviceList.size());
+//            //当前内存不为空时赋值路径
+////            deviceInfo.deviceName = deviceName;
+////            deviceInfo.devicePath = mountPath;
+////            deviceInfos.add(deviceInfo);
+//        }
+//        if (deviceList.size() > 0) {
+////            task = new TimerTask() {
+////                @Override
+////                public void run() {
+////                    // TODO Auto-generated method stub
+////                    Message message = new Message();
+////                    message.what = 1;
+////                    handler.sendMessage(message);
+////                }
+////            };
+////            timer.schedule(task, 1000, 3000); //延时1000ms后执行，3000ms执行一次
+//            rl_mount_space_one.setVisibility(View.VISIBLE);
+//        }else {
+//            rl_mount_space_one.setVisibility(View.GONE);
+//        }
     }
 
     //computer页面各个盘符的点击事件集合
@@ -234,7 +225,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
                     fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
                     copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
                 }
-                curFragment = new SystemSpaceFragment(SD_SPACE_FRAGMENT,null, fileInfoArrayList, copyOrMove);
+                curFragment = new SystemSpaceFragment(SD_SPACE_FRAGMENT, null, fileInfoArrayList, copyOrMove);
                 manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
                         .addToBackStack(null).commit();
                 break;
@@ -253,7 +244,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
                     fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
                     copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
                 }
-                curFragment = new SystemSpaceFragment(YUN_SPACE_FRAGMENT,null , fileInfoArrayList, copyOrMove);
+                curFragment = new SystemSpaceFragment(YUN_SPACE_FRAGMENT, null, fileInfoArrayList, copyOrMove);
                 manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
                         .addToBackStack(null).commit();
                 break;
@@ -266,6 +257,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        LocalCache.setSearchText(null);
         ButterKnife.unbind(this);
     }
 

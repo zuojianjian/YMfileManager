@@ -19,19 +19,19 @@ public class FileIconHelper implements FileIconLoader.IconLoadFinishListener {
     static {
         addItem(new String[] {
             "mp3"
-        }, R.mipmap.file_icon_mp3);
+        }, R.mipmap.music_default_bg);
         addItem(new String[] {
             "wma"
-        }, R.mipmap.file_icon_wma);
+        }, R.mipmap.music_default_bg);
         addItem(new String[] {
             "wav"
-        }, R.mipmap.file_icon_wav);
+        }, R.mipmap.music_default_bg);
         addItem(new String[] {
             "mid"
-        }, R.mipmap.file_icon_mid);
+        }, R.mipmap.music_default_bg);
         addItem(new String[] {
                 "mp4", "wmv", "mpeg", "m4v", "3gp", "3gpp", "3g2", "3gpp2", "asf"
-        }, R.mipmap.file_icon_video);
+        }, R.mipmap.video_default_icon);
         addItem(new String[] {
                 "jpg", "jpeg", "gif", "png", "bmp", "wbmp"
         }, R.mipmap.file_icon_picture);
@@ -100,7 +100,7 @@ public class FileIconHelper implements FileIconLoader.IconLoadFinishListener {
                     fileImageFrame.setVisibility(View.VISIBLE);
                 else {
                     fileImage.setImageResource(fc == FileCategoryHelper.FileCategory.Picture ? R.drawable.file_icon_picture
-                            : R.mipmap.file_icon_video);
+                            : R.mipmap.video_default_icon);
                     imageFrames.put(fileImage, fileImageFrame);
                     set = true;
                 }

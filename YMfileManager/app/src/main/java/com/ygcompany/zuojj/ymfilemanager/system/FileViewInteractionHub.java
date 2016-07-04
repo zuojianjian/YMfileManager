@@ -1,6 +1,5 @@
 package com.ygcompany.zuojj.ymfilemanager.system;
 
-import android.R.drawable;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -15,24 +14,18 @@ import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.MotionEvent;
-import android.view.SubMenu;
 import android.view.View;
-import android.view.View.OnCreateContextMenuListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.ygcompany.zuojj.ymfilemanager.MainActivity;
 import com.ygcompany.zuojj.ymfilemanager.R;
+import com.ygcompany.zuojj.ymfilemanager.component.SelectDialog;
 import com.ygcompany.zuojj.ymfilemanager.utils.L;
 import com.ygcompany.zuojj.ymfilemanager.utils.LocalCache;
 import com.ygcompany.zuojj.ymfilemanager.utils.T;
@@ -65,6 +58,8 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     // 当前是复制还是移动
     private CopyOrMove copyOrMoveMode;
+    private SelectDialog selectDialog;
+    private int selectedDialogItem;
 
     public enum Mode {
         View, Pick
@@ -103,11 +98,11 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         mConfirmOperationBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    public void addContextMenuSelectedItem() {
+    public void addDialogSelectedItem(int position) {
         if (mCheckedFileNameList.size() == 0) {
-            int pos = mListViewContextMenuSelectedItem;
-            if (pos != -1) {
-                FileInfo fileInfo = mFileViewListener.getItem(pos);
+            selectedDialogItem = position;
+            if (selectedDialogItem != -1) {
+                FileInfo fileInfo = mFileViewListener.getItem(selectedDialogItem);
                 if (fileInfo != null) {
                     mCheckedFileNameList.add(fileInfo);
                 }
@@ -239,7 +234,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     //刷新列表
     public void onOperationReferesh() {
         refreshFileList();
-        T.showShort(mContext,"刷新成功！");
+        T.showShort(mContext, "刷新成功！");
     }
 
     //启动设置页面
@@ -364,10 +359,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         return true;
     }
 
-    public void onOperationSearch() {
-
-    }
-
+    //TODO
     public void onSortChanged(FileSortHelper.SortMethod s) {
         if (mFileSortHelper.getSortMethod() != s) {
             mFileSortHelper.setSortMethog(s);
@@ -406,7 +398,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         cm.setText(text);
     }
 
-    private void onOperationPaste() {
+    public void onOperationPaste() {
         if (mFileOperationHelper.Paste(mCurrentPath)) {
             showProgress(mContext.getString(R.string.operation_pasting));
         }
@@ -458,7 +450,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         mNavigationBarText.setText(mFileViewListener.getDisplayPath(mCurrentPath));
     }
 
-    //发送
+    //发送操作
     public void onOperationSend() {
         ArrayList<FileInfo> selectedFileList = getSelectedFileList();
         for (FileInfo f : selectedFileList) {
@@ -483,7 +475,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     //重命名
     public void onOperationRename() {
-        int pos = mListViewContextMenuSelectedItem;
+        int pos = selectedDialogItem;
         if (pos == -1)
             return;
 
@@ -628,176 +620,20 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
-    //中间context长按menu
-    private OnCreateContextMenuListener mListViewContextMenuListener = new OnCreateContextMenuListener() {
-        @Override
-        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-            if (isInSelection() || isMoveState())
-                return;
-            clearSelection();
-//            AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-            //二级分类menu
-            SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, R.string.menu_item_sort).setIcon(
-                    R.drawable.ic_menu_sort);
-            addMenuItem(sortMenu, MENU_SORT_NAME, 0, R.string.menu_item_sort_name);
-            addMenuItem(sortMenu, MENU_SORT_SIZE, 1, R.string.menu_item_sort_size);
-            addMenuItem(sortMenu, MENU_SORT_DATE, 2, R.string.menu_item_sort_date);
-            addMenuItem(sortMenu, MENU_SORT_TYPE, 3, R.string.menu_item_sort_type);
-            sortMenu.setGroupCheckable(0, true, true);
-            sortMenu.getItem(0).setChecked(true);
-
-            //长按menu按钮
-            addMenuItem(menu, Constants.MENU_NEW_FOLDER, 0, R.string.operation_create_folder);
-            addMenuItem(menu, Constants.MENU_NEW_FILE, 0, R.string.operation_create_file);
-            addMenuItem(menu, Constants.MENU_COPY, 0, R.string.operation_copy);
-            addMenuItem(menu, Constants.MENU_COPY_PATH, 0, R.string.operation_copy_path);
-            addMenuItem(menu, Constants.MENU_PASTE, 0,
-                    R.string.operation_paste);
-            addMenuItem(menu, Constants.MENU_MOVE, 0, R.string.operation_move);
-            addMenuItem(menu, MENU_SEND, 0, R.string.operation_send);
-            addMenuItem(menu, MENU_RENAME, 0, R.string.operation_rename);
-            addMenuItem(menu, MENU_DELETE, 0, R.string.operation_delete);
-            addMenuItem(menu, MENU_INFO, 0, R.string.operation_info);
-
-            addMenuItem(menu, Constants.MENU_SHOWHIDE, 0, R.string.operation_show_sys,
-                    R.drawable.ic_menu_show_sys);
-            addMenuItem(menu, MENU_REFRESH, 0, R.string.operation_refresh,
-                    R.drawable.ic_menu_refresh);
-            addMenuItem(menu, MENU_SETTING, 0, R.string.menu_setting, drawable.ic_menu_preferences);
-//            addMenuItem(menu, MENU_SELECTALL, 0, R.string.operation_selectall);
-            addMenuItem(menu, MENU_EXIT, 8, R.string.menu_exit, drawable.ic_menu_close_clear_cancel);
-
-            if (!canPaste()) {
-                MenuItem menuItem = menu.findItem(Constants.MENU_PASTE);
-                if (menuItem != null)
-                    menuItem.setEnabled(false);
-            }
-        }
-    };
-
     // File List view setup
     private GridView mFileGridView;
     private ListView mFileListView;
 
-    private int mListViewContextMenuSelectedItem;
-
+    //list和grid监听鼠标的点击事件
     private void setupFileListView() {
         final String title = LocalCache.getViewTag();
         if ("list".equals(title)) {
             mFileListView = (ListView) mFileViewListener.getViewById(R.id.file_path_list);
-            //设置list鼠标动作的事件监听
-            mFileListView.setOnGenericMotionListener(new ListOnGenericMotionListener());
         } else if ("grid".equals(title)) {
             mFileGridView = (GridView) mFileViewListener.getViewById(R.id.file_path_grid);
-            //设置grid鼠标动作的事件监听
-            mFileGridView.setOnGenericMotionListener(new GridOnGenericMotionListener());
         }
 
     }
-
-    // menu
-    private static final int MENU_SEARCH = 1;
-    private static final int MENU_SORT = 3;
-    private static final int MENU_SEND = 7;
-    private static final int MENU_RENAME = 8;
-    private static final int MENU_DELETE = 9;
-    private static final int MENU_INFO = 10;
-    private static final int MENU_SORT_NAME = 11;
-    private static final int MENU_SORT_SIZE = 12;
-    private static final int MENU_SORT_DATE = 13;
-    private static final int MENU_SORT_TYPE = 14;
-    private static final int MENU_REFRESH = 15;
-    private static final int MENU_SELECTALL = 16;
-    private static final int MENU_SETTING = 17;
-    private static final int MENU_EXIT = 18;
-
-    //the bottom and context menu的点击事件
-    private OnMenuItemClickListener menuItemClick = new OnMenuItemClickListener() {
-
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-
-            AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-            mListViewContextMenuSelectedItem = info != null ? info.position : -1;
-
-            int itemId = item.getItemId();
-            if (mFileViewListener.onOperation(itemId)) {
-                return true;
-            }
-
-            addContextMenuSelectedItem();
-
-            switch (itemId) {
-                case MENU_SEARCH://搜索功能（待定）
-                    onOperationSearch();
-                    break;
-                case Constants.MENU_NEW_FOLDER://创建文件夹
-                    onOperationCreateFolder();
-                    break;
-                case MENU_REFRESH://刷新
-                    onOperationReferesh();
-                    break;
-                case MENU_SELECTALL://全选（取消）
-                    onOperationSelectAllOrCancel();
-                    break;
-                case Constants.MENU_SHOWHIDE: //显示隐藏文件或文件夹
-                    onOperationShowSysFiles();
-                    break;
-                case MENU_SETTING://设置页面
-                    onOperationSetting();
-                    break;
-                case MENU_EXIT://退出
-                    ((MainActivity) mContext).finish();
-                    break;
-                case MENU_SORT_NAME:// sort分类二级选择目录
-                    item.setChecked(true);
-                    onSortChanged(FileSortHelper.SortMethod.name);
-                    break;
-                case MENU_SORT_SIZE: //大小
-                    item.setChecked(true);
-                    onSortChanged(FileSortHelper.SortMethod.size);
-                    break;
-                case MENU_SORT_DATE: //日期
-                    item.setChecked(true);
-                    onSortChanged(FileSortHelper.SortMethod.date);
-                    break;
-                case MENU_SORT_TYPE: //类型
-                    item.setChecked(true);
-                    onSortChanged(FileSortHelper.SortMethod.type);
-                    break;
-                case Constants.MENU_COPY://复制
-                    onOperationCopy();
-                    break;
-                case Constants.MENU_COPY_PATH://路径复制
-                    onOperationCopyPath();
-                    break;
-                case Constants.MENU_PASTE://粘贴
-                    onOperationPaste();
-                    break;
-                case Constants.MENU_MOVE://移动
-                    onOperationMove();
-                    break;
-                case MENU_SEND://发送
-                    onOperationSend();
-                    break;
-                case MENU_RENAME://重命名
-                    onOperationRename();
-                    break;
-                case MENU_DELETE://删除
-                    onOperationDelete();
-                    break;
-                case MENU_INFO://详情
-                    onOperationInfo();
-                    break;
-                default:
-                    return false;
-            }
-
-            mListViewContextMenuSelectedItem = -1;
-            return true;
-        }
-
-    };
 
     private FileViewInteractionHub.Mode mCurrentMode;
 
@@ -806,41 +642,6 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     private String mRoot;
 
     private SystemSpaceFragment.SelectFilesCallback mSelectFilesCallback;
-
-//    //  创建list底部menu 设置返回true
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        return true;
-//    }
-//
-//    public boolean onPrepareOptionsMenu(Menu menu) {
-//        updateMenuItems(menu);
-//        return true;
-//    }
-
-//    private void updateMenuItems(Menu menu) {
-//        menu.findItem(MENU_SELECTALL).setTitle(
-//                isSelectedAll() ? R.string.operation_cancel_selectall : R.string.operation_selectall);
-//        menu.findItem(MENU_SELECTALL).setEnabled(mCurrentMode != Mode.Pick);
-//
-//        MenuItem menuItem = menu.findItem(Constants.MENU_SHOWHIDE);
-//        if (menuItem != null) {
-//            menuItem.setTitle(Settings.instance().getShowDotAndHiddenFiles() ? R.string.operation_hide_sys
-//                    : R.string.operation_show_sys);
-//        }
-//    }
-
-    private void addMenuItem(Menu menu, int itemId, int order, int string) {
-        addMenuItem(menu, itemId, order, string, -1);
-    }
-
-    private void addMenuItem(Menu menu, int itemId, int order, int string, int iconRes) {
-        if (!mFileViewListener.shouldHideMenu(itemId)) {
-            MenuItem item = menu.add(0, itemId, order, string).setOnMenuItemClickListener(menuItemClick);
-            if (iconRes > 0) {
-                item.setIcon(iconRes);
-            }
-        }
-    }
 
     public boolean isFileSelected(String filePath) {
         return mFileOperationHelper.isFileSelected(filePath);
@@ -868,7 +669,9 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         if (!lFileInfo.IsDir) {
             if (mCurrentMode == Mode.Pick) {
                 mFileViewListener.onPick(lFileInfo);
-            } else {
+            }
+            else {
+                //打开文件夹
                 viewFile(lFileInfo);
             }
             return;
@@ -878,8 +681,32 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         refreshFileList();
     }
 
-    //listview或gridview的item鼠标右键点击不做任何操作只刷新
+    //listview或gridview的item鼠标右键点击不做任何操作
     public void onListItemRightClick(AdapterView<?> parent, View view, int position, long id) {
+//        FileInfo lFileInfo = mFileViewListener.getItem(position);
+//        if (lFileInfo == null) {
+//            Log.e(LOG_TAG, "file does not exist on position:" + position);
+//            return;
+//        }
+//
+//        if (isInSelection()) {
+//            boolean selected = lFileInfo.Selected;
+//            if (selected) {
+//                mCheckedFileNameList.remove(lFileInfo);
+//            } else {
+//                mCheckedFileNameList.add(lFileInfo);
+//            }
+//            lFileInfo.Selected = !selected;
+//            return;
+//        }
+//
+//        if (mCurrentMode == Mode.Pick) {
+//            mFileViewListener.onPick(lFileInfo);
+//        }else {
+//            return;
+//        }
+//
+//        mCurrentPath = getAbsoluteName(mCurrentPath, lFileInfo.fileName);
         refreshFileList();
     }
 
@@ -995,91 +822,8 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 //        updateConfirmButtons();
 //    }
 
-    private class ListOnGenericMotionListener implements View.OnGenericMotionListener {
-        //根据MotionEvent事件来判断鼠标的操作执行对应的动作
-        @Override
-        public boolean onGenericMotion(View view, MotionEvent event) {
-            switch (event.getButtonState()) {
-                case MotionEvent.BUTTON_PRIMARY:   // BUTTON_PRIMARY鼠标左键点击
-                    mFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            onListItemClick(parent, view, position, id);
-                        }
-                    });
-//                    T.showShort(mContext, "鼠标左键单击事件");
-                    break;
-                case MotionEvent.BUTTON_SECONDARY:    //BUTTON_SECONDARY鼠标右键点击
-                    //点击鼠标右键且让点击事件不起作用只弹出contextmenu
-//                    mFileListView.setLongClickable(true);
-                    mFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            onListItemRightClick(parent, view, position, id);
-                        }
-                    });
-                    mFileListView.setOnCreateContextMenuListener(mListViewContextMenuListener);
-//                    T.showShort(mContext, "鼠标右键单击事件");
-                    break;
-                case MotionEvent.BUTTON_TERTIARY:   //BUTTON_TERTIARY鼠标滚轮点击
-                    mFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            onListItemClick(parent, view, position, id);
-                        }
-                    });
-//                    T.showShort(mContext, "鼠标滑轮单击事件");
-                    break;
-                case MotionEvent.ACTION_SCROLL:   //ACTION_SCROLL鼠标滚轮滑动
-                    MouseScrollAction(event);
-                    break;
-            }
-            return false;
-        }
-    }
-
-    private class GridOnGenericMotionListener implements View.OnGenericMotionListener {
-        //根据MotionEvent事件来判断鼠标的操作执行对应的动作
-        @Override
-        public boolean onGenericMotion(View view, MotionEvent event) {
-            switch (event.getButtonState()) {
-                case MotionEvent.BUTTON_PRIMARY:   // BUTTON_PRIMARY鼠标左键点击
-                    mFileGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            onListItemClick(parent, view, position, id);
-                        }
-                    });
-                    break;
-                case MotionEvent.BUTTON_SECONDARY:    //BUTTON_SECONDARY鼠标右键点击
-                    //点击鼠标右键且让点击事件不起作用只弹出contextmenu
-//                    mFileGridView.setLongClickable(true);
-                    mFileGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            onListItemRightClick(parent, view, position, id);
-                        }
-                    });
-                    mFileGridView.setOnCreateContextMenuListener(mListViewContextMenuListener);
-                    break;
-                case MotionEvent.BUTTON_TERTIARY:   //BUTTON_TERTIARY鼠标滚轮点击
-                    mFileGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            onListItemClick(parent, view, position, id);
-                        }
-                    });
-                    break;
-                case MotionEvent.ACTION_SCROLL:   //ACTION_SCROLL鼠标滚轮滑动
-                    MouseScrollAction(event);
-                    break;
-            }
-            return false;
-        }
-    }
-
     //鼠标滚轮滑动
-    private void MouseScrollAction(MotionEvent event) {
+    public void MouseScrollAction(MotionEvent event) {
         if (event.getAxisValue(MotionEvent.AXIS_VSCROLL) < 0.0f) {
             L.i("fortest::onGenericMotionEvent", "down");
             T.showShort(mContext, "向下滚动...");
@@ -1090,4 +834,27 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
             T.showShort(mContext, "向上滚动...");
         }
     }
+
+    //显示自定义dialog
+    public void shownContextDialog(FileViewInteractionHub mFileViewInteractionHub) {
+        //创建Dialog并设置样式主题
+        selectDialog = new SelectDialog(mContext, R.style.dialog, mFileViewInteractionHub);
+        selectDialog.setCanceledOnTouchOutside(true);//设置点击Dialog外部任意区域关闭Dialog
+        selectDialog.show();
+        //显示区域范围的设置在显示dialog之后，不然会不起作用
+        Window win = selectDialog.getWindow();
+        WindowManager.LayoutParams params = win.getAttributes();
+        params.height = 380; // 高度设置
+        params.width = 190; // 宽度设置
+        params.x = 30;
+
+        win.setAttributes(params);
+    }
+
+    public void dismissContextDialog(){
+        selectDialog.dismiss();
+        clearSelection();
+        refreshFileList();
+    }
+
 }

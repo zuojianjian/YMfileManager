@@ -63,6 +63,7 @@
 
         <TextView
             android:id="@+id/tv_storage"
+            android:visibility="gone"
             style="@style/textSet"
             android:drawableLeft="@drawable/left_usb_selector"
             android:text="@string/usb" />

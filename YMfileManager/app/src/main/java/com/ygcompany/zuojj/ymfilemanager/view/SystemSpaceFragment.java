@@ -62,6 +62,8 @@ public class SystemSpaceFragment extends BaseFragment implements
 
     private FileViewInteractionHub mFileViewInteractionHub;
 
+    private IFileInteractionListener mFileViewListener;
+
     //区分文件的工具类
     private FileCategoryHelper mFileCagetoryHelper;
 
@@ -169,8 +171,8 @@ public class SystemSpaceFragment extends BaseFragment implements
 
     /**
      * 各个页面的构造参数
-     * @param sdSpaceFragment  传入的标识和路径区分加载文件目录位置
-     * @param directPath       传入的外接U盘的地址
+     * @param sdSpaceFragment 传入的标识和路径区分加载文件目录位置
+     * @param directPath      传入的外接U盘的地址
      * @param fileInfoList    传进来的选中文件列表
      * @param copyOrMove      传进来的复制和移动模式的标志
      */
@@ -197,6 +199,7 @@ public class SystemSpaceFragment extends BaseFragment implements
     }
 
     private void initView() {
+
         mActivity = getActivity();
         mFileCagetoryHelper = new FileCategoryHelper(mActivity);
         mFileViewInteractionHub = new FileViewInteractionHub(this);
@@ -245,6 +248,7 @@ public class SystemSpaceFragment extends BaseFragment implements
         } else if ("grid".equals(LocalCache.getViewTag())) {
             mAdapter = new FileListAdapter(mActivity, R.layout.file_browser_item_grid, mFileNameList, mFileViewInteractionHub,
                     mFileIconHelper);
+
         }
 
         boolean baseSd = intent.getBooleanExtra(Constants.KEY_BASE_SD, !FileManagerPreferenceActivity.isReadRoot(mActivity));
@@ -282,11 +286,14 @@ public class SystemSpaceFragment extends BaseFragment implements
             file_path_list.setVisibility(View.VISIBLE);
             file_path_grid.setVisibility(View.GONE);
             file_path_list.setAdapter(mAdapter);
+            file_path_list.setOnGenericMotionListener(new ListOnGenericMotionListener(file_path_list, mFileViewInteractionHub));
         } else if ("grid".equals(LocalCache.getViewTag())) {
             file_path_list.setVisibility(View.GONE);
             file_path_grid.setVisibility(View.VISIBLE);
             file_path_grid.setAdapter(mAdapter);
+            file_path_grid.setOnGenericMotionListener(new GridOnGenericMotionListener(file_path_grid, mFileViewInteractionHub));
         }
+
 
         mFileViewInteractionHub.refreshFileList();
 
@@ -472,6 +479,7 @@ public class SystemSpaceFragment extends BaseFragment implements
 
     @Override
     public View getViewById(int id) {
+
         return view.findViewById(id);
     }
 
@@ -613,7 +621,6 @@ public class SystemSpaceFragment extends BaseFragment implements
     public FileInfo getItem(int pos) {
         if (pos < 0 || pos > mFileNameList.size() - 1)
             return null;
-
         return mFileNameList.get(pos);
     }
 
@@ -647,6 +654,7 @@ public class SystemSpaceFragment extends BaseFragment implements
 
     /**
      * 当前是否可以发生回退操作
+     *
      * @return
      */
     public boolean canGoBack() {

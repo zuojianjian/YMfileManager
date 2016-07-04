@@ -229,6 +229,7 @@
             android:id="@+id/rl_mount_space_one"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_marginLeft="50dp">
 
             <ImageView
@@ -306,7 +307,8 @@
             android:id="@+id/rl_mount_space_two"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="120dp">
+            android:layout_marginLeft="120dp"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/iv_mount"

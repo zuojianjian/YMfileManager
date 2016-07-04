@@ -1,22 +1,24 @@
 package com.ygcompany.zuojj.ymfilemanager.system;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.ygcompany.zuojj.ymfilemanager.R;
+import com.ygcompany.zuojj.ymfilemanager.view.TextSelectDialog;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class IntentBuilder {
 
+    private static final int TEXT_TYPE = 2;
+
     public static void viewFile(final Context context, final String filePath) {
         String type = getMimeType(filePath);
-
         if (!TextUtils.isEmpty(type) && !TextUtils.equals(type, "*/*")) {
             /* 设置intent的file与MimeType */
             Intent intent = new Intent();
@@ -26,44 +28,59 @@ public class IntentBuilder {
             context.startActivity(intent);
         } else {
             // unknown MimeType
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-            dialogBuilder.setTitle(R.string.dialog_select_type);
+//            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+//            dialogBuilder.setTitle(R.string.dialog_select_type);
+//
+//            CharSequence[] menuItemArray = new CharSequence[]{
+//                    context.getString(R.string.dialog_type_text),
+//                    context.getString(R.string.dialog_type_audio),
+//                    context.getString(R.string.dialog_type_video),
+//                    context.getString(R.string.dialog_type_image)};
+//            dialogBuilder.setItems(menuItemArray,
+//                    new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            String selectType = "*/*";
+//                            switch (which) {
+//                                case 0:
+//                                    selectType = "text/plain";
+//                                    break;
+//                                case 1:
+//                                    selectType = "audio/*";
+//                                    break;
+//                                case 2:
+//                                    selectType = "video/*";
+//                                    break;
+//                                case 3:
+//                                    selectType = "image/*";
+//                                    break;
+//                            }
+//                            Intent intent = new Intent();
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            intent.setAction(Intent.ACTION_VIEW);
+//                            intent.setDataAndType(Uri.fromFile(new File(filePath)), selectType);
+//                            context.startActivity(intent);
+//                        }
+//                    });
 
-            CharSequence[] menuItemArray = new CharSequence[] {
-                    context.getString(R.string.dialog_type_text),
-                    context.getString(R.string.dialog_type_audio),
-                    context.getString(R.string.dialog_type_video),
-                    context.getString(R.string.dialog_type_image) };
-            dialogBuilder.setItems(menuItemArray,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String selectType = "*/*";
-                            switch (which) {
-                            case 0:
-                                selectType = "text/plain";
-                                break;
-                            case 1:
-                                selectType = "audio/*";
-                                break;
-                            case 2:
-                                selectType = "video/*";
-                                break;
-                            case 3:
-                                selectType = "image/*";
-                                break;
-                            }
-                            Intent intent = new Intent();
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.setAction(Intent.ACTION_VIEW);
-                            intent.setDataAndType(Uri.fromFile(new File(filePath)), selectType);
-                            context.startActivity(intent);
-                        }
-                    });
-            dialogBuilder.show();
+            //创建Dialog并设置样式主题
+            TextSelectDialog dialog = new TextSelectDialog(context, R.style.dialog,filePath);
+            dialog.setCanceledOnTouchOutside(true);//设置点击Dialog外部任意区域关闭Dialog
+            dialog.show();
+            Window win = dialog.getWindow();
+            WindowManager.LayoutParams params = win.getAttributes();
+            params.height = 380; // 高度设置
+            params.width = 120; // 宽度设置
+            params.y = 100;
+            params.x = 30;
+
+            win.setAttributes(params);
+
+
         }
     }
 
+    //创建发送文件
     public static Intent buildSendFile(ArrayList<FileInfo> files) {
         ArrayList<Uri> uris = new ArrayList<>();
 

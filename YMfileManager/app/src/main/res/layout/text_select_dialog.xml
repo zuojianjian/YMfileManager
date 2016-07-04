@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingBottom="15dp"
+    android:background="@drawable/pop_bg_shape"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/dialog_type_text"
+        style="@style/textDialog"
+        android:text="@string/dialog_type_text"/>
+    <TextView
+        android:id="@+id/dialog_type_audio"
+        style="@style/textDialog"
+        android:layout_marginTop="15dp"
+        android:text="@string/dialog_type_audio"/>
+    <TextView
+        android:id="@+id/dialog_type_video"
+        style="@style/textDialog"
+        android:layout_marginTop="15dp"
+        android:text="@string/dialog_type_video"/>
+    <TextView
+        android:id="@+id/dialog_type_image"
+        style="@style/textDialog"
+        android:layout_marginTop="15dp"
+        android:text="@string/dialog_type_image"/>
+
+</LinearLayout>
