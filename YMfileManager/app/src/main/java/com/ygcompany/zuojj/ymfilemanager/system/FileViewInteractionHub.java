@@ -509,7 +509,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                     .setPositiveButton(R.string.confirm, null).create().show();
             return false;
         }
-
+        refreshFileList();
         return true;
     }
 
@@ -647,9 +647,14 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         return mFileOperationHelper.isFileSelected(filePath);
     }
 
+    //上次按下返回键的系统时间
+    private long lastBackTime = 0;
+
     //listview或gridview的item左键点击事件监听
     public void onListItemClick(AdapterView<?> parent, View view, int position, long id) {
         FileInfo lFileInfo = mFileViewListener.getItem(position);
+        //系统当前时间
+        long currentBackTime = System.currentTimeMillis();
         if (lFileInfo == null) {
             Log.e(LOG_TAG, "file does not exist on position:" + position);
             return;
@@ -669,16 +674,15 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         if (!lFileInfo.IsDir) {
             if (mCurrentMode == Mode.Pick) {
                 mFileViewListener.onPick(lFileInfo);
-            }
-            else {
-                //打开文件夹
+            } else {
+                //打开文件
                 viewFile(lFileInfo);
             }
-            return;
+        }else if (currentBackTime - lastBackTime < 800){ //打开文件夹
+            mCurrentPath = getAbsoluteName(mCurrentPath, lFileInfo.fileName);
+            refreshFileList();
         }
-
-        mCurrentPath = getAbsoluteName(mCurrentPath, lFileInfo.fileName);
-        refreshFileList();
+        lastBackTime = currentBackTime;
     }
 
     //listview或gridview的item鼠标右键点击不做任何操作
@@ -688,7 +692,6 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 //            Log.e(LOG_TAG, "file does not exist on position:" + position);
 //            return;
 //        }
-//
 //        if (isInSelection()) {
 //            boolean selected = lFileInfo.Selected;
 //            if (selected) {
@@ -699,13 +702,11 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 //            lFileInfo.Selected = !selected;
 //            return;
 //        }
-//
 //        if (mCurrentMode == Mode.Pick) {
 //            mFileViewListener.onPick(lFileInfo);
 //        }else {
 //            return;
 //        }
-//
 //        mCurrentPath = getAbsoluteName(mCurrentPath, lFileInfo.fileName);
         refreshFileList();
     }
@@ -851,7 +852,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         win.setAttributes(params);
     }
 
-    public void dismissContextDialog(){
+    public void dismissContextDialog() {
         selectDialog.dismiss();
         clearSelection();
         refreshFileList();

@@ -16,7 +16,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginTop="30dp"
             android:gravity="center"
-            android:text="收藏"
+            android:text="@string/tv_storage_page"
             android:textColor="@android:color/darker_gray"
             android:textSize="13sp" />
 
@@ -51,7 +51,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginTop="15dp"
             android:gravity="center"
-            android:text="本机"
+            android:text="@string/left_local_up"
             android:textColor="@android:color/darker_gray"
             android:textSize="13sp" />
 
@@ -63,7 +63,7 @@
 
         <TextView
             android:id="@+id/tv_storage"
-            android:visibility="gone"
+            android:visibility="visible"
             style="@style/textSet"
             android:drawableLeft="@drawable/left_usb_selector"
             android:text="@string/usb" />
@@ -75,7 +75,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginTop="15dp"
             android:gravity="center"
-            android:text="网络"
+            android:text="@string/left_net_up"
             android:textColor="@android:color/darker_gray"
             android:textSize="13sp" />
 

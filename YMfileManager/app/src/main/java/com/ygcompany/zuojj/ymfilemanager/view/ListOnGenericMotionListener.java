@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.system.FileViewInteractionHub;
 
 /**
@@ -14,6 +15,13 @@ import com.ygcompany.zuojj.ymfilemanager.system.FileViewInteractionHub;
 public class ListOnGenericMotionListener implements View.OnGenericMotionListener {
     private ListView file_path_list;
     private FileViewInteractionHub mFileViewInteractionHub;
+    //是否为第一次点击
+    private boolean isFrist = true;
+    //上一次点击位置
+    private int prePosition;
+
+    //上次按下返回键的系统时间
+    private long lastBackTime = 0;
 
     public ListOnGenericMotionListener(ListView file_path_list, FileViewInteractionHub mFileViewInteractionHub) {
         this.mFileViewInteractionHub = mFileViewInteractionHub;
@@ -24,12 +32,10 @@ public class ListOnGenericMotionListener implements View.OnGenericMotionListener
     public boolean onGenericMotion(View view, MotionEvent event) {
         switch (event.getButtonState()) {
             case MotionEvent.BUTTON_PRIMARY:   // BUTTON_PRIMARY鼠标左键点击
-                file_path_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        mFileViewInteractionHub.onListItemClick(parent, view, position, id);
-                    }
-                });
+                if (event.getButtonState() == MotionEvent.BUTTON_PRIMARY) {
+                    //每一个item的点击和双击的判断
+                    ItemDoubbleOrSingle();
+                }
                 break;
             case MotionEvent.BUTTON_SECONDARY:    //BUTTON_SECONDARY鼠标右键点击
                 //点击鼠标右键且让点击事件不起作用只弹出contextmenu
@@ -37,22 +43,59 @@ public class ListOnGenericMotionListener implements View.OnGenericMotionListener
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         mFileViewInteractionHub.onListItemRightClick(parent, view, position, id);
+                        selectedItemBackground(parent, position);
+                        mFileViewInteractionHub.addDialogSelectedItem(position);
                     }
                 });
                 mFileViewInteractionHub.shownContextDialog(mFileViewInteractionHub);
                 break;
             case MotionEvent.BUTTON_TERTIARY:   //BUTTON_TERTIARY鼠标滚轮点击
-                file_path_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        mFileViewInteractionHub.onListItemClick(parent, view, position, id);
-                    }
-                });
+                if (event.getButtonState() == MotionEvent.BUTTON_TERTIARY){
+                    //每一个item的点击和双击的判断
+                    ItemDoubbleOrSingle();
+                }
                 break;
             case MotionEvent.ACTION_SCROLL:   //ACTION_SCROLL鼠标滚轮滑动
                 mFileViewInteractionHub.MouseScrollAction(event);
                 break;
         }
         return false;
+    }
+
+    private void ItemDoubbleOrSingle() {
+        //获取当前系统时间的毫秒数
+        long currentBackTime = System.currentTimeMillis();
+        //比较上次按下返回键和当前按下返回键的时间差，如果大于2秒，则提示再按一次退出
+        if (currentBackTime - lastBackTime > 800) {
+            file_path_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    //添加选中的背景
+                    selectedItemBackground(parent, position);
+                }
+            });
+            lastBackTime = currentBackTime;
+        } else { //如果两次按下的时间差小于1秒，则退出程序
+            file_path_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    mFileViewInteractionHub.onListItemClick(parent, view, position, id);
+                }
+            });
+        }
+    }
+
+    private void selectedItemBackground(AdapterView<?> parent, int position) {
+        if (!isFrist){
+            parent.getChildAt(prePosition).findViewById(R.id.ll_list_item_bg).setSelected(false);
+        }else {
+            parent.getChildAt(position).findViewById(R.id.ll_list_item_bg).setSelected(true);
+            prePosition = position;
+            isFrist = false;
+        }
+        if (!isFrist){
+            parent.getChildAt(position).findViewById(R.id.ll_list_item_bg).setSelected(true);
+            prePosition = position;
+        }
     }
 }

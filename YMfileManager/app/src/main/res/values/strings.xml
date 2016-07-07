@@ -131,4 +131,7 @@
     <string name="text_help_title">您可以直接在此发送反馈，也可以去论坛反馈，还可以在帮助中心快速寻找答案。</string>
     <string name="text_to_public">去官网反馈</string>
     <string name="text_help_center">去官网帮助中心</string>
+    <string name="tv_storage_page">收藏</string>
+    <string name="left_local_up">本机</string>
+    <string name="left_net_up">网络</string>
 </resources>

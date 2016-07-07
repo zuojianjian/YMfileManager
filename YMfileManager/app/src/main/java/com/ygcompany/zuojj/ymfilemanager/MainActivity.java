@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -77,13 +78,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private SystemSpaceFragment usbStorageFragment;
     private OnlineNeighborFragment onlineNeighborFragment;
     private UsbConnectReceiver receiver;
+    private SearchView search_view;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //绑定view
+        //绑定viewe
         ButterKnife.bind(MainActivity.this);
         //默认选中computer页面
         tv_computer.setSelected(true);
@@ -131,7 +133,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     //设置左侧侧边栏的点击监听
     private void initView() {
         manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
-        SearchView search_view = (SearchView) findViewById(R.id.search_view);
+        search_view = (SearchView) findViewById(R.id.search_view);
         curFragment = sdStorageFragment;
         tv_desk.setOnClickListener(this);  //桌面
         tv_music.setOnClickListener(this);  //音乐
@@ -150,13 +152,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     /**
-     *usb 广播接收器
+     * usb 广播接收器
      */
     class UsbConnectReceiver extends BroadcastReceiver {
-
-        public UsbConnectReceiver() {
-        }
-
         private static final String TAG = "UsbConnectReceiver";
         private static final String USB_DEVICE_ATTACHED = "usb_device_attached";
         private static final String USB_DEVICE_DETACHED = "usb_device_detached";
@@ -167,25 +165,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             L.d(TAG, "intent.getAction() ->" + action);
 
             if (action.equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) { //usb连接
-//                T.showShort(context, USB_DEVICE_ATTACHED);
                 tv_storage.setVisibility(View.VISIBLE);
                 tv_storage.setOnClickListener(MainActivity.this);  //内存存储
-                sdStorageFragment = new SdStorageFragment(manager,USB_DEVICE_ATTACHED);
+                sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_ATTACHED);
                 setSelectedBackground(R.id.tv_computer);
                 manager.popBackStack();
                 curFragment = sdStorageFragment;
                 manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
+                T.showShort(MainActivity.this, "USB设备已连接～");
 
             } else if (action.equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) { //usb断开
 //                T.showShort(context, USB_DEVICE_DETACHED);
                 tv_storage.setVisibility(View.GONE);
-                sdStorageFragment = new SdStorageFragment(manager,USB_DEVICE_DETACHED);
+                sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_DETACHED);
                 setSelectedBackground(R.id.tv_computer);
                 manager.popBackStack();
                 curFragment = sdStorageFragment;
                 manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
+                T.showShort(MainActivity.this, "USB设备已断开连接～");
             }
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //判断backspace是回退还是删除操作
+        if (keyCode == KeyEvent.KEYCODE_DEL && !search_view.hasFocus()) {
+            onBackPressed();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

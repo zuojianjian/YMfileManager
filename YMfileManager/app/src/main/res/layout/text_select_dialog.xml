@@ -3,10 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="10dp"
-    android:paddingBottom="15dp"
-    android:background="@drawable/pop_bg_shape"
-    android:gravity="center_vertical">
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:background="@drawable/dialog_bg_shape"
+    android:gravity="center_horizontal">
 
     <TextView
         android:id="@+id/dialog_type_text"
