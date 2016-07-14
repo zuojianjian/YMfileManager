@@ -79,6 +79,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private OnlineNeighborFragment onlineNeighborFragment;
     private UsbConnectReceiver receiver;
     private SearchView search_view;
+    private boolean isX = false;
+    private boolean isCtrl = false;
 
 
     @Override
@@ -193,6 +195,34 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (keyCode == KeyEvent.KEYCODE_DEL && !search_view.hasFocus()) {
             onBackPressed();
         }
+        if (keyCode == KeyEvent.KEYCODE_ENTER){
+            L.e("KEYCODE_ENTER","KEYCODE_ENTER");
+            //TODO
+        }
+        if (keyCode == KeyEvent.KEYCODE_CTRL_LEFT || keyCode == KeyEvent.KEYCODE_CTRL_RIGHT){
+            isCtrl = true;
+        }
+        if (isCtrl && keyCode == KeyEvent.KEYCODE_X){
+            sendBroadcastMessage("iv_menu","pop_cut");
+            T.showShort(this,"剪切成功");
+            isCtrl = false;
+        }if (isCtrl && keyCode == KeyEvent.KEYCODE_C){
+            sendBroadcastMessage("iv_menu","pop_copy");
+            T.showShort(this,"复制成功");
+            isCtrl = false;
+        }if (isCtrl && keyCode == KeyEvent.KEYCODE_V){
+            sendBroadcastMessage("iv_menu","pop_paste");
+            T.showShort(this,"粘贴成功");
+            isCtrl = false;
+        }if (isCtrl && keyCode == KeyEvent.KEYCODE_Z){
+            sendBroadcastMessage("iv_menu","pop_cacel");
+            T.showShort(this,"取消成功");
+            isCtrl = false;
+        }if (isCtrl && keyCode == KeyEvent.KEYCODE_D){
+            sendBroadcastMessage("iv_menu","pop_delete");
+            T.showShort(this,"删除成功");
+            isCtrl = false;
+        }
         return super.onKeyDown(keyCode, event);
     }
 
@@ -258,7 +288,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (manager.getBackStackEntryCount() < 1) {
                     T.showShort(MainActivity.this, "当前页面不支持刷新操作");
                 }
-                sendBroadcastMessage("iv_fresh");
+                sendBroadcastMessage("iv_fresh",null);
                 break;
             case R.id.iv_setting:   //设置
                 shownPopWidndow("iv_setting");
@@ -267,7 +297,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //顶部切换视图按钮
                 switchListOrgrid();
                 //发送广播通知视图切换
-                sendBroadcastMessage("iv_switch_view");
+                sendBroadcastMessage("iv_switch_view",null);
                 break;
         }
     }
@@ -349,12 +379,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      *
      * @param name 按钮点击的标识
      */
-    private void sendBroadcastMessage(String name) {
+    private void sendBroadcastMessage(String name,String tag) {
         Intent intent = new Intent();
-        if (name.equals("iv_switch_view")) {
-            intent.setAction("com.switchview");
-        } else if (name.equals("iv_fresh")) {
-            intent.setAction("com.refreshview");
+        switch (name) {
+            case "iv_switch_view":
+                intent.setAction("com.switchview");
+                break;
+            case "iv_fresh":
+                intent.setAction("com.refreshview");
+                break;
+            case "iv_menu":
+                intent.setAction("com.switchmenu");
+                intent.putExtra("pop_menu", tag);
+                break;
         }
         sendBroadcast(intent);
     }
@@ -408,6 +445,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             }
         });
+    }
+
+    //移除poupwindow
+    public void DismissPopwindow(){
+        popWinShare.dismiss();
     }
 
     /**

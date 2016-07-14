@@ -12,6 +12,7 @@
     <!--<string name="operation_favorite">收藏</string>-->
     <!--<string name="operation_unfavorite">取消收藏</string>-->
     <string name="operation_copy">复制</string>
+    <string name="operation_folder">创建文件夹</string>
     <string name="operation_copy_path">复制路径</string>
     <string name="operation_paste">粘贴</string>
     <string name="operation_move">剪切</string>
@@ -61,7 +62,7 @@
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="operation_deleting">正在删除…</string>
-    <string name="operation_pasting">正在复制…</string>
+    <string name="operation_pasting">正在粘贴…</string>
     <string name="operation_moving">正在移动…</string>
     <string name="confirm_know">知道了</string>
     <string name="install_successful">安装成功</string>
@@ -107,8 +108,8 @@
     <string name="pref_primary_folder_summary">程序启动时显示的文件夹，当前路径为<xliff:g id="string">%1$s</xliff:g></string>
     <string name="pref_show_real_path_summary">在导航栏中显示真实路径</string>
     <string name="default_system_primary_folder">/</string>
-    <string name="default_sd_primary_folder">/storage/disk0</string>
-    <string name="default_usb_primary_folder">/storage/usb2</string>
+    <string name="default_sd_primary_folder">/mnt/sdcard</string>
+    <string name="default_usb_primary_folder">/storage/usb0</string>
     <string name="default_yun_primary_folder">待定</string>
     <string name="default_system_primary_folder_cn">安卓系统</string>
     <string name="default_sd_primary_folder_cn">磁盘空间</string>

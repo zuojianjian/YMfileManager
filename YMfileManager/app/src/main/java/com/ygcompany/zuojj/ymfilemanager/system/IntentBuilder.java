@@ -75,8 +75,6 @@ public class IntentBuilder {
             params.x = 30;
 
             win.setAttributes(params);
-
-
         }
     }
 

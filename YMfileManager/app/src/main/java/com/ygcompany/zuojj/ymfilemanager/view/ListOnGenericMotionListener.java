@@ -7,12 +7,19 @@ import android.widget.ListView;
 
 import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.system.FileViewInteractionHub;
+import com.ygcompany.zuojj.ymfilemanager.utils.L;
+
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * listview的item鼠标操作
  * Created by zuojj on 16-6-30.
  */
 public class ListOnGenericMotionListener implements View.OnGenericMotionListener {
+    private static boolean flag = false;// 用来判断是否已经执行双击事件
+    private static int clickNum = 0;// 用来判断是否该执行双击事件
     private ListView file_path_list;
     private FileViewInteractionHub mFileViewInteractionHub;
     //是否为第一次点击
@@ -63,37 +70,84 @@ public class ListOnGenericMotionListener implements View.OnGenericMotionListener
     }
 
     private void ItemDoubbleOrSingle() {
-        //获取当前系统时间的毫秒数
-        long currentBackTime = System.currentTimeMillis();
-        //比较上次按下返回键和当前按下返回键的时间差，如果大于2秒，则提示再按一次退出
-        if (currentBackTime - lastBackTime > 800) {
-            file_path_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    //添加选中的背景
-                    selectedItemBackground(parent, position);
-                }
-            });
-            lastBackTime = currentBackTime;
-        } else { //如果两次按下的时间差小于1秒，则退出程序
-            file_path_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    mFileViewInteractionHub.onListItemClick(parent, view, position, id);
-                }
-            });
+        flag = false;// 每次点击鼠标初始化双击事件执行标志为false
+
+        if (clickNum == 1) {// 当clickNum==1时执行双击事件
+            this.mouseDoubleClicked();// 执行双击事件
+            clickNum = 0;// 初始化双击事件执行标志为0
+            flag = true;// 双击事件已执行,事件标志为true
         }
+
+        // 定义定时器
+        Timer timer = new Timer();
+
+        // 定时器开始执行,延时0.2秒后确定是否执行单击事件
+        timer.schedule(new TimerTask() {
+            private int n = 0;// 记录定时器执行次数
+
+            public void run() {
+                if (ListOnGenericMotionListener.flag) {// 如果双击事件已经执行,那么直接取消单击执行
+                    n = 0;
+                    ListOnGenericMotionListener.clickNum = 0;
+                    this.cancel();
+                    return;
+                }
+                if (n == 1) {// 定时器等待0.2秒后,双击事件仍未发生,执行单击事件
+                    mouseSingleClicked();// 执行单击事件
+                    ListOnGenericMotionListener.flag = true;
+                    ListOnGenericMotionListener.clickNum = 0;
+                    n = 0;
+                    this.cancel();
+                    return;
+                }
+                clickNum++;
+                n++;
+            }
+        }, new Date(), 500);
+    }
+
+
+    /**
+     * 鼠标单击事件
+     */
+    public void mouseSingleClicked() {
+        file_path_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //添加选中的背景
+                selectedItemBackground(parent, position);
+                mFileViewInteractionHub.addDialogSelectedItem(position);
+            }
+        });
+        L.e("Single Clicked!");
+    }
+
+    /**
+     * 鼠标双击事件
+     */
+    public void mouseDoubleClicked() {
+        file_path_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedItemBackground(parent, position);
+                String doubleTag = "double";
+                mFileViewInteractionHub.onListItemClick(parent, view, position, id, doubleTag);
+                L.e("mFileViewInteractionHub");
+            }
+        });
+        L.e("Doublc Clicked!");
     }
 
     private void selectedItemBackground(AdapterView<?> parent, int position) {
-        if (!isFrist){
-            parent.getChildAt(prePosition).findViewById(R.id.ll_list_item_bg).setSelected(false);
-        }else {
+        if (isFrist) {
             parent.getChildAt(position).findViewById(R.id.ll_list_item_bg).setSelected(true);
             prePosition = position;
             isFrist = false;
         }
-        if (!isFrist){
+        if (!isFrist || position != prePosition) {
+            if (parent.getChildAt(prePosition) != null) {
+                parent.getChildAt(prePosition).findViewById(R.id.ll_list_item_bg).setSelected(false);
+            }
             parent.getChildAt(position).findViewById(R.id.ll_list_item_bg).setSelected(true);
             prePosition = position;
         }

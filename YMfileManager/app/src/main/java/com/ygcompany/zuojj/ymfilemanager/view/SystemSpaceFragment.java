@@ -140,7 +140,7 @@ public class SystemSpaceFragment extends BaseFragment implements
                 mFileViewInteractionHub.onOperationSelectAllOrCancel();
                 break;
             case "pop_copy":
-                mFileViewInteractionHub.onOperationCopy();
+                mFileViewInteractionHub.doOnOperationCopy();
                 break;
             case "pop_delete":
                 mFileViewInteractionHub.onOperationDelete();
@@ -153,6 +153,16 @@ public class SystemSpaceFragment extends BaseFragment implements
                 break;
             case "view_or_dismiss":
                 mFileViewInteractionHub.onOperationShowSysFiles();
+                break;
+
+            case "pop_cut":
+                mFileViewInteractionHub.onOperationMove();
+                break;
+            case "pop_paste":
+                mFileViewInteractionHub.onOperationButtonConfirm();
+                break;
+            case "pop_cacel":
+                mFileViewInteractionHub.onOperationButtonCancel();
                 break;
         }
     }
@@ -581,7 +591,7 @@ public class SystemSpaceFragment extends BaseFragment implements
     }
 //
 //    public void copyFile(ArrayList<FileInfo> files) {
-//        mFileViewInteractionHub.onOperationCopy(files);
+//        mFileViewInteractionHub.doOnOperationCopy(files);
 //    }
 //
 //    public void refresh() {
@@ -608,14 +618,14 @@ public class SystemSpaceFragment extends BaseFragment implements
         return mFileIconHelper;
     }
 
-//    public boolean setPath(String location) {
-//        if (!location.startsWith(mFileViewInteractionHub.getRootPath())) {
-//            return false;
-//        }
-//        mFileViewInteractionHub.setCurrentPath(location);
-//        mFileViewInteractionHub.refreshFileList();
-//        return true;
-//    }
+    public boolean setPath(String location) {
+        if (!location.startsWith(mFileViewInteractionHub.getRootPath())) {
+            return false;
+        }
+        mFileViewInteractionHub.setCurrentPath(location);
+        mFileViewInteractionHub.refreshFileList();
+        return true;
+    }
 
     @Override
     public FileInfo getItem(int pos) {

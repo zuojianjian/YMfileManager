@@ -21,6 +21,7 @@ import com.ygcompany.zuojj.ymfilemanager.system.FileViewInteractionHub;
 import com.ygcompany.zuojj.ymfilemanager.system.Util;
 import com.ygcompany.zuojj.ymfilemanager.utils.L;
 import com.ygcompany.zuojj.ymfilemanager.utils.LocalCache;
+import com.ygcompany.zuojj.ymfilemanager.utils.T;
 import com.ygcompany.zuojj.ymfilemanager.view.SystemSpaceFragment;
 
 import java.util.ArrayList;
@@ -230,6 +231,9 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
                         fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
                         copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
                     }
+                    if (fileInfoArrayList != null && copyOrMove != null){
+                        T.showShort(getContext(),"系统目录只有读取权限！当前操作失败～");
+                    }
                     curFragment = new SystemSpaceFragment(SYSTEM_SPACE_FRAGMENT, null, fileInfoArrayList, copyOrMove);
                     //开启事务替换当前fragment
                     manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
@@ -242,7 +246,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
                     //设置选中背景
                     setSelectedCardBg(R.id.rl_sd_space);
                     lastBackTime = currentBackTime;
-                } else { //如果两次按下的时间差小于1秒，则退出程序
+                } else { //如果两次按下的时间差小于1秒，则进入
                     if (curFragment != null) {
                         fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
                         copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
@@ -253,12 +257,12 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
                 }
                 break;
             case R.id.rl_mount_space_one:   //移动磁盘
-                //比较上次按下返回键和当前按下返回键的时间差，如果大于2秒，则提示再按一次退出
+                //比较上次按下返回键和当前按下返回键的时间差，如果大于0.8秒，则选中
                 if (currentBackTime - lastBackTime > 800) {
                     //设置选中背景
                     setSelectedCardBg(R.id.rl_mount_space_one);
                     lastBackTime = currentBackTime;
-                } else { //如果两次按下的时间差小于1秒，则退出程序
+                } else { //如果两次按下的时间差小于1秒，则进入
                     if (curFragment != null) {
                         fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
                         copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
@@ -269,12 +273,12 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
                 }
                 break;
             case R.id.rl_android_service:
-                //比较上次按下返回键和当前按下返回键的时间差，如果大于2秒，则提示再按一次退出
+                //比较上次按下返回键和当前按下返回键的时间差，如果大于0.8秒，则选中
                 if (currentBackTime - lastBackTime > 800) {
                     //设置选中背景
                     setSelectedCardBg(R.id.rl_android_service);
                     lastBackTime = currentBackTime;
-                } else { //如果两次按下的时间差小于1秒，则退出程序
+                } else { //如果两次按下的时间差小于0.8秒，则退出程序
                     if (curFragment != null) {
                         fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
                         copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();

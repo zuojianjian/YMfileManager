@@ -19,6 +19,7 @@ public class FileListAdapter extends ArrayAdapter<FileInfo> {
     private FileIconHelper mFileIcon;
 
     private Context mContext;
+    private boolean isShowCheckbox = false;
 
     public FileListAdapter(Context context, int resource,
                            List<FileInfo> objects, FileViewInteractionHub f,
@@ -36,12 +37,13 @@ public class FileListAdapter extends ArrayAdapter<FileInfo> {
         if (convertView != null) {
             view = convertView;
         } else {
-            if ("list".equals(LocalCache.getViewTag())){
+            if ("list".equals(LocalCache.getViewTag())) {
                 view = mInflater.inflate(R.layout.file_browser_item_list, parent, false);
-            }else if ("grid".equals(LocalCache.getViewTag())){
+            } else if ("grid".equals(LocalCache.getViewTag())) {
                 view = mInflater.inflate(R.layout.file_browser_item_grid, parent, false);
             }
         }
+
         FileInfo lFileInfo = mFileViewInteractionHub.getItem(position);
         FileListItem.setupFileListItemInfo(mContext, view, lFileInfo,
                 mFileIcon, mFileViewInteractionHub);

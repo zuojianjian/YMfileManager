@@ -102,16 +102,6 @@ public class PictrueFragment extends BaseFragment {
         gv_pictrue.setOnItemClickListener(new FolderOnItemClickListener());
     }
 
-    @Override
-    public boolean canGoBack() {
-        return false;
-    }
-
-    @Override
-    public void goBack() {
-
-    }
-
     private class FolderOnItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -161,10 +151,6 @@ public class PictrueFragment extends BaseFragment {
             public void run() {
                 Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                 ContentResolver mContentResolver = getContext().getContentResolver();
-//                String[] projection = {
-//                        MediaStore.Images.Media.DISPLAY_NAME,//图片名称
-//                        MediaStore.Images.Media.SIZE//图片的大小
-//                };
                 //只查询jpeg和png的图片
                 assert mContentResolver != null;
                 Cursor mCursor = mContentResolver.query(mImageUri, null,
@@ -174,23 +160,12 @@ public class PictrueFragment extends BaseFragment {
 
                 assert mCursor != null;
                 while (mCursor.moveToNext()) {
-//                    ImageBean mImageBean = new ImageBean();
                     //获取图片的路径
                     String path = mCursor.getString(mCursor
                             .getColumnIndex(MediaStore.Images.Media.DATA));
-//                    String iconName = mCursor.getString(mCursor
-//                            .getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME));
-//                    //设置图片的名称
-//                    mImageBean.setIconName(iconName);
-//                    Long iconSize = mCursor.getLong(mCursor
-//                            .getColumnIndex(MediaStore.Images.Media.SIZE));
-//                    //设置图片的大小
-//                    mImageBean.setIconSize(iconSize);
-                    //将内容添加到集合中
-//                    list.add(mImageBean);
                     //获取该图片的父路径名
                     String parentName = new File(path).getParentFile().getName();
-                    //根据父路径名将图片放入到mGruopMap中
+                    //根据父路径名将图片放入到不同的mGruopMap中
                     if (!mGruopMap.containsKey(parentName)) {
                         List<String> chileList = new ArrayList<>();
                         chileList.add(path);
@@ -210,5 +185,15 @@ public class PictrueFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public boolean canGoBack() {
+        return false;
+    }
+
+    @Override
+    public void goBack() {
+
     }
 }

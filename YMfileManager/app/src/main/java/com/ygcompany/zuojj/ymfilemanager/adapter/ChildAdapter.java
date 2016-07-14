@@ -9,10 +9,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.ygcompany.zuojj.ymfilemanager.R;
 import com.ygcompany.zuojj.ymfilemanager.component.MyImageView;
 import com.ygcompany.zuojj.ymfilemanager.component.NativeImageLoader;
+import com.ygcompany.zuojj.ymfilemanager.utils.L;
 
 import java.util.List;
 
@@ -27,23 +29,23 @@ public class ChildAdapter extends BaseAdapter {
      */
 //    private HashMap<Integer, Boolean> mSelectMap = new HashMap<>();
     private GridView mGridView;
-    private List<String> list;
+    private List<String> childPathList;
     protected LayoutInflater mInflater;
 
-    public ChildAdapter(Context context, List<String> list, GridView mGridView) {
-        this.list = list;
+    public ChildAdapter(Context context, List<String> childPathList, GridView mGridView) {
+        this.childPathList = childPathList;
         this.mGridView = mGridView;
         mInflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
-        return list.size();
+        return childPathList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return list.get(position);
+        return childPathList.get(position);
     }
 
 
@@ -55,13 +57,17 @@ public class ChildAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final ViewHolder viewHolder;
-        String path = list.get(position);
-
+        //打开文件图片的路径
+        String path = childPathList.get(position);
+        L.e("path",path);
+        //截取路径中文件名
+        String iconName = path.substring(path.lastIndexOf("/")+1);
+        L.e("iconName",iconName);
         if(convertView == null){
             convertView = mInflater.inflate(R.layout.grid_child_item, null);
             viewHolder = new ViewHolder();
             viewHolder.mImageView = (MyImageView) convertView.findViewById(R.id.child_image);
-//            viewHolder.mTextView = (TextView) convertView.findViewById(R.id.tv_icon_name);
+            viewHolder.mTextView = (TextView) convertView.findViewById(R.id.tv_icon_name);
 
             //用来监听ImageView的宽和高
             viewHolder.mImageView.setOnMeasureListener(new MyImageView.OnMeasureListener() {
@@ -77,6 +83,7 @@ public class ChildAdapter extends BaseAdapter {
             viewHolder.mImageView.setImageResource(R.mipmap.pictures_no);
         }
         viewHolder.mImageView.setTag(path);
+//        viewHolder.mTextView.setTag(path);
 
         //利用NativeImageLoader类加载本地图片
         Bitmap bitmap = NativeImageLoader.getInstance().loadNativeImage(path, mPoint, new NativeImageLoader.NativeImageCallBack() {
@@ -94,7 +101,7 @@ public class ChildAdapter extends BaseAdapter {
         }else{
             viewHolder.mImageView.setImageResource(R.mipmap.pictures_no);
         }
-//        viewHolder.mTextView.setText(imageBean.getIconName());
+        viewHolder.mTextView.setText(iconName);
 
         return convertView;
     }
@@ -118,15 +125,15 @@ public class ChildAdapter extends BaseAdapter {
 //     * @return
 //     */
 //    public List<Integer> getSelectItems(){
-//        List<Integer> list = new ArrayList<Integer>();
+//        List<Integer> childPathList = new ArrayList<Integer>();
 //        for(Iterator<Map.Entry<Integer, Boolean>> it = mSelectMap.entrySet().iterator(); it.hasNext();){
 //            Map.Entry<Integer, Boolean> entry = it.next();
 //            if(entry.getValue()){
-//                list.add(entry.getKey());
+//                childPathList.add(entry.getKey());
 //            }
 //        }
 //
-//        return list;
+//        return childPathList;
 //    }
 
 
@@ -134,7 +141,7 @@ public class ChildAdapter extends BaseAdapter {
         //要显示的图片
         public MyImageView mImageView;
 //        //图片名字
-//        public TextView mTextView;
+        public TextView mTextView;
     }
 
 }

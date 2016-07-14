@@ -28,19 +28,33 @@ import butterknife.ButterKnife;
  */
 public class GvDetailFragment extends Fragment {
 
+    private static final String TAG = "";
     @Bind(R.id.gv_detail_pictrue)
     GridView gv_detail_pictrue;
 
     private int i;
-    private List<String> childList;
+    private List<String> childPathList;
     private List<ImageBean> list;
-    HashMap<String,List<String>> mGruopMap;
+    HashMap<String, List<String>> mGruopMap;
 
     public GvDetailFragment(HashMap<String, List<String>> mGruopMap, List<ImageBean> list, int i) {
         this.mGruopMap = mGruopMap;
         this.list = list;
         this.i = i;
     }
+
+//    public GvDetailFragment(int i, List<String> childPathList, List<ImageBean> list) {
+//        this.i = i;
+//        this.childPathList = childPathList;
+//        this.list = list;
+//    }
+//
+//    public GvDetailFragment(HashMap<String, List<String>> mGruopMap) {
+//        this.mGruopMap = mGruopMap;
+//    }
+//
+//    public GvDetailFragment(Bundle bundle) {
+//    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,8 +71,8 @@ public class GvDetailFragment extends Fragment {
     }
 
     private void initView() {
-        childList = mGruopMap.get(list.get(i).getFolderName());
-        ChildAdapter adapter = new ChildAdapter(getContext(), childList, gv_detail_pictrue);
+        childPathList = mGruopMap.get(list.get(i).getFolderName());
+        ChildAdapter adapter = new ChildAdapter(getContext(), childPathList, gv_detail_pictrue);
         gv_detail_pictrue.setAdapter(adapter);
         gv_detail_pictrue.setOnItemClickListener(new DetailOnItemClickListener());
     }
@@ -66,12 +80,12 @@ public class GvDetailFragment extends Fragment {
     private class DetailOnItemClickListener implements android.widget.AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            String path = childList.get(i);
+            String path = childPathList.get(i);
 //Uri mUri = Uri.parse("file://" + picFile.getPath());Android3.0以后最好不要通过该方法，存在一些小Bug
             File file = new File(path);
-            if (file != null && file.isFile() == true) {
+            if (file.isFile()) {
                 Intent intent = new Intent();
-                intent.setAction(android.content.Intent.ACTION_VIEW);
+                intent.setAction(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(file), "image/*");
                 startActivity(intent);
             }

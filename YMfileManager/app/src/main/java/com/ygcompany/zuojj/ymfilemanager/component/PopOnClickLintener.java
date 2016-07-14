@@ -44,21 +44,28 @@ public class PopOnClickLintener implements View.OnClickListener {
                 case R.id.pop_menu_refresh: //刷新
                     //发送广播通知选中哪个item
                     sendBroadcastMessage("iv_menu", POP_REFRESH);
+                    //移除poupwindow
+                    mainActivity.DismissPopwindow();
                     break;
                 case R.id.pop_menu_cancel_all: //全选或取消
                     sendBroadcastMessage("iv_menu", POP_CANCEL_ALL);
+                    mainActivity.DismissPopwindow();
                     break;
                 case R.id.pop_menu_copy:  //复制
                     sendBroadcastMessage("iv_menu", POP_COPY);
+                    mainActivity.DismissPopwindow();
                     break;
                 case R.id.pop_menu_delete: //删除
                     sendBroadcastMessage("iv_menu", POP_DELETE);
+                    mainActivity.DismissPopwindow();
                     break;
                 case R.id.pop_menu_send:  //发送
                     sendBroadcastMessage("iv_menu", POP_SEND);
+                    mainActivity.DismissPopwindow();
                     break;
                 case R.id.pop_menu_create:  //创建
                     sendBroadcastMessage("iv_menu", POP_CREATE);
+                    mainActivity.DismissPopwindow();
                     break;
                 case R.id.pop_menu_exit: //退出
                     mainActivity.finish();
@@ -74,14 +81,17 @@ public class PopOnClickLintener implements View.OnClickListener {
                         T.showShort(mainActivity,"当前页面不支持此操作！");
                     }
                     sendBroadcastMessage("iv_menu", VIEW_OR_DISMISS);
+                    mainActivity.DismissPopwindow();
                     break;
                 case R.id.pop_setting_relative:  //关于
                     Intent intent = new Intent(mainActivity, AboutActivity.class);
                     mainActivity.startActivity(intent);
+                    mainActivity.DismissPopwindow();
                     break;
                 case R.id.pop_setting_help:  //帮助和反馈
                     intent = new Intent(mainActivity,HelpActivity.class);
                     mainActivity.startActivity(intent);
+                    mainActivity.DismissPopwindow();
                     break;
                 case R.id.pop_setting_exit:  //退出
                     mainActivity.finish();

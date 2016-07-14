@@ -69,8 +69,6 @@ public class FileListItem {
                 if ("grid".equals(LocalCache.getViewTag())){
                     img.setBackgroundResource(tag.Selected ? R.mipmap.btn_check_on_holo_light
                             : R.mipmap.btn_check_off_holo_light);
-//                    v.findViewById(R.id.rl_folder_bg).setSelected(true);   空指针？？？？
-//                    v.findViewById(R.id.ll_folder_text_bg).setSelected(true);
                 }
                 img.setImageResource(tag.Selected ? R.mipmap.btn_check_on_holo_light
                         : R.mipmap.btn_check_off_holo_light);

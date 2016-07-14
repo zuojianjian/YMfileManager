@@ -34,7 +34,7 @@ public class FileIconHelper implements FileIconLoader.IconLoadFinishListener {
         }, R.mipmap.video_default_icon);
         addItem(new String[] {
                 "jpg", "jpeg", "gif", "png", "bmp", "wbmp"
-        }, R.mipmap.file_icon_picture);
+        }, R.mipmap.category_icon_picture);
         addItem(new String[] {
                 "txt", "log", "xml", "ini", "lrc"
         }, R.mipmap.file_icon_txt);

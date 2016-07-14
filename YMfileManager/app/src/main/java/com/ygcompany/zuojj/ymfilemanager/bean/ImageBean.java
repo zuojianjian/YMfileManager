@@ -14,10 +14,6 @@ public class ImageBean {
      */
     private String folderName;
     /**
-     * 图片名称
-     */
-    private String iconName;
-    /**
      * 文件夹中的图片数
      */
     private int imageCounts;
@@ -32,14 +28,6 @@ public class ImageBean {
 
     public void setIconSize(long iconSize) {
         this.iconSize = iconSize;
-    }
-
-    public String getIconName() {
-        return iconName;
-    }
-
-    public void setIconName(String iconName) {
-        this.iconName = iconName;
     }
 
     public String getTopImagePath() {

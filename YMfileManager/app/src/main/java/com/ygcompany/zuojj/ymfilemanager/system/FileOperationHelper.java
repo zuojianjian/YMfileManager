@@ -25,7 +25,7 @@ public class FileOperationHelper {
     private static final String TAG = FileOperationHelper.class.getSimpleName();
 
     //当前文件集合
-    private final ArrayList<FileInfo> mCurFileNameList = new ArrayList<FileInfo>();
+    private final ArrayList<FileInfo> mCurFileNameList = new ArrayList<>();
 
     private boolean mMoving;
 

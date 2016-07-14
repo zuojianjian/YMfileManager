@@ -129,13 +129,13 @@ public class SelectDialog extends AlertDialog implements View.OnClickListener {
         switch (view.getId()) {
             //contextmenu菜单点击事件
             case R.id.dialog_copy:  //复制
-                mFileViewInteractionHub.onOperationCopy();
+                mFileViewInteractionHub.doOnOperationCopy();
                 isCopy = true;
                 mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_paste:  //粘贴
-                mFileViewInteractionHub.onOperationPaste();
+                mFileViewInteractionHub.onOperationButtonConfirm();
                 mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
