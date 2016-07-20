@@ -30,8 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/left_bg_shape"
-            android:layout_marginTop="3dp">
+            android:background="@drawable/left_bg_shape">
 
             <include layout="@layout/left_bar" />
 
@@ -39,7 +38,7 @@
 
 
         <View
-            android:layout_width="2dp"
+            android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="#E6E6E6" />
 
