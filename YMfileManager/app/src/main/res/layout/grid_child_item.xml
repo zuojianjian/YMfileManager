@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" >
 
-    <cn.com.emindsoft.filemanager.component.MyImageView
+    <com.emindsoft.filemanager.component.MyImageView
         android:id="@+id/child_image"
         android:layout_width="fill_parent"
         android:layout_height="120dp"
