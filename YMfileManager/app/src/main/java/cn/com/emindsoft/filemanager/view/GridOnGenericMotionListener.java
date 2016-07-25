@@ -38,8 +38,11 @@ public class GridOnGenericMotionListener implements View.OnGenericMotionListener
     public boolean onGenericMotion(View view, final MotionEvent event) {
         switch (event.getButtonState()) {
             case MotionEvent.BUTTON_PRIMARY:   // BUTTON_PRIMARY鼠标左键点击
+                if (mFileViewInteractionHub.getSelectedFileList() != null){
                     //每一个item的单击和双击的判断
+                    mFileViewInteractionHub.clearSelection();
                     ItemDoubbleOrSingle(file_path_grid);
+                }
                 break;
             case MotionEvent.BUTTON_SECONDARY:    //BUTTON_SECONDARY鼠标右键点击
                 //点击鼠标右键且让点击事件不起作用只弹出contextmenu

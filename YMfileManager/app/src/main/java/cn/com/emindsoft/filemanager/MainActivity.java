@@ -186,7 +186,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 T.showShort(MainActivity.this, "USB设备已连接～");
 
             } else if (action.equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) { //usb断开
-//                T.showShort(context, USB_DEVICE_DETACHED);
                 tv_storage.setVisibility(View.GONE);
                 sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_DETACHED);
                 setSelectedBackground(R.id.tv_computer);

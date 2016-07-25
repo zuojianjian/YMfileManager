@@ -115,10 +115,10 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
         VideoItem videoItem = videoItems.get(i);
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
         Uri data = Uri.parse(videoItem.getData());
-        intent.setDataAndType(data, "video/mp4");
+        intent.setDataAndType(data, "video/mp4,wmv,mpeg,3gp,m4v,3gpp,3g2,3gpp2,asf");
         startActivity(intent);
     }
-
+//    "mp4", "wmv", "mpeg", "m4v", "3gp", "3gpp", "3g2", "3gpp2", "asf"
     @Override
     public void onDestroyView() {
         super.onDestroyView();

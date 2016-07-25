@@ -90,14 +90,8 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     private BaseFragment curFragment;
     //fragament管理器
     FragmentManager manager = getFragmentManager();
-    //是否为第一次点击
-    private boolean isFrist = true;
-    //上一次点击位置
-    private int prePosition;
     //上次按下返回键的系统时间
     private long lastBackTime = 0;
-    //当前按下返回键的系统时间
-    private long currentBackTime = 0;
 
     /**
      * 构造器
@@ -108,7 +102,6 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         this.manager = manager;
         this.usbDeviceIsAttached = usbDeviceIsAttached;
     }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -135,7 +128,6 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
             L.e("tv_system_avail", Util.convertStorage(systemInfo.avilMemory).substring(0, 3));
 //
             pb_system.setMax((int) Double.parseDouble(Util.convertStorage(systemInfo.romMemory).substring(0, 3)) * 10);
-//            pb_system.setProgress(100);
             pb_system.setSecondaryProgress((int) (Double.parseDouble(Util.convertStorage(systemInfo.romMemory - systemInfo.avilMemory).substring(0, 3)) * 10));
         }
         //设置sd卡用量信息
@@ -167,48 +159,41 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         rl_sd_space.setOnClickListener(this);
         rl_android_service.setOnClickListener(this);
 
+        //显示外接设备磁盘
+        showMountDevices();
+    }
+    //显示外接设备磁盘
+    private void showMountDevices() {
         UsbManager usbManager = (UsbManager) getContext().getSystemService(Context.USB_SERVICE);
         //获取设备列表返回HashMap
         HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
-        //设置移动磁盘的显示和隐藏
-        if (null != usbDeviceIsAttached && usbDeviceIsAttached.equals("usb_device_attached") || deviceList.size() > 2) {
-            rl_mount_space_one.setVisibility(View.VISIBLE);
-            rl_mount_space_one.setOnClickListener(this);
-
-        } else if (null != usbDeviceIsAttached && usbDeviceIsAttached.equals("usb_device_detached")) {
-            rl_mount_space_one.setVisibility(View.GONE);
-        }
-
-
-//        //android作为host时,usbManager获取是否有usb连接的管理器
-        //遍历usb设备列表
-//        for (UsbDevice device : deviceList.values()) {
-//                        DeviceInfo deviceInfo = new DeviceInfo();
-//            //设备名称
-//            String deviceName = device.getDeviceName();
-//            String mountPath = device.getDeviceName();
+        //遍历usb设备
+//        for (UsbDevice usbDevice : deviceList.values()) {
+//            L.d(TAG, usbDevice.getDeviceClass() + "++++++++++++" + usbDevice.getDeviceSubclass() + "++++++++++++" + usbDevice.getDeviceName());
 //
-//            L.e(TAG,deviceName+"====================="+mountPath+"++++++++++++++++"+deviceList.size());
-//            //当前内存不为空时赋值路径
-////            deviceInfo.deviceName = deviceName;
-////            deviceInfo.devicePath = mountPath;
-////            deviceInfos.add(deviceInfo);
-//        }
-//        if (deviceList.size() > 0) {
-////            task = new TimerTask() {
-////                @Override
-////                public void run() {
-////                    // TODO Auto-generated method stub
-////                    Message message = new Message();
-////                    message.what = 1;
-////                    handler.sendMessage(message);
-////                }
-////            };
-////            timer.schedule(task, 1000, 3000); //延时1000ms后执行，3000ms执行一次
-//            rl_mount_space_one.setVisibility(View.VISIBLE);
-//        }else {
+//            if (usbDevice.getDeviceClass() == 0){
+////                UsbInterface anInterface = usbDevice.getInterface(0);
+////                int interfaceClass = anInterface.getInterfaceClass();
+////                UsbInterface usbInterface = usbDevice.getInterface(usbDevice.getDeviceClass());
+//            }
+//
+//            if (usbDevice.getDeviceClass() == UsbConstants.USB_CLASS_HID) {
+//                T.showShort(getContext(), "此设备为鼠标");
+//            } else if (usbDevice.getDeviceClass() == UsbConstants.USB_CLASS_MASS_STORAGE) {
+//                T.showShort(getContext(), "此设备是U盘");
+//            }
 //            rl_mount_space_one.setVisibility(View.GONE);
 //        }
+        if (usbDeviceIsAttached !=null){
+            if (usbDeviceIsAttached.equals("usb_device_attached") && deviceList.size() > 2){
+                //设置移动磁盘的显示和隐藏
+                rl_mount_space_one.setVisibility(View.VISIBLE);
+                rl_mount_space_one.setOnClickListener(this);
+            }else if (usbDeviceIsAttached.equals("usb_device_detached")){
+                rl_mount_space_one.setVisibility(View.GONE);
+            }
+        }
+
     }
 
     //computer页面各个盘符的点击事件集合
@@ -217,7 +202,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         ArrayList<FileInfo> fileInfoArrayList = null;
         FileViewInteractionHub.CopyOrMove copyOrMove = null;
         //获取当前系统时间的毫秒数
-        currentBackTime = System.currentTimeMillis();
+        long currentBackTime = System.currentTimeMillis();
         switch (view.getId()) {
             case R.id.rl_android_system:   //安卓系统
                 //比较上次按下返回键和当前按下返回键的时间差，如果大于2秒，则提示再按一次退出
