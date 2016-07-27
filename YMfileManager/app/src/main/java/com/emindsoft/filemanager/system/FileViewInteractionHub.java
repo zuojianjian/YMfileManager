@@ -28,17 +28,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.emindsoft.filemanager.R;
-
-import java.io.File;
-import java.util.ArrayList;
-
 import com.emindsoft.filemanager.MainActivity;
+import com.emindsoft.filemanager.R;
 import com.emindsoft.filemanager.component.SelectDialog;
 import com.emindsoft.filemanager.utils.L;
 import com.emindsoft.filemanager.utils.LocalCache;
 import com.emindsoft.filemanager.utils.T;
 import com.emindsoft.filemanager.view.SystemSpaceFragment;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class FileViewInteractionHub implements FileOperationHelper.IOperationProgressListener {
     private static final String LOG_TAG = "FileViewInteractionHub";
@@ -384,12 +383,12 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     public void onOperationCopy(ArrayList<FileInfo> files) {
         mFileOperationHelper.Copy(files);
-        clearSelection();
+//        clearSelection();
 //        showConfirmOperationBar(true);
 //        View confirmButton = mConfirmOperationBar.findViewById(R.id.button_moving_confirm);
 //        confirmButton.setEnabled(false);
         // refresh to hide selected files
-        refreshFileList();
+//        refreshFileList();
     }
 
     //复制路径操作

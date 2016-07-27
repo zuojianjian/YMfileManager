@@ -13,20 +13,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.emindsoft.filemanager.utils.L;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
 /**
  * 这个文件夹里面存储的内容是app2sd产生的文件夹，也就是是你手机上所有安装到SD卡的应用程序的缓存文件夹。
- * androidsecure文件夹可以删除吗？
  * 如果删除之后，软件不能正常使用，和系统没有关系。
  * 删的话除了会可能导致移动至sd卡的程序损坏，数据丢失，并不会造成什么严重后果。
  * 只要把移动到sd卡的损坏程序卸载，重装，手机就完全没有损伤，文件夹也会在再次app2sd时自动重建的。
@@ -34,6 +39,82 @@ import java.util.HashSet;
 public class Util {
 
     private static final String LOG_TAG = "Util";
+
+    //不要root权限运行的函数，此处只针对df命令  外接U盘
+    public static String[] execUsb(String[] args) {
+        String []strs = null;
+        ProcessBuilder processBuilder = new ProcessBuilder(args);
+        Process process = null;
+        InputStream inIs = null;
+        try {
+            process = processBuilder.start();
+            inIs = process.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inIs);
+            BufferedReader buff= new BufferedReader(inputStreamReader);
+            String line=null;
+            while ((line = buff.readLine()) != null) {
+                Log.e("line:",line);
+                //获取usb的或者sd卡的路径
+                if (line.startsWith("/storage/usb")){
+                    strs = line.split("\\s+");
+                    L.d(LOG_TAG, Arrays.toString(strs) +"");
+                }
+            }
+            buff.close();
+            inputStreamReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (inIs != null) {
+                    inIs.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (process != null) {
+                process.destroy();
+            }
+        }
+        return strs;
+    }    //不要root权限运行的函数，此处只针对df命令 本地磁盘
+    public static String[] execDisk(String[] args) {
+        String []strs = null;
+        ProcessBuilder processBuilder = new ProcessBuilder(args);
+        Process process = null;
+        InputStream inIs = null;
+        try {
+            process = processBuilder.start();
+            inIs = process.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inIs);
+            BufferedReader buff= new BufferedReader(inputStreamReader);
+            String line=null;
+            while ((line = buff.readLine()) != null) {
+                Log.e("line:",line);
+                //获取usb的或者sd卡的路径
+                if (line.startsWith("/storage/disk")){
+                    strs = line.split("\\s+");
+                    L.d(LOG_TAG, Arrays.toString(strs) +"");
+                }
+            }
+            buff.close();
+            inputStreamReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (inIs != null) {
+                    inIs.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (process != null) {
+                process.destroy();
+            }
+        }
+        return strs;
+    }
 
     //获得SD卡的存储状态，“mounted”表示已经就绪
     public static boolean isSDCardReady() {

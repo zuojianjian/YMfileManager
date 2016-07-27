@@ -20,17 +20,9 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.emindsoft.filemanager.R;
-
-import java.io.File;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import com.emindsoft.filemanager.BaseFragment;
 import com.emindsoft.filemanager.MainActivity;
+import com.emindsoft.filemanager.R;
 import com.emindsoft.filemanager.system.Constants;
 import com.emindsoft.filemanager.system.FileCategoryHelper;
 import com.emindsoft.filemanager.system.FileIconHelper;
@@ -43,6 +35,14 @@ import com.emindsoft.filemanager.system.IFileInteractionListener;
 import com.emindsoft.filemanager.system.Settings;
 import com.emindsoft.filemanager.system.Util;
 import com.emindsoft.filemanager.utils.LocalCache;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * 系统空间存储页面
@@ -159,7 +159,6 @@ public class SystemSpaceFragment extends BaseFragment implements
             case "view_or_dismiss":
                 mFileViewInteractionHub.onOperationShowSysFiles();
                 break;
-
             case "pop_cut":
                 mFileViewInteractionHub.onOperationMove();
                 break;

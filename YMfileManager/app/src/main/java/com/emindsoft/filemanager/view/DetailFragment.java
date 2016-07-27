@@ -11,7 +11,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.emindsoft.filemanager.BaseFragment;
 import com.emindsoft.filemanager.R;
+import com.emindsoft.filemanager.adapter.ChildAdapter;
+import com.emindsoft.filemanager.bean.ImageBean;
+import com.emindsoft.filemanager.system.Constants;
 
 import java.io.File;
 import java.util.HashMap;
@@ -19,9 +23,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import com.emindsoft.filemanager.BaseFragment;
-import com.emindsoft.filemanager.adapter.ChildAdapter;
-import com.emindsoft.filemanager.bean.ImageBean;
 
 /**
  * 显示全部图片页面
@@ -87,8 +88,9 @@ public class DetailFragment extends BaseFragment {
             if (file.isFile()) {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
-                //intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setDataAndType(Uri.fromFile(file), "image/*");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                String type = Constants.getMIMEType(file);
+                intent.setDataAndType(Uri.fromFile(file), type);
                 startActivity(intent);
             }
         }

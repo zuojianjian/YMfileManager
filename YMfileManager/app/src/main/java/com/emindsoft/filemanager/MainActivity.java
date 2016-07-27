@@ -25,11 +25,14 @@ import com.emindsoft.filemanager.fragment.OnlineNeighborFragment;
 import com.emindsoft.filemanager.fragment.PictrueFragment;
 import com.emindsoft.filemanager.fragment.SdStorageFragment;
 import com.emindsoft.filemanager.fragment.VideoFragment;
+import com.emindsoft.filemanager.system.Util;
 import com.emindsoft.filemanager.utils.DisplayUtil;
 import com.emindsoft.filemanager.utils.L;
 import com.emindsoft.filemanager.utils.LocalCache;
 import com.emindsoft.filemanager.utils.T;
 import com.emindsoft.filemanager.view.SystemSpaceFragment;
+
+import java.util.Arrays;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -64,6 +67,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     ImageView iv_setting;
 
     private static final String USB_SPACE_FRAGMENT = "usb_space_fragment";
+    //usb设备链接标识
+    private static final String USB_DEVICE_ATTACHED = "usb_device_attached";
+    private static final String USB_DEVICE_DETACHED = "usb_device_detached";
     //V4包下的fragment管理器
     FragmentManager manager = getSupportFragmentManager();
     //选择控制栏
@@ -81,6 +87,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private UsbConnectReceiver receiver;
     private SearchView search_view;
     private boolean isCtrl = false;
+    private String[] usbs;
+    private String[] cmd;
 
 
     @Override
@@ -89,18 +97,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
         //绑定viewe
         ButterKnife.bind(MainActivity.this);
+        //注册广播
+        registerReceiver();
         //初始化时默认传入grid视图,实例化不能去掉,否则会报空指针异常
         LocalCache.getInstance(MainActivity.this).setViewTag("grid");
         //初始化fragment
         initFragemnt();
         //初始化数据设置点击监听
         initView();
-        registerReceiver();
     }
 
-    /**
-     * 动态注册
-     */
     private void registerReceiver() {
         /*动态方式注册广播接收者*/
         receiver = new UsbConnectReceiver();
@@ -114,25 +120,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //初始化fragment
     private void initFragemnt() {
-        if (sdStorageFragment == null){
+        if (sdStorageFragment == null) {
             sdStorageFragment = new SdStorageFragment(manager, null);
         }
-        if (deskFragment == null){
+        if (deskFragment == null) {
             deskFragment = new DeskFragment();
         }
-        if (musicFragment == null){
+        if (musicFragment == null) {
             musicFragment = new MusicFragment();
         }
-        if (videoFragment == null){
+        if (videoFragment == null) {
             videoFragment = new VideoFragment();
         }
-        if (pictrueFragment == null){
+        if (pictrueFragment == null) {
             pictrueFragment = new PictrueFragment();
         }
-        if (usbStorageFragment == null){
-            usbStorageFragment = new SystemSpaceFragment(USB_SPACE_FRAGMENT, null, null, null);
-        }
-        if (onlineNeighborFragment == null){
+        if (onlineNeighborFragment == null) {
             onlineNeighborFragment = new OnlineNeighborFragment();
         }
 
@@ -161,29 +164,56 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
+    @Override
+    protected void onStart() {
+        cmd = new String[]{"df"};
+        usbs = Util.execUsb(cmd);
+        if (usbs != null && usbs.length > 0) {
+            T.showShort(MainActivity.this, "USB设备已连接");
+            tv_storage.setVisibility(View.VISIBLE);
+            tv_storage.setOnClickListener(MainActivity.this);  //内存存储
+            sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_ATTACHED);
+            setSelectedBackground(R.id.tv_computer);
+            manager.popBackStack();
+            curFragment = sdStorageFragment;
+            manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
+        } else if (usbs == null || usbs.length == 0) {
+            tv_storage.setVisibility(View.GONE);
+            tv_storage.setVisibility(View.GONE);
+            sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_DETACHED);
+            setSelectedBackground(R.id.tv_computer);
+            manager.popBackStack();
+            curFragment = sdStorageFragment;
+            manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
+        }
+        super.onStart();
+    }
+
     /**
      * usb 广播接收器
      */
     class UsbConnectReceiver extends BroadcastReceiver {
         private static final String TAG = "UsbConnectReceiver";
-        private static final String USB_DEVICE_ATTACHED = "usb_device_attached";
-        private static final String USB_DEVICE_DETACHED = "usb_device_detached";
 
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             L.d(TAG, "intent.getAction() ->" + action);
-
             if (action.equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) { //usb连接
-                tv_storage.setVisibility(View.VISIBLE);
-                tv_storage.setOnClickListener(MainActivity.this);  //内存存储
-                sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_ATTACHED);
-                setSelectedBackground(R.id.tv_computer);
-                manager.popBackStack();
-                curFragment = sdStorageFragment;
-                manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
-                T.showShort(MainActivity.this, "USB设备已连接～");
-
+                cmd = new String[]{"df"};
+                usbs = Util.execUsb(cmd);
+                L.d(TAG, Arrays.toString(usbs));
+                if (usbs != null){
+                    L.d(TAG, usbs[0] + "++++++++" + usbs[1] + "++++++++++++" + usbs[3]);
+                    tv_storage.setVisibility(View.VISIBLE);
+                    tv_storage.setOnClickListener(MainActivity.this);  //内存存储
+                    sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_ATTACHED);
+                    setSelectedBackground(R.id.tv_computer);
+                    manager.popBackStack();
+                    curFragment = sdStorageFragment;
+                    manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
+                    T.showShort(MainActivity.this, "USB设备已连接～");
+                }
             } else if (action.equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) { //usb断开
                 tv_storage.setVisibility(View.GONE);
                 sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_DETACHED);
@@ -191,7 +221,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 manager.popBackStack();
                 curFragment = sdStorageFragment;
                 manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
-                T.showShort(MainActivity.this, "USB设备已断开连接～");
+                T.showShort(MainActivity.this, "USB设备已断开");
             }
         }
     }
@@ -202,32 +232,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (keyCode == KeyEvent.KEYCODE_DEL && !search_view.hasFocus()) {
             onBackPressed();
         }
-        if (keyCode == KeyEvent.KEYCODE_ENTER){
-            L.e("KEYCODE_ENTER","KEYCODE_ENTER");
+        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+            L.e("KEYCODE_ENTER", "KEYCODE_ENTER");
             //TODO
         }
-        if (keyCode == KeyEvent.KEYCODE_CTRL_LEFT || keyCode == KeyEvent.KEYCODE_CTRL_RIGHT){
+        if (keyCode == KeyEvent.KEYCODE_CTRL_LEFT || keyCode == KeyEvent.KEYCODE_CTRL_RIGHT) {
             isCtrl = true;
         }
-        if (isCtrl && keyCode == KeyEvent.KEYCODE_X){
-            sendBroadcastMessage("iv_menu","pop_cut");
-            T.showShort(this,"剪切成功");
+        if (isCtrl && keyCode == KeyEvent.KEYCODE_X) {
+            sendBroadcastMessage("iv_menu", "pop_cut");
+            T.showShort(this, "剪切成功");
             isCtrl = false;
-        }if (isCtrl && keyCode == KeyEvent.KEYCODE_C){
-            sendBroadcastMessage("iv_menu","pop_copy");
-            T.showShort(this,"复制成功");
+        }
+        if (isCtrl && keyCode == KeyEvent.KEYCODE_C) {
+            sendBroadcastMessage("iv_menu", "pop_copy");
+            T.showShort(this, "复制成功");
             isCtrl = false;
-        }if (isCtrl && keyCode == KeyEvent.KEYCODE_V){
-            sendBroadcastMessage("iv_menu","pop_paste");
-            T.showShort(this,"粘贴成功");
+        }
+        if (isCtrl && keyCode == KeyEvent.KEYCODE_V) {
+            sendBroadcastMessage("iv_menu", "pop_paste");
+            T.showShort(this, "粘贴成功");
             isCtrl = false;
-        }if (isCtrl && keyCode == KeyEvent.KEYCODE_Z){
-            sendBroadcastMessage("iv_menu","pop_cacel");
-            T.showShort(this,"取消成功");
+        }
+        if (isCtrl && keyCode == KeyEvent.KEYCODE_Z) {
+            sendBroadcastMessage("iv_menu", "pop_cacel");
+            T.showShort(this, "取消成功");
             isCtrl = false;
-        }if (isCtrl && keyCode == KeyEvent.KEYCODE_D){
-            sendBroadcastMessage("iv_menu","pop_delete");
-            T.showShort(this,"删除成功");
+        }
+        if (isCtrl && keyCode == KeyEvent.KEYCODE_D) {
+            sendBroadcastMessage("iv_menu", "pop_delete");
             isCtrl = false;
         }
         return super.onKeyDown(keyCode, event);
@@ -237,25 +270,29 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_desk:   //桌面页面
-                startAndSettingFragment(R.id.tv_desk,manager,deskFragment);
+                startAndSettingFragment(R.id.tv_desk, manager, deskFragment);
                 break;
             case R.id.tv_music:  //音乐页面
-                startAndSettingFragment(R.id.tv_music,manager,musicFragment);
+                startAndSettingFragment(R.id.tv_music, manager, musicFragment);
                 break;
             case R.id.tv_video:  //视频页面
-                startAndSettingFragment(R.id.tv_video,manager,videoFragment);
+                startAndSettingFragment(R.id.tv_video, manager, videoFragment);
                 break;
             case R.id.tv_picture:   //图片页面
-                startAndSettingFragment(R.id.tv_picture,manager,pictrueFragment);
+                startAndSettingFragment(R.id.tv_picture, manager, pictrueFragment);
                 break;
             case R.id.tv_computer:  //计算机页面
-                startAndSettingFragment(R.id.tv_computer,manager,sdStorageFragment);
+                startAndSettingFragment(R.id.tv_computer, manager, sdStorageFragment);
                 break;
             case R.id.tv_storage:    //USB页面
-                startAndSettingFragment(R.id.tv_storage,manager,usbStorageFragment);
+                setSelectedBackground(R.id.tv_storage);
+                usbStorageFragment = new SystemSpaceFragment(USB_SPACE_FRAGMENT, usbs[0], null, null);
+                manager.popBackStack();
+                curFragment = usbStorageFragment;
+                manager.beginTransaction().replace(R.id.fl_mian, usbStorageFragment).commit();
                 break;
             case R.id.tv_net_service:   //网上邻居页面
-                startAndSettingFragment(R.id.tv_net_service,manager,onlineNeighborFragment);
+                startAndSettingFragment(R.id.tv_net_service, manager, onlineNeighborFragment);
                 break;
             case R.id.iv_menu:  //选项菜单popwindow
                 if (manager.getBackStackEntryCount() < 1) {
@@ -271,7 +308,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (manager.getBackStackEntryCount() < 1) {
                     T.showShort(MainActivity.this, "当前页面不支持刷新操作");
                 }
-                sendBroadcastMessage("iv_fresh",null);
+                sendBroadcastMessage("iv_fresh", null);
                 break;
             case R.id.iv_setting:   //设置
                 shownPopWidndow("iv_setting");
@@ -280,7 +317,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //顶部切换视图按钮
                 switchListOrgrid();
                 //发送广播通知视图切换
-                sendBroadcastMessage("iv_switch_view",null);
+                sendBroadcastMessage("iv_switch_view", null);
                 break;
         }
     }
@@ -298,8 +335,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (MotionEvent.ACTION_DOWN == event.getAction()){
-            sendBroadcastMessage("isTouchEvent",null);
+        if (MotionEvent.ACTION_DOWN == event.getAction()) {
+            sendBroadcastMessage("isTouchEvent", null);
         }
         return super.onTouchEvent(event);
     }
@@ -381,7 +418,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      *
      * @param name 按钮点击的标识
      */
-    private void sendBroadcastMessage(String name,String tag) {
+    private void sendBroadcastMessage(String name, String tag) {
         Intent intent = new Intent();
         switch (name) {
             case "iv_switch_view":
@@ -453,7 +490,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     //移除poupwindow
-    public void DismissPopwindow(){
+    public void DismissPopwindow() {
         popWinShare.dismiss();
     }
 
@@ -491,8 +528,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-         // 解绑注册
-        this.unregisterReceiver(receiver);
+        // 解绑注册
+//        this.unregisterReceiver(receiver);
     }
 
 }

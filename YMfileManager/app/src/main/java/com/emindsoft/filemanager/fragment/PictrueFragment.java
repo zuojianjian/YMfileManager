@@ -19,7 +19,12 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.emindsoft.filemanager.BaseFragment;
 import com.emindsoft.filemanager.R;
+import com.emindsoft.filemanager.adapter.GroupAdapter;
+import com.emindsoft.filemanager.bean.ImageBean;
+import com.emindsoft.filemanager.system.Util;
+import com.emindsoft.filemanager.view.DetailFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,11 +34,6 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import com.emindsoft.filemanager.BaseFragment;
-import com.emindsoft.filemanager.adapter.GroupAdapter;
-import com.emindsoft.filemanager.bean.ImageBean;
-import com.emindsoft.filemanager.system.Util;
-import com.emindsoft.filemanager.view.DetailFragment;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -157,7 +157,8 @@ public class PictrueFragment extends BaseFragment {
                 Cursor mCursor = mContentResolver.query(mImageUri, null,
                         MediaStore.Images.Media.MIME_TYPE + "=? or "
                                 + MediaStore.Images.Media.MIME_TYPE + "=?",
-                        new String[]{"image/jpeg", "image/png"}, MediaStore.Images.Media.DATE_MODIFIED);
+                        new String[]{"image/jpeg", "image/png"},
+                        MediaStore.Images.Media.DATE_MODIFIED);
 
                 assert mCursor != null;
                 while (mCursor.moveToNext()) {

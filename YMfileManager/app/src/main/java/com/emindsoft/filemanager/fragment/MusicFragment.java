@@ -18,15 +18,17 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.emindsoft.filemanager.BaseFragment;
 import com.emindsoft.filemanager.R;
+import com.emindsoft.filemanager.adapter.AudioAdapter;
+import com.emindsoft.filemanager.bean.AudioItem;
+import com.emindsoft.filemanager.system.Constants;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import com.emindsoft.filemanager.BaseFragment;
-import com.emindsoft.filemanager.adapter.AudioAdapter;
-import com.emindsoft.filemanager.bean.AudioItem;
 
 /**
  * 音乐显示页面
@@ -87,20 +89,12 @@ public class MusicFragment  extends BaseFragment implements AdapterView.OnItemCl
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//        MediaPlayer mediaPlayer = new MediaPlayer();
-        //            mediaPlayer.release();
-//            mediaPlayer = null;
-//        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//        try {
-//            mediaPlayer.setDataSource(getContext(), Uri.parse(currentPath));
-//            mediaPlayer.prepare();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        mediaPlayer.start();
+        File f = new File(audioItems.get(i).getData());
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setAction("android.intent.action.MUSIC_PLAYER");
+        intent.setAction(Intent.ACTION_VIEW);
+        String type = Constants.getMIMEType(f);
+        intent.setDataAndType(Uri.fromFile(f), type);
         startActivity(intent);
     }
 

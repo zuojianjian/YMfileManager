@@ -17,15 +17,17 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.emindsoft.filemanager.BaseFragment;
 import com.emindsoft.filemanager.R;
+import com.emindsoft.filemanager.adapter.VideoAdapter;
+import com.emindsoft.filemanager.adapter.VideoItem;
+import com.emindsoft.filemanager.system.Constants;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import com.emindsoft.filemanager.BaseFragment;
-import com.emindsoft.filemanager.adapter.VideoAdapter;
-import com.emindsoft.filemanager.adapter.VideoItem;
 
 /**
  * 视频列表页面
@@ -114,12 +116,14 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         //点击item播放视频
         VideoItem videoItem = videoItems.get(i);
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-        Uri data = Uri.parse(videoItem.getData());
-        intent.setDataAndType(data, "video/mp4,wmv,mpeg,3gp,m4v,3gpp,3g2,3gpp2,asf");
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        File f = new File(videoItem.getData());
+        String type = Constants.getMIMEType(f);
+        intent.setDataAndType(Uri.fromFile(f), type);
         startActivity(intent);
     }
-//    "mp4", "wmv", "mpeg", "m4v", "3gp", "3gpp", "3g2", "3gpp2", "asf"
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

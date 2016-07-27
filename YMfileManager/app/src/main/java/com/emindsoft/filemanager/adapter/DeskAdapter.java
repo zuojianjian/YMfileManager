@@ -8,10 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.emindsoft.filemanager.R;
+import com.emindsoft.filemanager.bean.AppInfo;
 
 import java.util.ArrayList;
-
-import com.emindsoft.filemanager.bean.AppInfo;
 
 /**
  * 桌面图标adapter
@@ -44,24 +43,12 @@ public class DeskAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View convertView, ViewGroup viewGroup) {
-//        Hodler hodler = null;
-//        if (convertView == null) {
-//            hodler = new Hodler();
         convertView = View.inflate(context, R.layout.desk_icon_item, null);
         ImageView iv_desk_icon = (ImageView) convertView.findViewById(R.id.iv_desk_icon);
         TextView tv_app_name = (TextView) convertView.findViewById(R.id.tv_app_name);
-//            convertView.setTag(hodler);
-//        } else {
-//            hodler = (Hodler) convertView.getTag();
-//        }
         AppInfo appInfo = appInfos.get(i);
         iv_desk_icon.setImageDrawable(appInfo.getIcon());
         tv_app_name.setText(appInfo.getAppName());
         return convertView;
     }
 }
-
-//    static class Hodler {
-//        TextView tv_app_name;
-//        ImageView iv_desk_icon;
-//    }

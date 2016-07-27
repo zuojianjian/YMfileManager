@@ -10,12 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.emindsoft.filemanager.R;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import com.emindsoft.filemanager.system.FileSortHelper;
 import com.emindsoft.filemanager.system.FileViewInteractionHub;
 import com.emindsoft.filemanager.utils.T;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * 自定义dialog类，用于显示contextmenu
@@ -105,6 +105,7 @@ public class SelectDialog extends AlertDialog implements View.OnClickListener {
         }else {
             dialog_paste.setTextColor(Color.BLACK);
             dialog_paste.setOnClickListener(this);
+            isCopy = false;
         }
         dialog_rename.setOnClickListener(this);
         dialog_delete.setOnClickListener(this);
@@ -131,12 +132,12 @@ public class SelectDialog extends AlertDialog implements View.OnClickListener {
             case R.id.dialog_copy:  //复制
                 mFileViewInteractionHub.doOnOperationCopy();
                 isCopy = true;
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_paste:  //粘贴
+                mFileViewInteractionHub.getSelectedFileList();
                 mFileViewInteractionHub.onOperationButtonConfirm();
-                mFileViewInteractionHub.clearSelection();
+//                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_rename:  //重命名
