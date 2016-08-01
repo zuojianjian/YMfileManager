@@ -125,18 +125,12 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         if (null != systemInfo) {
             tv_system_total.setText(Util.convertStorage(systemInfo.romMemory));
             tv_system_avail.setText(Util.convertStorage(systemInfo.avilMemory));
-            L.e("tv_system_total", Util.convertStorage(systemInfo.romMemory).substring(0, 3));
-            L.e("tv_system_avail", Util.convertStorage(systemInfo.avilMemory).substring(0, 3));
-//
+//            L.e("tv_system_total", Util.convertStorage(systemInfo.romMemory).substring(0, 3));
+//            L.e("tv_system_avail", Util.convertStorage(systemInfo.avilMemory).substring(0, 3));
             pb_system.setMax((int) Double.parseDouble(Util.convertStorage(systemInfo.romMemory).substring(0, 3)) * 10);
             pb_system.setSecondaryProgress((int) (Double.parseDouble(Util.convertStorage(systemInfo.romMemory - systemInfo.avilMemory).substring(0, 3)) * 10));
         }
-//        //设置本地磁盘用量信息
-//        String[] cmd = {"df"};
-//        String[] disks = Util.execUsb(cmd);
-//        if (disks != null && disks.length > 0){
-//            showMountDevices(disks);
-//        }
+
         //设置sd卡（个人空间）信息
         Util.SDCardInfo sdCardInfo = Util.getSDCardInfo();
         if (null != sdCardInfo) {
@@ -168,24 +162,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
             String[] usbs = Util.execUsb(cmd);
             if (usbs != null && usbs.length > 0) {
                 showMountDevices(usbs);
-                rl_mount_space_one.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (currentBackTime - lastBackTime > 800) {
-                            //设置选中背景
-                            setSelectedCardBg(R.id.rl_mount_space_one);
-                            lastBackTime = currentBackTime;
-                        } else { //如果两次按下的时间差小于1秒，则进入
-                            if (curFragment != null) {
-                                fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
-                                copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
-                            }
-                            curFragment = new SystemSpaceFragment(USB_SPACE_FRAGMENT, mountPath, fileInfoArrayList, copyOrMove);
-                            manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
-                                    .addToBackStack(null).commit();
-                        }
-                    }
-                });
+                rl_mount_space_one.setOnClickListener(new MountItemClick());
             }
         } else if (usbDeviceIsAttached != null && usbDeviceIsAttached.equals("usb_device_detached")){
             rl_mount_space_one.setVisibility(View.GONE);
@@ -212,72 +189,36 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         switch (view.getId()) {
             case R.id.rl_android_system:   //安卓系统
                 //比较上次按下返回键和当前按下返回键的时间差，如果大于2秒，则提示再按一次退出
-                if (currentBackTime - lastBackTime > 800) {
-                    //设置选中背景
-                    setSelectedCardBg(R.id.rl_android_system);
-                    lastBackTime = currentBackTime;
-                } else { //如果两次按下的时间差小于1秒，则退出程序
-                    if (curFragment != null) {
-                        fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
-                        copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
-                    }
-                    if (fileInfoArrayList != null && copyOrMove != null) {
-                        T.showShort(getContext(), "系统目录只有读取权限！当前操作失败～");
-                    }
-                    curFragment = new SystemSpaceFragment(SYSTEM_SPACE_FRAGMENT, null, fileInfoArrayList, copyOrMove);
-                    //开启事务替换当前fragment
-                    manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
-                            .addToBackStack(null).commit();
-                }
+                setDiskClickInfo(R.id.rl_android_system,SYSTEM_SPACE_FRAGMENT);
                 break;
             case R.id.rl_sd_space:     //磁盘空间
-                //比较上次按下返回键和当前按下返回键的时间差，如果大于2秒，则提示再按一次退出
-                if (currentBackTime - lastBackTime > 800) {
-                    //设置选中背景
-                    setSelectedCardBg(R.id.rl_sd_space);
-                    lastBackTime = currentBackTime;
-                } else { //如果两次按下的时间差小于1秒，则进入
-                    if (curFragment != null) {
-                        fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
-                        copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
-                    }
-                    curFragment = new SystemSpaceFragment(SD_SPACE_FRAGMENT, null, fileInfoArrayList, copyOrMove);
-                    manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
-                            .addToBackStack(null).commit();
-                }
+                setDiskClickInfo(R.id.rl_sd_space,SD_SPACE_FRAGMENT);
                 break;
             case R.id.rl_mount_space_one:   //移动磁盘
-                //比较上次按下返回键和当前按下返回键的时间差，如果大于0.8秒，则选中
-                if (currentBackTime - lastBackTime > 800) {
-                    //设置选中背景
-                    setSelectedCardBg(R.id.rl_mount_space_one);
-                    lastBackTime = currentBackTime;
-                } else { //如果两次按下的时间差小于1秒，则进入
-                    if (curFragment != null) {
-                        fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
-                        copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
-                    }
-                    curFragment = new SystemSpaceFragment(USB_SPACE_FRAGMENT, mountPath, fileInfoArrayList, copyOrMove);
-                    manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
-                            .addToBackStack(null).commit();
-                }
+                setDiskClickInfo(R.id.rl_mount_space_one,USB_SPACE_FRAGMENT);
                 break;
-            case R.id.rl_android_service:
-                //比较上次按下返回键和当前按下返回键的时间差，如果大于0.8秒，则选中
-                if (currentBackTime - lastBackTime > 800) {
-                    //设置选中背景
-                    setSelectedCardBg(R.id.rl_android_service);
-                    lastBackTime = currentBackTime;
-                } else { //如果两次按下的时间差小于0.8秒，则退出程序
-                    if (curFragment != null) {
-                        fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
-                        copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
-                    }
-                    curFragment = new SystemSpaceFragment(YUN_SPACE_FRAGMENT, null, fileInfoArrayList, copyOrMove);
-                    manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
-                            .addToBackStack(null).commit();
-                }
+            case R.id.rl_android_service:  //云服务
+                setDiskClickInfo(R.id.rl_android_service,YUN_SPACE_FRAGMENT);
                 break;
+        }
+    }
+
+    private void setDiskClickInfo(int id, String tag) {
+        if (currentBackTime - lastBackTime > 800) {
+            //设置选中背景
+            setSelectedCardBg(id);
+            lastBackTime = currentBackTime;
+        } else { //如果两次按下的时间差小于0.8秒，则退出程序
+            if (curFragment != null) {
+                fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
+                copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
+            }
+            if (fileInfoArrayList != null && copyOrMove != null) {
+                T.showShort(getContext(), "系统目录只有读取权限！当前操作失败～");
+            }
+            curFragment = new SystemSpaceFragment(tag, null, fileInfoArrayList, copyOrMove);
+            manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
+                    .addToBackStack(null).commit();
         }
     }
 
@@ -344,6 +285,25 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         if (baseFragment instanceof SystemSpaceFragment) {
             SystemSpaceFragment systemSpaceFragment = (SystemSpaceFragment) baseFragment;
             systemSpaceFragment.goBack();
+        }
+    }
+
+    private class MountItemClick implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            if (currentBackTime - lastBackTime > 800) {
+                //设置选中背景
+                setSelectedCardBg(R.id.rl_mount_space_one);
+                lastBackTime = currentBackTime;
+            } else { //如果两次按下的时间差小于1秒，则进入
+                if (curFragment != null) {
+                    fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
+                    copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
+                }
+                curFragment = new SystemSpaceFragment(USB_SPACE_FRAGMENT, mountPath, fileInfoArrayList, copyOrMove);
+                manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
+                        .addToBackStack(null).commit();
+            }
         }
     }
 }

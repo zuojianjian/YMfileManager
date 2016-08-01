@@ -529,7 +529,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onDestroy() {
         super.onDestroy();
         // 解绑注册
-//        this.unregisterReceiver(receiver);
+        this.unregisterReceiver(receiver);
     }
 
 }

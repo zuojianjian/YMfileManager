@@ -130,86 +130,75 @@ public class SelectDialog extends AlertDialog implements View.OnClickListener {
         switch (view.getId()) {
             //contextmenu菜单点击事件
             case R.id.dialog_copy:  //复制
-                mFileViewInteractionHub.doOnOperationCopy();
-                isCopy = true;
-                mFileViewInteractionHub.dismissContextDialog();
+                try {
+                    mFileViewInteractionHub.doOnOperationCopy();
+                    isCopy = true;
+                    mFileViewInteractionHub.dismissContextDialog();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 break;
             case R.id.dialog_paste:  //粘贴
                 mFileViewInteractionHub.getSelectedFileList();
                 mFileViewInteractionHub.onOperationButtonConfirm();
-//                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_rename:  //重命名
                 mFileViewInteractionHub.onOperationRename();
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_delete:  //删除
                 mFileViewInteractionHub.onOperationDelete();
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_move:  //剪切
                 mFileViewInteractionHub.onOperationMove();
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_send:  //发送
                 mFileViewInteractionHub.onOperationSend();
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_sort:  //分类
                 dialogFlags = 0;
                 mFileViewInteractionHub.dismissContextDialog();
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.shownContextDialog(mFileViewInteractionHub);
                 break;
             case R.id.dialog_info:  //属性
                 mFileViewInteractionHub.onOperationInfo();
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_copy_path:  //复制路径
                 mFileViewInteractionHub.onOperationCopyPath();
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 T.showShort(context, "dialog_copy_path");
                 break;
             case R.id.dialog_new_folder:  //创建文件夹
                 mFileViewInteractionHub.onOperationCreateFolder();
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_visibale_file:  //显示隐藏文件
                 mFileViewInteractionHub.onOperationShowSysFiles();
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
 
             //sort分类dialog
             case R.id.dialog_sort_name:  //名称
                 mFileViewInteractionHub.onSortChanged(FileSortHelper.SortMethod.name);
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_sort_size:  //大小
                 mFileViewInteractionHub.onSortChanged(FileSortHelper.SortMethod.size);
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_sort_time:  //日期
                 mFileViewInteractionHub.onSortChanged(FileSortHelper.SortMethod.date);
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_sort_type:  //类型
                 mFileViewInteractionHub.onSortChanged(FileSortHelper.SortMethod.type);
-                mFileViewInteractionHub.clearSelection();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
-
         }
     }
 

@@ -859,8 +859,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     public void dismissContextDialog() {
         selectDialog.dismiss();
-        clearSelection();
-        refreshFileList();
+//        refreshFileList();
     }
 
     //下面为item的触屏点击事件监听代码
