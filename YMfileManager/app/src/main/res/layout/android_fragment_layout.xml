@@ -299,8 +299,6 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:max="100"
-                    android:progress="50"
                     android:progressDrawable="@drawable/my_progressbar" />
 
                 <LinearLayout

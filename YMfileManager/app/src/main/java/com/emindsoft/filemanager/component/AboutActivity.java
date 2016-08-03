@@ -9,8 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.emindsoft.filemanager.R;
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 /**
  * 关于本应用介绍页面
@@ -18,19 +16,22 @@ import butterknife.ButterKnife;
  */
 public class AboutActivity extends Activity implements View.OnClickListener {
     //初始化组件
-    @Bind(R.id.iv_about_back)
-    ImageView iv_about_back;
-    @Bind(R.id.tv_public)
-    TextView tv_public;
-    @Bind(R.id.tv_discuss)
-    TextView tv_discuss;
+    private ImageView iv_about_back;
+    private TextView tv_public;
+    private TextView tv_discuss;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-        ButterKnife.bind(AboutActivity.this);
+        initView();
         initData();
+    }
+
+    private void initView() {
+        iv_about_back = (ImageView) findViewById(R.id.iv_about_back);
+        tv_public = (TextView) findViewById(R.id.tv_public);
+        tv_discuss = (TextView) findViewById(R.id.tv_discuss);
     }
 
     private void initData() {
@@ -42,7 +43,7 @@ public class AboutActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.iv_about_back:
                 finish();
                 break;

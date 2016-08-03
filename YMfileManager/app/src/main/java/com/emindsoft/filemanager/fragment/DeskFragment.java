@@ -15,17 +15,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.emindsoft.filemanager.R;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import com.emindsoft.filemanager.BaseFragment;
+import com.emindsoft.filemanager.R;
 import com.emindsoft.filemanager.adapter.DeskAdapter;
 import com.emindsoft.filemanager.bean.AppInfo;
 import com.emindsoft.filemanager.utils.L;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 桌面应用图标页面
@@ -37,8 +34,7 @@ public class DeskFragment extends BaseFragment {
     //应用包名
     private String packageName;
     private DeskAdapter deskAdapter;
-    @Bind(R.id.gv_desk_icon)
-    GridView gv_desk_icon;
+    private GridView gv_desk_icon;
     private PackageManager pm;
 
     @Override
@@ -50,9 +46,13 @@ public class DeskFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.desk_fragment_layout, container, false);
-        ButterKnife.bind(this, view);
+        initView(view);
         initData();
         return view;
+    }
+
+    private void initView(View view) {
+        gv_desk_icon = (GridView) view.findViewById(R.id.gv_desk_icon);
     }
 
     //初始化数据
@@ -182,11 +182,5 @@ public class DeskFragment extends BaseFragment {
     @Override
     public void goBack() {
 
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 }

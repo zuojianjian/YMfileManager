@@ -14,50 +14,30 @@ import com.emindsoft.filemanager.system.FileSortHelper;
 import com.emindsoft.filemanager.system.FileViewInteractionHub;
 import com.emindsoft.filemanager.utils.T;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 /**
  * 自定义dialog类，用于显示contextmenu
  * Created by zuojj on 16-6-29.
  */
 public class SelectDialog extends AlertDialog implements View.OnClickListener {
     //contextMenu菜单
-    @Bind(R.id.dialog_copy)
     TextView dialog_copy;
-    @Bind(R.id.dialog_paste)
     TextView dialog_paste;
-    @Bind(R.id.dialog_rename)
     TextView dialog_rename;
-    @Bind(R.id.dialog_delete)
     TextView dialog_delete;
-    @Bind(R.id.dialog_move)
     TextView dialog_move;
-    @Bind(R.id.dialog_send)
     TextView dialog_send;
-    @Bind(R.id.dialog_sort)
     TextView dialog_sort;
-    @Bind(R.id.dialog_copy_path)
     TextView dialog_copy_path;
-    @Bind(R.id.dialog_info)
     TextView dialog_info;
-    @Bind(R.id.dialog_new_folder)
     TextView dialog_new_folder;
-    @Bind(R.id.dialog_visibale_file)
     TextView dialog_visibale_file;
     //sort分类
-    @Bind(R.id.dialog_sort_name)
     TextView dialog_sort_name;
-    @Bind(R.id.dialog_sort_size)
     TextView dialog_sort_size;
-    @Bind(R.id.dialog_sort_time)
     TextView dialog_sort_time;
-    @Bind(R.id.dialog_sort_type)
     TextView dialog_sort_type;
     //线性布局
-    @Bind(R.id.dialog_content_menu)
     LinearLayout dialog_content_menu;
-    @Bind(R.id.dialog_sort_menu)
     LinearLayout dialog_sort_menu;
     //上下文
     private Context context;
@@ -76,7 +56,7 @@ public class SelectDialog extends AlertDialog implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_dialog);
-        ButterKnife.bind(SelectDialog.this);
+        initView();
         //判断显示哪一个dialog
         if (dialogFlags == -1) {
             dialog_content_menu.setVisibility(View.VISIBLE);
@@ -94,13 +74,34 @@ public class SelectDialog extends AlertDialog implements View.OnClickListener {
                 mFileViewInteractionHub.refreshFileList();
             }
         });
-        initView();
+        initData();
     }
 
     private void initView() {
+        dialog_copy = (TextView) findViewById(R.id.dialog_copy);
+        dialog_paste = (TextView) findViewById(R.id.dialog_paste);
+        dialog_rename = (TextView) findViewById(R.id.dialog_rename);
+        dialog_delete = (TextView) findViewById(R.id.dialog_delete);
+        dialog_move = (TextView) findViewById(R.id.dialog_move);
+        dialog_send = (TextView) findViewById(R.id.dialog_send);
+        dialog_sort = (TextView) findViewById(R.id.dialog_sort);
+        dialog_copy_path = (TextView) findViewById(R.id.dialog_copy_path);
+        dialog_info = (TextView) findViewById(R.id.dialog_info);
+        dialog_new_folder = (TextView) findViewById(R.id.dialog_new_folder);
+        dialog_visibale_file = (TextView) findViewById(R.id.dialog_visibale_file);
+        dialog_sort_name = (TextView) findViewById(R.id.dialog_sort_name);
+        dialog_sort_size = (TextView) findViewById(R.id.dialog_sort_size);
+        dialog_sort_time = (TextView) findViewById(R.id.dialog_sort_time);
+        dialog_sort_type = (TextView) findViewById(R.id.dialog_sort_type);
+
+        dialog_content_menu = (LinearLayout) findViewById(R.id.dialog_content_menu);
+        dialog_sort_menu = (LinearLayout) findViewById(R.id.dialog_sort_menu);
+    }
+
+    private void initData() {
         //contextmenu菜单点击事件
         dialog_copy.setOnClickListener(this);
-        if (!isCopy){
+        if (!isCopy || mFileViewInteractionHub.getSelectedFileList() == null){
             dialog_paste.setTextColor(Color.LTGRAY);
         }else {
             dialog_paste.setTextColor(Color.BLACK);
@@ -198,6 +199,8 @@ public class SelectDialog extends AlertDialog implements View.OnClickListener {
             case R.id.dialog_sort_type:  //类型
                 mFileViewInteractionHub.onSortChanged(FileSortHelper.SortMethod.type);
                 mFileViewInteractionHub.dismissContextDialog();
+                break;
+            default:
                 break;
         }
     }

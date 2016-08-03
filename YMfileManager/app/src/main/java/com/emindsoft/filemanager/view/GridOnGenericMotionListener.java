@@ -14,15 +14,8 @@ import com.emindsoft.filemanager.utils.L;
  * Created by zuojj on 16-6-30.
  */
 public class GridOnGenericMotionListener implements View.OnGenericMotionListener {
-    private static boolean flag = false;// 用来判断是否已经执行双击事件
-    private static int clickNum = 0;// 用来判断是否该执行双击事件
-
     private GridView file_path_grid;
     private FileViewInteractionHub mFileViewInteractionHub;
-    //是否为第一次点击
-    private boolean isFrist = true;
-    //上一次点击位置
-    private int prePosition;
     private int  mLastClickId;
     private long mLastClickTime = 0;
 
@@ -48,7 +41,9 @@ public class GridOnGenericMotionListener implements View.OnGenericMotionListener
                 file_path_grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        mFileViewInteractionHub.onListItemRightClick(parent, view, position, id);
+                        if (mLastClickId != position){
+                            mFileViewInteractionHub.clearSelection();
+                        }
                         view.setSelected(true);
                         parent.getChildAt(position).findViewById(R.id.rl_folder_bg).setSelected(true);
                         parent.getChildAt(position).findViewById(R.id.ll_folder_text_bg).setSelected(true);

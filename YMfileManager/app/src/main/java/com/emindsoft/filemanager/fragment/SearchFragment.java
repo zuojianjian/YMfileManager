@@ -11,17 +11,14 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.emindsoft.filemanager.R;
-
-import java.util.ArrayList;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import com.emindsoft.filemanager.BaseFragment;
+import com.emindsoft.filemanager.R;
 import com.emindsoft.filemanager.bean.SearchInfo;
 import com.emindsoft.filemanager.utils.L;
 import com.emindsoft.filemanager.utils.LocalCache;
 import com.emindsoft.filemanager.view.SystemSpaceFragment;
+
+import java.util.ArrayList;
 
 /**
  * 数据搜索页面
@@ -33,8 +30,7 @@ public class SearchFragment extends BaseFragment{
     private ArrayList<SearchInfo> mSearchList = new ArrayList<>();
     FragmentManager manager = getFragmentManager();
 
-    @Bind(R.id.lv_mian_search)
-    ListView lv_mian_search;
+    private ListView lv_mian_search;
 
     public SearchFragment(FragmentManager manager, ArrayList<SearchInfo> mFileList) {
         this.mSearchList = mFileList;
@@ -49,9 +45,13 @@ public class SearchFragment extends BaseFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_fragment_layout, container, false);
-        ButterKnife.bind(this, view);
+        initView(view);
         initData();
         return view;
+    }
+
+    private void initView(View view) {
+        lv_mian_search = (ListView) view.findViewById(R.id.lv_mian_search);
     }
 
     private void initData() {

@@ -21,17 +21,13 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 /**
  * 显示全部图片页面
  * Created by zuojj on 16-5-18.
  */
 public class DetailFragment extends BaseFragment {
 
-    @Bind(R.id.gv_detail_pictrue)
-    GridView gv_detail_pictrue;
+    private GridView gv_detail_pictrue;
 
     private int i;
     private List<String> childPathList;
@@ -48,16 +44,6 @@ public class DetailFragment extends BaseFragment {
     public DetailFragment() {
     }
 
-//    public static DetailFragment getInstance(HashMap<String, List<String>> mGruopMap, ArrayList<ImageBean> list, int i){
-//
-//        DetailFragment instance = new DetailFragment();
-//        Bundle args = new Bundle();
-//        args.putSerializable("groupmap", mGruopMap);
-//        args.putSerializable("list", list);
-//        args.putSerializable("int", i);
-//        return instance;
-//    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +53,7 @@ public class DetailFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.gv_detail_layout, container, false);
-        ButterKnife.bind(this, view);
+        gv_detail_pictrue = (GridView) view.findViewById(R.id.gv_detail_pictrue);
         initView();
         return view;
     }
@@ -94,12 +80,6 @@ public class DetailFragment extends BaseFragment {
                 startActivity(intent);
             }
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override

@@ -72,11 +72,11 @@ public class FileManagerPreferenceActivity extends PreferenceActivity implements
         if ("system_space_fragment".equals(sdOrSystem)){
             primaryFolder = settings.getString(PRIMARY_FOLDER, context.getString(R.string.default_system_primary_folder, Constants.ROOT_PATH));
         }else if ("sd_space_fragment".equals(sdOrSystem)){
-            primaryFolder = settings.getString(PRIMARY_FOLDER, context.getString(R.string.default_sd_primary_folder, Constants.ROOT_PATH));
+            primaryFolder = settings.getString(PRIMARY_FOLDER, directorPath);
         }else if ("usb_space_fragment".equals(sdOrSystem)){
             primaryFolder = settings.getString(PRIMARY_FOLDER, directorPath);
         }else if ("yun_space_fragment".equals(sdOrSystem)){
-            primaryFolder = settings.getString(PRIMARY_FOLDER, context.getString(R.string.default_yun_primary_folder, Constants.ROOT_PATH));
+            primaryFolder = settings.getString(PRIMARY_FOLDER, directorPath);
         }else if ("search_fragment".equals(sdOrSystem)){
             primaryFolder = settings.getString(PRIMARY_FOLDER, directorPath);
         }

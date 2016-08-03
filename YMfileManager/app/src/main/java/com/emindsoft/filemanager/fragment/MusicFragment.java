@@ -27,9 +27,6 @@ import com.emindsoft.filemanager.system.Constants;
 import java.io.File;
 import java.util.ArrayList;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 /**
  * 音乐显示页面
  * Created by zuojj on 16-5-18.
@@ -41,10 +38,8 @@ public class MusicFragment  extends BaseFragment implements AdapterView.OnItemCl
     private ContentResolver contentResolver;
     private ProgressDialog mProgressDialog;
 
-    @Bind(R.id.gv_audio_pager)
-    GridView gv_audio_pager;
-    @Bind(R.id.tv_no_audio)
-    TextView tv_no_audio;
+    private GridView gv_audio_pager;
+    private TextView tv_no_audio;
 
     private Handler handler = new Handler() {
         @Override
@@ -77,12 +72,17 @@ public class MusicFragment  extends BaseFragment implements AdapterView.OnItemCl
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.music_fragment_layout, container, false);
-        ButterKnife.bind(this, view);
-        initView();
+        initView(view);
+        initData();
         return view;
     }
 
-    private void initView() {
+    private void initView(View view) {
+        gv_audio_pager = (GridView) view.findViewById(R.id.gv_audio_pager);
+        tv_no_audio = (TextView) view.findViewById(R.id.tv_no_audio);
+    }
+
+    private void initData() {
         getAudioList();
         gv_audio_pager.setOnItemClickListener(this);
     }

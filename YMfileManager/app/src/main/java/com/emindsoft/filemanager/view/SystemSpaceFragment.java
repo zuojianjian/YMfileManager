@@ -40,10 +40,6 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 /**
  * 系统空间存储页面
  * Created by zuojj on 16-5-19.
@@ -51,36 +47,29 @@ import butterknife.ButterKnife;
 public class SystemSpaceFragment extends BaseFragment implements
         IFileInteractionListener, MainActivity.IBackPressedListener {
     public static final String EXT_FILTER_KEY = "ext_filter";
-
     private static final String LOG_TAG = "SystemSpaceFragment";
-
     public static final String ROOT_DIRECTORY = "root_directory";
-
     public static final String PICK_FOLDER = "pick_folder";
-
     // private TextView mCurrentPathTextView;
     private ArrayAdapter<FileInfo> mAdapter;
-
     private FileViewInteractionHub mFileViewInteractionHub;
-
     private IFileInteractionListener mFileViewListener;
-
     //区分文件的工具类
     private FileCategoryHelper mFileCagetoryHelper;
-
     //设置不同文件图标的工具类
     private FileIconHelper mFileIconHelper;
-
     //文件list集合
     private ArrayList<FileInfo> mFileNameList = new ArrayList<>();
-
     private Activity mActivity;
-
     private View view;
-
+    private boolean mBackspaceExit;
+    ListView file_path_list;
+    GridView file_path_grid;
+    LinearLayout pick_operation_bar;
+    Button button_pick_confirm;
+    Button button_pick_cancel;
     //获得SD卡的存储目录
     private static final String sdDir = Util.getSdDirectory();
-
     //传入的标识和路径区分加载文件目录位置
     private String sdOrSystem;
     private String directorPath;
@@ -104,7 +93,7 @@ public class SystemSpaceFragment extends BaseFragment implements
                 case "com.switchview":
                     //清空数据集合，重新加载数据和布局（view视图的切换）
                     mAdapter.clear();
-                    initView();
+                    initData();
                     mFileViewInteractionHub.clearSelection();
                     break;
                 case "com.switchmenu": // 顶部菜单栏操作
@@ -117,7 +106,7 @@ public class SystemSpaceFragment extends BaseFragment implements
                     // 顶部菜单栏刷新操作
                     mFileViewInteractionHub.onOperationReferesh();
                     mAdapter.clear();
-                    initView();
+                    initData();
                     break;
                 case "com.isTouchEvent":
                     isTouchEvent = true;
@@ -171,18 +160,6 @@ public class SystemSpaceFragment extends BaseFragment implements
         }
     }
 
-    private boolean mBackspaceExit;
-    @Bind(R.id.file_path_list)
-    ListView file_path_list;
-    @Bind(R.id.file_path_grid)
-    GridView file_path_grid;
-    @Bind(R.id.pick_operation_bar)
-    LinearLayout pick_operation_bar;
-    @Bind(R.id.button_pick_confirm)
-    Button button_pick_confirm;
-    @Bind(R.id.button_pick_cancel)
-    Button button_pick_cancel;
-
     /**
      * 各个页面的构造参数
      * @param sdSpaceFragment 传入的标识和路径区分加载文件目录位置
@@ -207,13 +184,20 @@ public class SystemSpaceFragment extends BaseFragment implements
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.system_fragment_layout, container, false);
-        ButterKnife.bind(this, view);
-        initView();
+        initView(view);
+        initData();
         return view;
     }
 
-    private void initView() {
+    private void initView(View view) {
+        file_path_list = (ListView) view.findViewById(R.id.file_path_list);
+        file_path_grid = (GridView) view.findViewById(R.id.file_path_grid);
+        pick_operation_bar = (LinearLayout) view.findViewById(R.id.pick_operation_bar);
+        button_pick_confirm = (Button) view.findViewById(R.id.button_pick_confirm);
+        button_pick_cancel = (Button) view.findViewById(R.id.button_pick_cancel);
+    }
 
+    private void initData() {
         mActivity = getActivity();
         mFileCagetoryHelper = new FileCategoryHelper(mActivity);
         mFileViewInteractionHub = new FileViewInteractionHub(this);
@@ -361,7 +345,6 @@ public class SystemSpaceFragment extends BaseFragment implements
         super.onDestroyView();
         //当页面销毁时解绑广播接收器和当前view
         mActivity.unregisterReceiver(mReceiver);
-        ButterKnife.unbind(this);
     }
 
 //    //准备创建optionmenu

@@ -53,7 +53,6 @@ public class Util {
             BufferedReader buff= new BufferedReader(inputStreamReader);
             String line=null;
             while ((line = buff.readLine()) != null) {
-                Log.e("line:",line);
                 //获取usb的或者sd卡的路径
                 if (line.startsWith("/storage/usb")){
                     strs = line.split("\\s+");
@@ -77,7 +76,8 @@ public class Util {
             }
         }
         return strs;
-    }    //不要root权限运行的函数，此处只针对df命令 本地磁盘
+    }
+    //不要root权限运行的函数，此处只针对df命令 本地磁盘
     public static String[] execDisk(String[] args) {
         String []strs = null;
         ProcessBuilder processBuilder = new ProcessBuilder(args);

@@ -10,7 +10,6 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 import static android.widget.Toast.LENGTH_SHORT;
 
 /**
@@ -43,15 +39,13 @@ import static android.widget.Toast.LENGTH_SHORT;
  */
 public class PictrueFragment extends BaseFragment {
     private static final int SCAN_OK = 1;
-    private static final String GV_DETAIL = "gv_detail";
 
-    @Bind(R.id.gv_pictrue)
-    GridView gv_pictrue;
-    @Bind(R.id.tv_no_pictrue)
-    TextView tv_no_pictrue;
+    private GridView gv_pictrue;
+    private TextView tv_no_pictrue;
 
     private GroupAdapter adapter;
     private ProgressDialog mProgressDialog;
+
     //图片分类封装集合
     private ArrayList<ImageBean> list = new ArrayList<>();
     private HashMap<String, List<String>> mGruopMap = new HashMap<>();
@@ -64,18 +58,26 @@ public class PictrueFragment extends BaseFragment {
                     //关闭进度条
                     mProgressDialog.dismiss();
                     list = subGroupOfImage(mGruopMap);
-                    if (null != list){
+                    if (null != list) {
                         adapter = new GroupAdapter(getContext(), list, gv_pictrue);
-                    }else {
+                    } else {
                         tv_no_pictrue.setVisibility(View.VISIBLE);
                     }
+                    if (adapter != null) {
                         gv_pictrue.setAdapter(adapter);
+                    }
                     mHandler.removeCallbacksAndMessages(null);
                     break;
             }
         }
 
     };
+    private FragmentManager manager = getFragmentManager();
+    private ContentResolver mContentResolver;
+
+    public PictrueFragment(FragmentManager manager) {
+        this.manager = manager;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,14 +88,19 @@ public class PictrueFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.pictrue_fragment_layout, container, false);
-        ButterKnife.bind(this, view);
-        initView();
+        initView(view);
+        initData();
         return view;
     }
 
-    private void initView() {
+    private void initView(View view) {
+        gv_pictrue = (GridView) view.findViewById(R.id.gv_pictrue);
+        tv_no_pictrue = (TextView) view.findViewById(R.id.tv_no_pictrue);
+    }
+
+    private void initData() {
         //清空上一次集合数据，防止数据重复加载
-        if (null != list){
+        if (null != list) {
             list.clear();
         }
         //查询手机中的图片数据，并封装进list集合中
@@ -106,17 +113,16 @@ public class PictrueFragment extends BaseFragment {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             //将fragment添加到BackStack
-            FragmentManager fm = getFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            DetailFragment fragment =  new DetailFragment(mGruopMap,list,i);
-            ft.replace(R.id.fl_mian, fragment);//主页面
-            ft.addToBackStack(null);
-            ft.commit();
+            DetailFragment fragment = new DetailFragment(mGruopMap, list, i);
+            manager.beginTransaction().replace(R.id.fl_mian, fragment)
+                    .addToBackStack(null).commit();//主页面
         }
     }
+
     /**
      * 组装分组界面GridView的数据源，因为我们扫描手机的时候将图片信息放在HashMap中
      * 所以需要遍历HashMap将数据组装成List
+     *
      * @param mGruopMap
      * @return
      */
@@ -145,57 +151,60 @@ public class PictrueFragment extends BaseFragment {
             Toast.makeText(getContext(), "暂无外部存储", LENGTH_SHORT).show();
             return;
         }
-        //显示进度条
-        mProgressDialog = ProgressDialog.show(getContext(), null, "正在加载...");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                ContentResolver mContentResolver = getContext().getContentResolver();
-                //只查询jpeg和png的图片
-                assert mContentResolver != null;
-                Cursor mCursor = mContentResolver.query(mImageUri, null,
-                        MediaStore.Images.Media.MIME_TYPE + "=? or "
-                                + MediaStore.Images.Media.MIME_TYPE + "=?",
-                        new String[]{"image/jpeg", "image/png"},
-                        MediaStore.Images.Media.DATE_MODIFIED);
 
-                assert mCursor != null;
-                while (mCursor.moveToNext()) {
-                    //获取图片的路径
-                    String path = mCursor.getString(mCursor
-                            .getColumnIndex(MediaStore.Images.Media.DATA));
-                    //获取该图片的父路径名
-                    String parentName = new File(path).getParentFile().getName();
-                    //根据父路径名将图片放入到不同的mGruopMap中
-                    if (!mGruopMap.containsKey(parentName)) {
-                        List<String> chileList = new ArrayList<>();
-                        chileList.add(path);
-                        mGruopMap.put(parentName, chileList);
-                    } else {
-                        mGruopMap.get(parentName).add(path);
+        mContentResolver = getContext().getContentResolver();
+
+        if (mContentResolver != null) {
+            //显示进度条
+            mProgressDialog = ProgressDialog.show(getContext(), null, "正在加载...");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                    //只查询jpeg和png的图片
+                    Cursor mCursor = mContentResolver.query(mImageUri, null,
+                            MediaStore.Images.Media.MIME_TYPE + "=? or "
+                                    + MediaStore.Images.Media.MIME_TYPE + "=?",
+                            new String[]{"image/jpeg", "image/png"},
+                            MediaStore.Images.Media.DATE_MODIFIED);
+
+                    assert mCursor != null;
+                    while (mCursor.moveToNext()) {
+                        //获取图片的路径
+                        String path = mCursor.getString(mCursor
+                                .getColumnIndex(MediaStore.Images.Media.DATA));
+                        //获取该图片的父路径名
+                        String parentName = new File(path).getParentFile().getName();
+                        //根据父路径名将图片放入到不同的mGruopMap中
+                        if (!mGruopMap.containsKey(parentName)) {
+                            List<String> chileList = new ArrayList<>();
+                            chileList.add(path);
+                            mGruopMap.put(parentName, chileList);
+                        } else {
+                            mGruopMap.get(parentName).add(path);
+                        }
                     }
+                    mCursor.close();
+                    //通知Handler扫描图片完成
+                    mHandler.sendEmptyMessage(SCAN_OK);
+
                 }
-                mCursor.close();
-                //通知Handler扫描图片完成
-                mHandler.sendEmptyMessage(SCAN_OK);
-            }
-        }).start();
+            }).start();
+        }
+
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
-    }
-
-    @Override
+    /**
+     * 当前是否可以发生回退操作
+     *
+     * @return
+     */
     public boolean canGoBack() {
         return false;
     }
 
-    @Override
-    public void goBack() {
 
+    /*执行回退操作*/
+    public void goBack() {
     }
 }

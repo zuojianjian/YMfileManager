@@ -12,23 +12,11 @@ import com.emindsoft.filemanager.R;
 
 import java.io.File;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 /**
  * 用于显示text文本选择的dialog
  * Created by zuojj on 16-7-1.
  */
 public class TextSelectDialog extends AlertDialog implements View.OnClickListener {
-    //用于打开显示文本的选择
-    @Bind(R.id.dialog_type_text)
-    TextView dialog_type_text;
-    @Bind(R.id.dialog_type_audio)
-    TextView dialog_type_audio;
-    @Bind(R.id.dialog_type_video)
-    TextView dialog_type_video;
-    @Bind(R.id.dialog_type_image)
-    TextView dialog_type_image;
     //上下文
     private Context context;
     //文本打开选择的路径
@@ -44,17 +32,19 @@ public class TextSelectDialog extends AlertDialog implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.text_select_dialog);
-        ButterKnife.bind(TextSelectDialog.this);
         initView();
     }
 
     private void initView() {
+        TextView dialog_type_text = (TextView) findViewById(R.id.dialog_type_text);
+        TextView dialog_type_audio = (TextView) findViewById(R.id.dialog_type_audio);
+        TextView dialog_type_video = (TextView) findViewById(R.id.dialog_type_video);
+        TextView dialog_type_image = (TextView) findViewById(R.id.dialog_type_image);
         //用于打开显示文本的选择
         dialog_type_text.setOnClickListener(this);
         dialog_type_audio.setOnClickListener(this);
         dialog_type_video.setOnClickListener(this);
         dialog_type_image.setOnClickListener(this);
-
     }
 
     @Override

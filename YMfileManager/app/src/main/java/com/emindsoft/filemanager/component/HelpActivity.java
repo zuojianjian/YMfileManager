@@ -7,31 +7,29 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.emindsoft.filemanager.R;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 /**
  * 帮助和反馈页面
  * Created by zuojj on 16-6-24.
  */
 public class HelpActivity extends Activity implements View.OnClickListener {
     //初始化组件
-    @Bind(R.id.ll_help_back)
     LinearLayout ll_help_back;
-    @Bind(R.id.tv_public_official)
     TextView tv_public_official;
-    @Bind(R.id.tv_official_help)
     TextView tv_official_help;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
-        ButterKnife.bind(HelpActivity.this);
+        initView();
         initData();
+    }
+
+    private void initView() {
+        ll_help_back = (LinearLayout) findViewById(R.id.ll_help_back);
+        tv_public_official = (TextView) findViewById(R.id.tv_public_official);
+        tv_official_help = (TextView) findViewById(R.id.tv_official_help);
     }
 
     private void initData() {

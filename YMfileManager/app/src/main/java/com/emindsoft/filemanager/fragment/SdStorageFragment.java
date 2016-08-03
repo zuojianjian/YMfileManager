@@ -24,9 +24,6 @@ import com.emindsoft.filemanager.view.SystemSpaceFragment;
 import java.io.File;
 import java.util.ArrayList;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 /**
  * SD卡存储页面
  * Created by zuojj on 16-5-18.
@@ -48,40 +45,25 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     FileViewInteractionHub.CopyOrMove copyOrMove = null;
 
     //初始化控件
-    @Bind(R.id.rl_android_system)
-    RelativeLayout rl_android_system;
-    @Bind(R.id.rl_sd_space)
-    RelativeLayout rl_sd_space;
-    @Bind(R.id.rl_android_service)
-    RelativeLayout rl_android_service;
-    @Bind(R.id.rl_mount_space_one)
-    RelativeLayout rl_mount_space_one;
-    @Bind(R.id.rl_mount_space_two)
-    RelativeLayout rl_mount_space_two;
+    private RelativeLayout rl_android_system;
+    private RelativeLayout rl_sd_space;
+    private RelativeLayout rl_android_service;
+    private RelativeLayout rl_mount_space_one;
+    private RelativeLayout rl_mount_space_two;
     //系统
-    @Bind(R.id.tv_system_total)
-    TextView tv_system_total;
-    @Bind(R.id.tv_system_avail)
-    TextView tv_system_avail;
-    @Bind(R.id.pb_system)
-    ProgressBar pb_system;
+    private TextView tv_system_total;
+    private TextView tv_system_avail;
+    private ProgressBar pb_system;
     //sd卡
-    @Bind(R.id.tv_sd_total)
-    TextView tv_sd_total;
-    @Bind(R.id.tv_sd_avail)
-    TextView tv_sd_avail;
-    @Bind(R.id.pb_sd)
-    ProgressBar pb_sd;
+    private TextView tv_sd_total;
+    private TextView tv_sd_avail;
+    private ProgressBar pb_sd;
     //可移动磁盘
-    @Bind(R.id.tv_usb_total)
-    TextView tv_usb_total;
-    @Bind(R.id.tv_usb_avail)
-    TextView tv_usb_avail;
-    @Bind(R.id.pb_usb)
-    ProgressBar pb_usb;
+    private TextView tv_usb_total;
+    private TextView tv_usb_avail;
+    private ProgressBar pb_usb;
     //云服务
-    @Bind(R.id.pb_service)
-    ProgressBar pb_service;
+    private ProgressBar pb_service;
 
     // 当前的主界面
     private BaseFragment curFragment;
@@ -93,9 +75,11 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     private ArrayList<File> mountUsb = null;
     private String mountPath;
     private long currentBackTime;
+    private String mountDiskPath = null;
 
     /**
      * 构造器
+     *
      * @param manager             fragment管理器
      * @param usbDeviceIsAttached usb是否连接的标识
      */
@@ -114,9 +98,29 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.android_fragment_layout, container, false);
-        ButterKnife.bind(this, view);
-        initView();
+        initView(view);
+        initData();
         return view;
+    }
+
+    private void initView(View view) {
+        rl_android_system = (RelativeLayout) view.findViewById(R.id.rl_android_system);
+        rl_sd_space = (RelativeLayout) view.findViewById(R.id.rl_sd_space);
+        rl_android_service = (RelativeLayout) view.findViewById(R.id.rl_android_service);
+        rl_mount_space_one = (RelativeLayout) view.findViewById(R.id.rl_mount_space_one);
+        rl_mount_space_two = (RelativeLayout) view.findViewById(R.id.rl_mount_space_two);
+
+        tv_system_total = (TextView) view.findViewById(R.id.tv_system_total);
+        tv_system_avail = (TextView) view.findViewById(R.id.tv_system_avail);
+        tv_sd_total = (TextView) view.findViewById(R.id.tv_sd_total);
+        tv_sd_avail = (TextView) view.findViewById(R.id.tv_sd_avail);
+        tv_usb_total = (TextView) view.findViewById(R.id.tv_usb_total);
+        tv_usb_avail = (TextView) view.findViewById(R.id.tv_usb_avail);
+
+        pb_system = (ProgressBar) view.findViewById(R.id.pb_system);
+        pb_sd = (ProgressBar) view.findViewById(R.id.pb_sd);
+        pb_usb = (ProgressBar) view.findViewById(R.id.pb_usb);
+        pb_service = (ProgressBar) view.findViewById(R.id.pb_service);
     }
 
     private void setVolumSize() {
@@ -131,7 +135,28 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
             pb_system.setSecondaryProgress((int) (Double.parseDouble(Util.convertStorage(systemInfo.romMemory - systemInfo.avilMemory).substring(0, 3)) * 10));
         }
 
-        //设置sd卡（个人空间）信息
+        //设置本地磁盘用量信息
+        String[] cmd = {"df"};
+        String[] usbs = Util.execDisk(cmd);
+        if (usbs != null && usbs.length > 0) {
+            showDiskInfo(usbs);
+        } else {
+            //设置sd卡（个人空间）信息
+            showSdcardInfo();
+        }
+    }
+
+    private void showDiskInfo(String[] usbs) {
+        mountDiskPath = usbs[0];
+        tv_sd_total.setText(usbs[1]);
+        tv_sd_avail.setText(usbs[3]);
+        int max = (int) Double.parseDouble(usbs[1].substring(0, 3)) * 10;
+        int avail = (int) Double.parseDouble(usbs[3].substring(0, 2)) * 10;
+        pb_sd.setMax(max);
+        pb_sd.setProgress(max - avail);
+    }
+
+    private void showSdcardInfo() {
         Util.SDCardInfo sdCardInfo = Util.getSDCardInfo();
         if (null != sdCardInfo) {
             tv_sd_total.setText(Util.convertStorage(sdCardInfo.total));
@@ -145,7 +170,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
-    private void initView() {
+    private void initData() {
         //设置各个盘符的容量信息
         setVolumSize();
         rl_android_system.setOnClickListener(this);
@@ -162,9 +187,10 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
             String[] usbs = Util.execUsb(cmd);
             if (usbs != null && usbs.length > 0) {
                 showMountDevices(usbs);
-                rl_mount_space_one.setOnClickListener(new MountItemClick());
+//                rl_mount_space_one.setOnClickListener(new MountItemClick());
+                rl_mount_space_one.setOnClickListener(this);
             }
-        } else if (usbDeviceIsAttached != null && usbDeviceIsAttached.equals("usb_device_detached")){
+        } else if (usbDeviceIsAttached != null && usbDeviceIsAttached.equals("usb_device_detached")) {
             rl_mount_space_one.setVisibility(View.GONE);
         }
     }
@@ -189,26 +215,26 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         switch (view.getId()) {
             case R.id.rl_android_system:   //安卓系统
                 //比较上次按下返回键和当前按下返回键的时间差，如果大于2秒，则提示再按一次退出
-                setDiskClickInfo(R.id.rl_android_system,SYSTEM_SPACE_FRAGMENT);
+                setDiskClickInfo(R.id.rl_android_system, SYSTEM_SPACE_FRAGMENT, null);
                 break;
             case R.id.rl_sd_space:     //磁盘空间
-                setDiskClickInfo(R.id.rl_sd_space,SD_SPACE_FRAGMENT);
+                setDiskClickInfo(R.id.rl_sd_space, SD_SPACE_FRAGMENT,mountDiskPath);
                 break;
             case R.id.rl_mount_space_one:   //移动磁盘
-                setDiskClickInfo(R.id.rl_mount_space_one,USB_SPACE_FRAGMENT);
+                setDiskClickInfo(R.id.rl_mount_space_one, USB_SPACE_FRAGMENT, mountPath);
                 break;
             case R.id.rl_android_service:  //云服务
-                setDiskClickInfo(R.id.rl_android_service,YUN_SPACE_FRAGMENT);
+                setDiskClickInfo(R.id.rl_android_service, YUN_SPACE_FRAGMENT, null);
                 break;
         }
     }
 
-    private void setDiskClickInfo(int id, String tag) {
+    private void setDiskClickInfo(int id, String tag, String path) {
         if (currentBackTime - lastBackTime > 800) {
             //设置选中背景
             setSelectedCardBg(id);
             lastBackTime = currentBackTime;
-        } else { //如果两次按下的时间差小于0.8秒，则退出程序
+        } else { //如果两次按下的时间差小于0.8秒，则进入
             if (curFragment != null) {
                 fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
                 copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
@@ -216,13 +242,13 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
             if (fileInfoArrayList != null && copyOrMove != null) {
                 T.showShort(getContext(), "系统目录只有读取权限！当前操作失败～");
             }
-            curFragment = new SystemSpaceFragment(tag, null, fileInfoArrayList, copyOrMove);
+            curFragment = new SystemSpaceFragment(tag, path, fileInfoArrayList, copyOrMove);
             manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
                     .addToBackStack(null).commit();
         }
     }
 
-    //各个磁盘的背景选择
+    /*各个磁盘的背景选择*/
     private void setSelectedCardBg(int id) {
         switch (id) {
             case R.id.rl_android_system:
@@ -252,14 +278,10 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
-    /**
-     * 当前fragment销毁时解绑view
-     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         LocalCache.setSearchText(null);
-        ButterKnife.unbind(this);
     }
 
     /**
@@ -277,33 +299,12 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         return canGoBack;
     }
 
-    /**
-     * 执行回退操作
-     */
+   /*执行回退操作*/
     public void goBack() {
         Fragment baseFragment = curFragment;
         if (baseFragment instanceof SystemSpaceFragment) {
             SystemSpaceFragment systemSpaceFragment = (SystemSpaceFragment) baseFragment;
             systemSpaceFragment.goBack();
-        }
-    }
-
-    private class MountItemClick implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            if (currentBackTime - lastBackTime > 800) {
-                //设置选中背景
-                setSelectedCardBg(R.id.rl_mount_space_one);
-                lastBackTime = currentBackTime;
-            } else { //如果两次按下的时间差小于1秒，则进入
-                if (curFragment != null) {
-                    fileInfoArrayList = ((SystemSpaceFragment) curFragment).getFileInfoList();
-                    copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
-                }
-                curFragment = new SystemSpaceFragment(USB_SPACE_FRAGMENT, mountPath, fileInfoArrayList, copyOrMove);
-                manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
-                        .addToBackStack(null).commit();
-            }
         }
     }
 }

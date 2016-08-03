@@ -12,12 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.emindsoft.filemanager.R;
-
-import java.util.List;
-
 import com.emindsoft.filemanager.bean.ImageBean;
 import com.emindsoft.filemanager.component.MyImageView;
 import com.emindsoft.filemanager.component.NativeImageLoader;
+
+import java.util.List;
 
 /**
  * 用来设置分类图片集合
@@ -28,7 +27,7 @@ public class GroupAdapter extends BaseAdapter{
     private List<ImageBean> list;
     private Point mPoint = new Point(0, 0);//用来封装ImageView的宽和高的对象
     private GridView gv_pictrue;
-    protected LayoutInflater mInflater;
+    private LayoutInflater mInflater;
 
     public GroupAdapter(Context context, List<ImageBean> list, GridView gv_pictrue) {
         this.list = list;

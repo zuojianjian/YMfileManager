@@ -37,7 +37,9 @@ public class ListOnGenericMotionListener implements View.OnGenericMotionListener
                 file_path_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        mFileViewInteractionHub.onListItemRightClick(parent, view, position, id);
+                        if (mLastClickId != position){
+                            mFileViewInteractionHub.clearSelection();
+                        }
                         view.setSelected(true);
                         parent.getChildAt(position).findViewById(R.id.rl_folder_bg).setSelected(true);
                         parent.getChildAt(position).findViewById(R.id.ll_folder_text_bg).setSelected(true);
@@ -49,6 +51,7 @@ public class ListOnGenericMotionListener implements View.OnGenericMotionListener
             case MotionEvent.BUTTON_TERTIARY:   //BUTTON_TERTIARY鼠标滚轮点击
                 if (event.getButtonState() == MotionEvent.BUTTON_TERTIARY){
                     //每一个item的点击和双击的判断
+                    file_path_list.setOnItemClickListener(new ListItemClick());
                 }
                 break;
             case MotionEvent.ACTION_SCROLL:   //ACTION_SCROLL鼠标滚轮滑动

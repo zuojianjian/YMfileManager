@@ -26,9 +26,6 @@ import com.emindsoft.filemanager.system.Constants;
 import java.io.File;
 import java.util.ArrayList;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 /**
  * 视频列表页面
  * Created by zuojj on 16-5-18.
@@ -38,10 +35,8 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
     //播放视频专用
     private ProgressDialog mProgressDialog;
 
-    @Bind(R.id.tv_no_video)
-    TextView tv_no_video;
-    @Bind(R.id.gv_video_pager)
-    GridView gv_video_pager;
+    private TextView tv_no_video;
+    private GridView gv_video_pager;
 
     private Handler handler = new Handler() {
         @Override
@@ -66,12 +61,17 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.video_fragment_layout, container, false);
-        ButterKnife.bind(this, view);
-        initView();
+        initView(view);
+        initData();
         return view;
     }
 
-    private void initView() {
+    private void initView(View view) {
+        tv_no_video = (TextView) view.findViewById(R.id.tv_no_video);
+        gv_video_pager = (GridView) view.findViewById(R.id.gv_video_pager);
+    }
+
+    private void initData() {
         getVideoList();
         //点击item播放视频
         gv_video_pager.setOnItemClickListener(this);
@@ -122,12 +122,6 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
         String type = Constants.getMIMEType(f);
         intent.setDataAndType(Uri.fromFile(f), type);
         startActivity(intent);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override
