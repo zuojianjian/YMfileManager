@@ -15,9 +15,6 @@
      左剑剑   王琪
  
 # 2、功能需求
-####详细的功能需求请参考：<br>
-[总体功能需求](https://github.com/openthos/oto-filemanager/tree/master/requirement)   
-[seafile功能说明](https://github.com/openthos/oto-filemanager/blob/master/doc/summary/seafile%E5%8A%9F%E8%83%BD%E5%91%BD%E4%BB%A4%E5%88%97%E8%A1%A8.md)<br>
 ####完成情况如下所示：
 | 完成     | 描述     | 模块     | 完成度 |
 | ---- |-------    |:---------|:---------| 
@@ -71,8 +68,5 @@
 （由吴老师提供打设计方案）
 ##4.3功能的统一与实现
 （实现功能与oto-filemanager有略微的区别统一调整）
-##4.4构建 && 安装 && 运行
-请查看：[building.md](https://github.com/openthos/oto-filemanager/blob/master/doc/summary/building.md)<br>
-apk程序及压缩包地址：https://github.com/openthos/oto-filemanager/tree/master/app（后续添加与修改）
-##4.5工程文件地址
+##4.4工程文件地址
 请查看：（后续添加）
