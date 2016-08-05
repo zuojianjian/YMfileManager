@@ -12,7 +12,7 @@
 　本应用属于Openthos项目的一部分，提供 Openthos 系统本地文件管理以及Seafile/owncloud云存储支持。
 
 ##　当前开发人员 (20160801-20160831)
- 左剑剑
+ 左剑剑   王琪
  
 # 2、功能需求
 ####详细的功能需求请参考：<br>
@@ -40,48 +40,36 @@
 | √     | U盘动态识别，手动弹出U盘                                                              | 功能     | 100% |
 
 
-| daijinxin     | 描述     | 模块     | 完成度 |
+| 计划进行     | 描述     | 模块     | 完成度 |
 | ---- |-------    |:---------|:---------| 
 | x     | 文件拖拽                                                                              | 功能     |   0% |
 | x     | 文件框选                                                                              | 功能     |   0% |
 | x     | 网上邻居                                                                              | 功能     |   0% |
-| x     | Seafile文件/文件夹自动同步                                                            | 功能     |  50% |
-| x     | Seafile显示文件目录列表盘                                                             | 功能     |  50% |
-| x     | Seafile增加/解除同步文件夹                                                            | 功能     |  50% |
+| x     | Seafile文件/文件夹自动同步                                                            | 功能     |  0% |
+| x     | Seafile显示文件目录列表盘                                                             | 功能     |  0% |
+| x     | Seafile增加/解除同步文件夹                                                            | 功能     |  0% |
 | x     | Owncloud文件/文件夹自动同步                                                            | 功能     | 0% |
 | x     | Owncloud显示文件目录列表盘                                                             | 功能     | 0% |
 | x     | Owncloud增加/解除同步文件夹                                                            | 功能     | 0% |
-# 3、存在问题
-| 简述  | 类别  | 备注 |
-| ---- |------- |:---------|
-| U盘识别                        | 功能 |系统对部分U盘识别有问题 |
-| 网上邻居                       | 功能 |后期需要做的            |
-| Seafile文件/文件夹自动同步     | 功能 |工程师未提供接口        |  
-| Seafile显示文件目录列表        | 功能 |工程师未提供接口        | 
-| Seafile增加/解除同步文件夹     | 功能 |工程师未提供接口        |
-| Owncloud功能　　　　　　　　    | 功能 |未实现        | 
-# 4、项目进展
+
+# 3、项目进度计划
 
 | 开始时间  | 结束时间  | 内容 | 人员|
 | ---- |------- |-------|:---------|
-|2016.07.01| 2016.07.05| 调研开源Filemanager实现原理，初步制定基于Win10界面的Filemanager应用开发方案| 朱思敏和孙智鹏|
-|2016.07.06|	2016.07.12|	实现Filemanager界面及部分本地文件管理功能|朱思敏和孙智鹏|
-|2016.07.12|	2016.07.13|	与刘总交流，确定新的界面、功能需求|朱思敏和孙智鹏|
-|2016.07.14|	2016.07.22|	按照新的需求修改应用界面，完善本地文件管理功能并测试|朱思敏和孙智鹏|
-|2016.07.23|	2016.07.24|	调研分析总结terminal版Seafile客户端的CLI接口，并发送给王琪工程师|朱思敏和孙智鹏|
-|2016.07.25|	2016.07.30|	完成Seafile云存储基本功能，整合程序进Openthos系统，编写开发文档|朱思敏和孙智鹏|
+|2016.08.08| 2016.08.12| 确定UI更改方案并修改调整UI和功能代码調整| 左剑剑|
+|2016.08.15|	2016.08.19|	实现Filemanager 文件拖拽功能|左剑剑|
+|2016.08.22|	2016.08.26|	实现文件框选功能需求|左剑剑|
+|2016.08.29|	2016.08.31|	Seafile云同步功能开始实现|左剑剑|
 
-#5、设计与实现
-##5.1主要结构
-代码的主要结构如图所示：[主要结构](https://github.com/openthos/oto-filemanager/blob/master/doc/summary/%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84.md)
-##5.2应用设计与实现
-请查看：[FileManager设计与实现.md](https://github.com/openthos/oto-filemanager/blob/master/doc/summary/FileManager%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0.md)
-##5.3代码结构及说明
-请查看：[FileManager代码结构及说明.md](https://github.com/openthos/oto-filemanager/blob/master/doc/summary/FileManager%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E5%8F%8A%E8%AF%B4%E6%98%8E.md)
-##5.4流程图
-FileManager的几个基本功能流程图如下所示：[流程图.md](https://github.com/openthos/oto-filemanager/blob/master/doc/summary/%E6%B5%81%E7%A8%8B%E5%9B%BE.md)
-##5.5构建 && 安装 && 运行
+#4、设计与实现
+##5.1主要代码结构统一
+（采用YMfileManager）
+##5.2界面打统一设计与实现
+（由吴老师提供打设计方案）
+##5.3功能的统一与实现
+（实现功能与oto-filemanager有略微的区别统一调整）
+##5.4构建 && 安装 && 运行
 请查看：[building.md](https://github.com/openthos/oto-filemanager/blob/master/doc/summary/building.md)<br>
-apk程序及压缩包地址：https://github.com/openthos/oto-filemanager/tree/master/app
-##5.6工程文件地址
-请查看：[FileManagerOpenOS](https://github.com/openthos/oto-filemanager/tree/master/FileManagerOpenOS)
+apk程序及压缩包地址：https://github.com/openthos/oto-filemanager/tree/master/app（后续添加与修改）
+##5.5工程文件地址
+请查看：（后续添加）
