@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.emindsoft.filemanager">
+    package="com.emindsoft.openthos">
 
     <!--所需要的权限列表-->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.emindsoft.openthos.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +28,7 @@
         <activity
             android:label="@string/menu_setting"
             android:launchMode="singleTop"
-            android:name=".system.FileManagerPreferenceActivity"
+            android:name="com.emindsoft.openthos.system.FileManagerPreferenceActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         </activity>
 
@@ -39,14 +39,14 @@
         <activity
             android:label="@string/menu_about"
             android:launchMode="singleTop"
-            android:name=".component.AboutActivity"
+            android:name="com.emindsoft.openthos.component.AboutActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         </activity>
 
         <activity
             android:label="@string/menu_help"
             android:launchMode="singleTop"
-            android:name=".component.HelpActivity"
+            android:name="com.emindsoft.openthos.component.HelpActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         </activity>
 

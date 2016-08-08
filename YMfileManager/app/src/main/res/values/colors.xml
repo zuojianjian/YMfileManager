@@ -5,4 +5,8 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="transparent">#00000000</color>
+    <color name="top_bg_color">#C3CAD4</color>
+    <color name="top_select_color">#939AA3</color>
+    <color name="top_search_bg_color">#E9EDF0</color>
+    <color name="progress_second_color">#3EB400</color>
 </resources>

@@ -9,5 +9,5 @@
         android:topRightRadius="5dp"
         android:topLeftRadius="5dp"/>
     <solid
-    android:color="#ff33b5e5" />
+    android:color="@color/top_search_bg_color" />
 </shape>

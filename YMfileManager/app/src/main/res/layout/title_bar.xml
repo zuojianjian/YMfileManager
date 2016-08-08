@@ -1,84 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_centerInParent="true"
-    android:background="@android:color/white">
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="#C3CAD4">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:gravity="center_vertical"
         android:orientation="horizontal">
-
         <ImageButton
             android:id="@+id/iv_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:background="@drawable/back_bg_selector"
-            android:paddingBottom="9dp"
-            android:paddingTop="8dp"
-            android:src="@mipmap/iv_back" />
-
-        <View
-            android:layout_width="1dp"
+            android:layout_marginLeft="15dp"
+            android:layout_width="30dp"
             android:layout_height="match_parent"
-            android:background="#E6E6E6" />
-
-        <ImageView
-            android:id="@+id/iv_fresh"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="0.5"
-            android:src="@drawable/fresh_selector" />
+            android:background="@drawable/back_bg_selector"
+            android:src="@mipmap/iv_back" />
 
         <ImageView
             android:id="@+id/iv_setting"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_weight="0.3"
+            android:layout_marginLeft="25dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:src="@drawable/setting_selector" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="14" />
-
-        <SearchView
-            android:id="@+id/search_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:gravity="center"
-            android:iconifiedByDefault="true"
-            android:imeOptions="actionSearch"
-            android:queryHint="请输入搜索内容"
-            android:singleLine="true"
-            android:layout_marginBottom="-4dp"
-            android:textSize="10sp" />
-
-        <ImageView
-            android:id="@+id/iv_switch_view"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="0.3"
-            android:background="@android:color/white"
-            android:padding="5dp"
-            android:src="@drawable/view_switch_selector" />
-
-        <ImageView
-            android:id="@+id/iv_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.8"
-            android:padding="3dp"
-            android:src="@mipmap/menu" />
 
     </LinearLayout>
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="6"
+        android:gravity="center"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1.2"
+            android:layout_marginLeft="-18dp"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/iv_list_view"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/list_view_selector" />
+
+            <ImageView
+                android:id="@+id/iv_grid_view"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_toRightOf="@id/iv_list_view"
+                android:src="@drawable/grid_view_selector" />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/et_nivagation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:paddingLeft="8dp"
+            android:layout_marginRight="5dp"
+            android:hint="文件路径"
+            android:background="@drawable/edit_bg_shape"/>
+        <EditText
+            android:id="@+id/search_view"
+            android:layout_width="0dp"
+            android:layout_marginRight="4dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:hint="请输入搜索内容"
+            android:drawableRight="@mipmap/search"
+            android:paddingRight="8dp"
+            android:paddingLeft="10dp"
+            android:background="@drawable/edit_bg_shape"/>
+
+    </LinearLayout>
+
+</LinearLayout>
 
 

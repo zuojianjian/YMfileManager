@@ -8,7 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-        <com.emindsoft.filemanager.component.MyImageView
+        <com.emindsoft.openthos.component.MyImageView
             android:id="@+id/group_image"
             android:background="@mipmap/albums_bg"
             android:src="@mipmap/pictures_no"

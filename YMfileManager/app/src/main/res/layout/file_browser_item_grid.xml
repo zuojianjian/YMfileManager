@@ -4,13 +4,13 @@
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:background="@drawable/list_item_bg_selector"
+    android:id="@+id/ll_grid_item_bg"
     android:padding="3dp">
 
     <RelativeLayout
-        android:id="@+id/rl_folder_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/folder_bg_selector"
         android:gravity="center"
         android:padding="5dp">
 
@@ -54,11 +54,9 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/ll_folder_text_bg"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginTop="-3dp"
-        android:background="@drawable/folder_text_bg_selector"
         android:orientation="vertical">
 
         <LinearLayout

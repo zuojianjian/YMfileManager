@@ -31,7 +31,7 @@
                     android:bottomLeftRadius="10dp"
                     android:bottomRightRadius="10dp" />
                 <solid
-                    android:color="@android:color/holo_blue_light" />
+                    android:color="@color/progress_second_color" />
             </shape>
         </clip>
     </item>

@@ -3,5 +3,5 @@
     android:shape="rectangle"
     android:useLevel="false">
 
-    <solid android:color="#E6E6E6" />
+    <solid android:color="@color/top_select_color" />
 </shape>

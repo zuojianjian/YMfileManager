@@ -9,7 +9,7 @@
         android:topLeftRadius="5dp"
         android:topRightRadius="5dp"/>
     <solid
-    android:color="#ff0099cc" />
+    android:color="#E9DEF0" />
     <!--#103FE7-->
     <!--#1055E7-->
     <!--#0047DF-->
