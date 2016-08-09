@@ -58,17 +58,20 @@ public class FileOperationHelper {
     }
 
     //根据路径和文件名，创建文件
-    public void CreateFile(String path) {
-        Log.v(LOG_TAG, "CreateFolder >>> " + path);
+    public boolean CreateFile(String path, String name) {
+        Log.v(LOG_TAG, "CreateFile >>> " + path);
 
-        File dir = new File(path);
-        if (!dir.exists())
+        File dir = new File(Util.makePath(path, name));
+
+        if (!dir.exists()){
             try {
                 //在指定的文件夹中创建文件
-                dir.createNewFile();
+              return  dir.createNewFile();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        return true;
     }
     //拷贝若干个文件，把文件集合拷贝到“当前文件集合中mCurFileNameList”，可以供“粘贴操作”使用
     public void Copy(ArrayList<FileInfo> files) {

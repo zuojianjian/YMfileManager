@@ -52,6 +52,10 @@
             style="@style/textDialog"
             android:text="@string/operation_create_folder"/>
         <TextView
+            android:id="@+id/dialog_new_file"
+            style="@style/textDialog"
+            android:text="@string/operation_create_file"/>
+        <TextView
             android:id="@+id/dialog_visibale_file"
             style="@style/textDialog"
             android:layout_marginBottom="18dp"

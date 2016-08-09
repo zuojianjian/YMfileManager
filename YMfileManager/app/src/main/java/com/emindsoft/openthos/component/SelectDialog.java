@@ -20,25 +20,26 @@ import com.emindsoft.openthos.utils.T;
  */
 public class SelectDialog extends AlertDialog implements View.OnClickListener {
     //contextMenu菜单
-    TextView dialog_copy;
-    TextView dialog_paste;
-    TextView dialog_rename;
-    TextView dialog_delete;
-    TextView dialog_move;
-    TextView dialog_send;
-    TextView dialog_sort;
-    TextView dialog_copy_path;
-    TextView dialog_info;
-    TextView dialog_new_folder;
-    TextView dialog_visibale_file;
+    private TextView dialog_copy;
+    private TextView dialog_paste;
+    private TextView dialog_rename;
+    private TextView dialog_delete;
+    private TextView dialog_move;
+    private TextView dialog_send;
+    private TextView dialog_sort;
+    private TextView dialog_copy_path;
+    private TextView dialog_info;
+    private TextView dialog_new_folder;
+    private TextView dialog_new_file;
+    private TextView dialog_visibale_file;
     //sort分类
-    TextView dialog_sort_name;
-    TextView dialog_sort_size;
-    TextView dialog_sort_time;
-    TextView dialog_sort_type;
+    private TextView dialog_sort_name;
+    private TextView dialog_sort_size;
+    private TextView dialog_sort_time;
+    private TextView dialog_sort_type;
     //线性布局
-    LinearLayout dialog_content_menu;
-    LinearLayout dialog_sort_menu;
+    private LinearLayout dialog_content_menu;
+    private LinearLayout dialog_sort_menu;
     //上下文
     private Context context;
     private FileViewInteractionHub mFileViewInteractionHub;
@@ -88,6 +89,7 @@ public class SelectDialog extends AlertDialog implements View.OnClickListener {
         dialog_copy_path = (TextView) findViewById(R.id.dialog_copy_path);
         dialog_info = (TextView) findViewById(R.id.dialog_info);
         dialog_new_folder = (TextView) findViewById(R.id.dialog_new_folder);
+        dialog_new_file = (TextView) findViewById(R.id.dialog_new_file);
         dialog_visibale_file = (TextView) findViewById(R.id.dialog_visibale_file);
         dialog_sort_name = (TextView) findViewById(R.id.dialog_sort_name);
         dialog_sort_size = (TextView) findViewById(R.id.dialog_sort_size);
@@ -115,6 +117,7 @@ public class SelectDialog extends AlertDialog implements View.OnClickListener {
         dialog_sort.setOnClickListener(this);
         dialog_info.setOnClickListener(this);
         dialog_new_folder.setOnClickListener(this);
+        dialog_new_file.setOnClickListener(this);
         dialog_copy_path.setOnClickListener(this);
         dialog_visibale_file.setOnClickListener(this);
 
@@ -176,6 +179,10 @@ public class SelectDialog extends AlertDialog implements View.OnClickListener {
                 break;
             case R.id.dialog_new_folder:  //创建文件夹
                 mFileViewInteractionHub.onOperationCreateFolder();
+                mFileViewInteractionHub.dismissContextDialog();
+                break;
+            case R.id.dialog_new_file:  //创建文件
+                mFileViewInteractionHub.onOperationCreateFile();
                 mFileViewInteractionHub.dismissContextDialog();
                 break;
             case R.id.dialog_visibale_file:  //显示隐藏文件

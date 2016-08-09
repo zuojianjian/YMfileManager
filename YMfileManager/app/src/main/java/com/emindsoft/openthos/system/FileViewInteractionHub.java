@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.emindsoft.openthos.MainActivity;
 import com.emindsoft.openthos.R;
+import com.emindsoft.openthos.component.MenuDialog;
 import com.emindsoft.openthos.component.SelectDialog;
 import com.emindsoft.openthos.utils.L;
 import com.emindsoft.openthos.utils.LocalCache;
@@ -64,6 +65,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     // 当前是复制还是移动
     private CopyOrMove copyOrMoveMode;
     private SelectDialog selectDialog;
+    private MenuDialog menuDialog;
     private int selectedDialogItem;
 
     public enum Mode {
@@ -354,8 +356,13 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
             return false;
         }
 
-        if (!TextUtils.isEmpty(text)) {
+        if (mFileOperationHelper.CreateFile(mCurrentPath,text)) {
             mFileViewListener.addSingleFile(Util.GetFileInfo(Util.makePath(mCurrentPath, text)));
+            if ("list".equals(LocalCache.getViewTag())) {
+                mFileListView.setSelection(mFileListView.getCount() - 1);
+            } else if ("grid".equals(LocalCache.getViewTag())) {
+                mFileGridView.setSelection(mFileGridView.getCount() - 1);
+            }
             clearSelection();
         } else {
             new AlertDialog.Builder(mContext).setMessage(mContext.getString(R.string.fail_to_create_folder))
@@ -841,16 +848,32 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
+//    //显示自定义dialog
+//    public void shownContextDialog(FileViewInteractionHub mFileViewInteractionHub) {
+//        //创建Dialog并设置样式主题
+//        selectDialog = new SelectDialog(mContext, R.style.dialog, mFileViewInteractionHub);
+//        selectdialog.setcanceledontouchoutside(true);//设置点击dialog外部任意区域关闭dialog
+//        selectDialog.show();
+//        //显示区域范围的设置在显示dialog之后，不然会不起作用
+//        Window win = selectDialog.getWindow();
+//        WindowManager.LayoutParams params = win.getAttributes();
+//        params.height = 420; // 高度设置
+//        params.width = 190; // 宽度设置
+//        params.x = 30;
+//
+//        win.setAttributes(params);
+//    }
+
     //显示自定义dialog
     public void shownContextDialog(FileViewInteractionHub mFileViewInteractionHub) {
         //创建Dialog并设置样式主题
-        selectDialog = new SelectDialog(mContext, R.style.dialog, mFileViewInteractionHub);
+        menuDialog = new MenuDialog(mContext, R.style.menu_dialog, mFileViewInteractionHub);
         selectDialog.setCanceledOnTouchOutside(true);//设置点击Dialog外部任意区域关闭Dialog
         selectDialog.show();
         //显示区域范围的设置在显示dialog之后，不然会不起作用
         Window win = selectDialog.getWindow();
         WindowManager.LayoutParams params = win.getAttributes();
-        params.height = 380; // 高度设置
+        params.height = 420; // 高度设置
         params.width = 190; // 宽度设置
         params.x = 30;
 
