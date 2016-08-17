@@ -69,7 +69,6 @@
         android:layout_height="0dp"
         android:textSize="@dimen/edit_font_size"
         android:gravity="center_vertical"
-        android:paddingLeft="@dimen/right_menu_left_margin"
         android:layout_weight="1"
         android:background="@drawable/menu_btn_backgroud"
         android:text="全选"/>

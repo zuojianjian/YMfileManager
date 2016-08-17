@@ -44,7 +44,7 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
             //关闭进度条
             mProgressDialog.dismiss();
             if (videoItems !=null && videoItems.size()>0){
-                gv_video_pager.setAdapter(new VideoAdapter(getContext(), videoItems));
+                gv_video_pager.setAdapter(new VideoAdapter(getActivity(), videoItems));
             }else {
                 tv_no_video.setVisibility(View.VISIBLE);
             }
@@ -78,13 +78,13 @@ public class VideoFragment extends BaseFragment implements AdapterView.OnItemCli
     }
 
     private void getVideoList() {
-        mProgressDialog = ProgressDialog.show(getContext(), null, "正在加载...");
+        mProgressDialog = ProgressDialog.show(getActivity(), null, "正在加载...");
         //子线程准备数据
         new Thread(){
             public void run(){
                 videoItems = new ArrayList<>();
                 Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                ContentResolver contentResolver = getContext().getContentResolver();
+                ContentResolver contentResolver = getActivity().getContentResolver();
                 String[] projection = {
                         MediaStore.Video.Media.DISPLAY_NAME,//视屏名称
                         MediaStore.Video.Media.SIZE,//视频播放的大小

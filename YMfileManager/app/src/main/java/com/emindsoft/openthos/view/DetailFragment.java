@@ -60,7 +60,7 @@ public class DetailFragment extends BaseFragment {
 
     private void initView() {
         childPathList = mGruopMap.get(list.get(i).getFolderName());
-        ChildAdapter adapter = new ChildAdapter(getContext(), childPathList, gv_detail_pictrue);
+        ChildAdapter adapter = new ChildAdapter(getActivity(), childPathList, gv_detail_pictrue);
         gv_detail_pictrue.setAdapter(adapter);
         gv_detail_pictrue.setOnItemClickListener(new DetailOnItemClickListener());
     }

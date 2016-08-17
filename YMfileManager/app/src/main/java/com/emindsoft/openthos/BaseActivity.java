@@ -11,7 +11,7 @@ import com.emindsoft.openthos.component.AppManager;
  * activity基类
  * Created by zuojj on 16-5-18.
  */
-public class BaseActivity extends FragmentActivity{
+public abstract class BaseActivity extends FragmentActivity {
 
 
     @Override
@@ -28,4 +28,7 @@ public class BaseActivity extends FragmentActivity{
         // 结束Activity从堆栈中移除
         AppManager.getAppManager().finishActivity(this);
     }
+
+    //顶部导航栏显示的路径
+    public abstract void setNavigationBar(String displayPath);
 }

@@ -2,9 +2,9 @@ package com.emindsoft.openthos.component;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -19,70 +19,153 @@ import com.emindsoft.openthos.utils.T;
  * Created by zuojj on 16-8-9.
  */
 public class MenuDialog extends Dialog implements View.OnClickListener {
-    private boolean flag;
+    //contextMenu菜单
+    private TextView dialog_copy;
+    private TextView dialog_paste;
+    private TextView dialog_rename;
+    private TextView dialog_delete;
+    private TextView dialog_move;
+    private TextView dialog_send;
+    private TextView dialog_sort;
+    private TextView dialog_copy_path;
+    private TextView dialog_info;
+    private TextView dialog_new_folder;
+    private TextView dialog_new_file;
+    private TextView dialog_visibale_file;
     //上下文
     private Context context;
     private FileViewInteractionHub mFileViewInteractionHub;
+    private static boolean isCopy = false;
+    private int newX;
+    private int newY;
+    private MenuSecondDialog menuSecondDialog;
 
-    private TextView newdir;
-    private TextView newfile;
-    private TextView refresh;
-    private TextView paste;
-    private TextView selectall;
-
-    public void setEnablePaste(boolean can) {
-        flag = can;
-        if (can) {
-            paste.setTextColor(Color.parseColor("#000000"));
-        } else {
-            paste.setTextColor(Color.parseColor("#b19898"));
-        }
-    }
-
-    public MenuDialog(Context context, int menu_dialog, FileViewInteractionHub mFileViewInteractionHub) {
-        super(context);
-        this.context = context;
+    public MenuDialog(Context mContext, int id, FileViewInteractionHub mFileViewInteractionHub) {
+        super(mContext);
+        this.context = mContext;
         this.mFileViewInteractionHub = mFileViewInteractionHub;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.right_click_menu2);
-
+        setContentView(R.layout.select_dialog);
         initView();
+        //点击其他区域时清除选中项，否则会点击不响应
+        setOnDismissListener(new OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                dialogInterface.dismiss();
+                mFileViewInteractionHub.clearSelection();
+                mFileViewInteractionHub.refreshFileList();
+            }
+        });
         initData();
     }
 
     private void initData() {
-        newdir.setOnClickListener(this);
-        newfile.setOnClickListener(this);
-        refresh.setOnClickListener(this);
-        paste.setOnClickListener(this);
-        selectall.setOnClickListener(this);
+        //contextmenu菜单点击事件
+        dialog_copy.setOnClickListener(this);
+        if (!isCopy || mFileViewInteractionHub.getSelectedFileList() == null){
+            dialog_paste.setTextColor(Color.LTGRAY);
+        }else {
+            dialog_paste.setTextColor(Color.BLACK);
+            dialog_paste.setOnClickListener(this);
+            isCopy = false;
+        }
+        dialog_rename.setOnClickListener(this);
+        dialog_delete.setOnClickListener(this);
+        dialog_move.setOnClickListener(this);
+        dialog_send.setOnClickListener(this);
+        dialog_sort.setOnClickListener(this);
+        dialog_info.setOnClickListener(this);
+        dialog_new_folder.setOnClickListener(this);
+        dialog_new_file.setOnClickListener(this);
+        dialog_copy_path.setOnClickListener(this);
+        dialog_visibale_file.setOnClickListener(this);
     }
 
     private void initView() {
-        newdir = (TextView) findViewById(R.id.newdir);
-        newfile = (TextView) findViewById(R.id.newfile);
-        refresh = (TextView) findViewById(R.id.refresh);
-        paste = (TextView) findViewById(R.id.paste);
-        selectall = (TextView) findViewById(R.id.selectall);
-        flag = true;
+        dialog_copy = (TextView) findViewById(R.id.dialog_copy);
+        dialog_paste = (TextView) findViewById(R.id.dialog_paste);
+        dialog_rename = (TextView) findViewById(R.id.dialog_rename);
+        dialog_delete = (TextView) findViewById(R.id.dialog_delete);
+        dialog_move = (TextView) findViewById(R.id.dialog_move);
+        dialog_send = (TextView) findViewById(R.id.dialog_send);
+        dialog_sort = (TextView) findViewById(R.id.dialog_sort);
+        dialog_copy_path = (TextView) findViewById(R.id.dialog_copy_path);
+        dialog_info = (TextView) findViewById(R.id.dialog_info);
+        dialog_new_folder = (TextView) findViewById(R.id.dialog_new_folder);
+        dialog_new_file = (TextView) findViewById(R.id.dialog_new_file);
+        dialog_visibale_file = (TextView) findViewById(R.id.dialog_visibale_file);
     }
 
     @Override
-    public void onClick(View v) {
-        T.showShort(context,"jsljfsljfs");
+    public void onClick(View view) {
+        switch (view.getId()) {
+            //contextmenu菜单点击事件
+            case R.id.dialog_copy:  //复制
+                try {
+                    mFileViewInteractionHub.doOnOperationCopy();
+                    isCopy = true;
+                    mFileViewInteractionHub.dismissContextDialog();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.dialog_paste:  //粘贴
+                mFileViewInteractionHub.getSelectedFileList();
+                mFileViewInteractionHub.onOperationButtonConfirm();
+                mFileViewInteractionHub.dismissContextDialog();
+                break;
+            case R.id.dialog_rename:  //重命名
+                mFileViewInteractionHub.onOperationRename();
+                mFileViewInteractionHub.dismissContextDialog();
+                break;
+            case R.id.dialog_delete:  //删除
+                mFileViewInteractionHub.onOperationDelete();
+                mFileViewInteractionHub.dismissContextDialog();
+                break;
+            case R.id.dialog_move:  //剪切
+                mFileViewInteractionHub.onOperationMove();
+                mFileViewInteractionHub.dismissContextDialog();
+                break;
+            case R.id.dialog_send:  //发送
+                mFileViewInteractionHub.onOperationSend();
+                mFileViewInteractionHub.dismissContextDialog();
+                break;
+            case R.id.dialog_sort:  //分类
+                mFileViewInteractionHub.dismissContextDialog();
+                menuSecondDialog = new MenuSecondDialog(context,R.style.menu_dialog,mFileViewInteractionHub);
+                menuSecondDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                menuSecondDialog.showSecondDialog(newX,newY,210,160);
+                break;
+            case R.id.dialog_info:  //属性
+                mFileViewInteractionHub.onOperationInfo();
+                mFileViewInteractionHub.dismissContextDialog();
+                break;
+            case R.id.dialog_copy_path:  //复制路径
+                mFileViewInteractionHub.onOperationCopyPath();
+                mFileViewInteractionHub.dismissContextDialog();
+                T.showShort(context, "dialog_copy_path");
+                break;
+            case R.id.dialog_new_folder:  //创建文件夹
+                mFileViewInteractionHub.onOperationCreateFolder();
+                mFileViewInteractionHub.dismissContextDialog();
+                break;
+            case R.id.dialog_new_file:  //创建文件
+                mFileViewInteractionHub.onOperationCreateFile();
+                mFileViewInteractionHub.dismissContextDialog();
+                break;
+            case R.id.dialog_visibale_file:  //显示隐藏文件
+                mFileViewInteractionHub.onOperationShowSysFiles();
+                mFileViewInteractionHub.dismissContextDialog();
+                break;
+        }
     }
 
     public void showDialog(int x, int y, int height, int width) {
         show();
-        // setContentView可以设置为一个View也可以简单地指定资源ID
-        // LayoutInflater
-        // li=(LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
-        // View v=li.inflate(R.layout.dialog_layout, null);
-        // dialog.setContentView(v);
         /*
          * 获取圣诞框的窗口对象及参数对象以修改对话框的布局设置,
          * 可以直接调用getWindow(),表示获得这个Activity的Window
@@ -91,9 +174,6 @@ public class MenuDialog extends Dialog implements View.OnClickListener {
         Window dialogWindow = getWindow();
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
-
-        WindowManager m = dialogWindow.getWindowManager();
-        Display d = m.getDefaultDisplay(); // 获取屏幕宽、高用
         /*
          * lp.x与lp.y表示相对于原始位置的偏移.
          * 当参数值包含Gravity.LEFT时,对话框出现在左边,所以lp.x就表示相对左边的偏移,负值忽略.
@@ -111,33 +191,15 @@ public class MenuDialog extends Dialog implements View.OnClickListener {
          * 我手机上测试时发现距左边与上边都有一小段距离,而且垂直坐标把程序标题栏也计算在内了,
          * Gravity.LEFT, Gravity.TOP, Gravity.BOTTOM与Gravity.RIGHT都是如此,据边界有一小段距离
          */
-        if (x > (d.getWidth() - 200))
-            lp.x = d.getWidth() - 200;
-        else
-            lp.x = x; // 新位置X坐标
-        if (y > (d.getHeight() - 285))
-            lp.y = d.getHeight() - 285;
-        else
-            lp.y = y - 10;
         // 新位置Y坐标
         lp.width = width; // 宽度
         lp.height = height; // 高度
-        lp.alpha = 0.9f; // 透明度
+        lp.x = x+220;
+        lp.y = y+50;
+//        lp.alpha = 0.9f; // 透明度
 
-        // 当Window的Attributes改变时系统会调用此函数,可以直接调用以应用上面对窗口参数的更改,也可以用setAttributes
-        // dialog.onWindowAttributesChanged(lp);
+        newX = x;
+        newY = y;
         dialogWindow.setAttributes(lp);
-
-        /*
-         * 将对话框的大小按屏幕大小的百分比设置
-         */
-//        WindowManager m = getWindowManager();
-//        Display d = m.getDefaultDisplay(); // 获取屏幕宽、高用
-//        WindowManager.LayoutParams p = dialogWindow.getAttributes(); // 获取对话框当前的参数值
-//        p.height = (int) (d.getHeight() * 0.6); // 高度设置为屏幕的0.6
-//        p.width = (int) (d.getWidth() * 0.65); // 宽度设置为屏幕的0.65
-//        dialogWindow.setAttributes(p);
-
-
     }
 }

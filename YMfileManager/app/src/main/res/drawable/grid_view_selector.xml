@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:state_pressed="true" android:drawable="@color/top_select_color"/>
+    <item android:state_selected="true" android:drawable="@mipmap/grid_view"/>
 
-    <item android:state_pressed="false" android:drawable="@mipmap/grid_view"/>
+    <item android:state_selected="false" android:drawable="@mipmap/grid_view_select"/>
 
 </selector>

@@ -103,7 +103,7 @@ public class SearchFragment extends BaseFragment{
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            view = View.inflate(getContext(), R.layout.search_file_item,null);
+            view = View.inflate(getActivity(), R.layout.search_file_item,null);
             TextView search_file_name = (TextView) view.findViewById(R.id.search_file_name);
             search_file_name.setText(mSearchList.get(i).fileName);
             return view;

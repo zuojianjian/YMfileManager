@@ -18,8 +18,8 @@
         android:gravity="center">
         <ImageView
             android:id="@+id/file_image_frame"
-            android:layout_width="80px"
-            android:layout_height="80px"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:scaleType="centerInside"
             android:gravity="center"
             android:background="@drawable/image_icon_bg"
@@ -27,11 +27,12 @@
             android:visibility="gone" />
         <ImageView
             android:id="@+id/file_image"
-            android:layout_width="74px"
-            android:layout_height="74px"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:scaleType="centerInside"
             android:gravity="center"
-            android:padding="2dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:layout_gravity="center" />
     </FrameLayout>
     <LinearLayout

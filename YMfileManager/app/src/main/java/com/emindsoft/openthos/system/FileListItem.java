@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.emindsoft.openthos.R;
-
 import com.emindsoft.openthos.utils.LocalCache;
 
 public class FileListItem {
@@ -24,7 +23,7 @@ public class FileListItem {
             checkbox.setVisibility(View.GONE);
         } else {
             checkbox.setVisibility(fileViewInteractionHub.canShowCheckBox() ? View.VISIBLE : View.GONE);
-            if ("grid".equals(LocalCache.getViewTag())){
+            if ("grid".equals(LocalCache.getViewTag())) {
                 checkbox.setBackgroundResource(fileInfo.Selected ? R.mipmap.btn_check_on_holo_light
                         : R.mipmap.btn_check_off_holo_light);
             }
@@ -63,8 +62,9 @@ public class FileListItem {
             assert (img != null && img.getTag() != null);
             FileInfo tag = (FileInfo) img.getTag();
             tag.Selected = !tag.Selected;
+//            ll_tag.Selected = !ll_tag.Selected;
             if (mFileViewInteractionHub.onCheckItem(tag, v)) {
-                if ("grid".equals(LocalCache.getViewTag())){
+                if ("grid".equals(LocalCache.getViewTag())) {
                     img.setBackgroundResource(tag.Selected ? R.mipmap.btn_check_on_holo_light
                             : R.mipmap.btn_check_off_holo_light);
                 }
@@ -75,6 +75,7 @@ public class FileListItem {
             }
         }
     }
+
 
 //    public static class ModeCallback implements ActionMode.Callback {
 //        private Menu mMenu;

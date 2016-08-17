@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 
 import com.emindsoft.openthos.component.PopOnClickLintener;
 import com.emindsoft.openthos.component.PopWinShare;
+import com.emindsoft.openthos.component.SearchOnClickListener;
 import com.emindsoft.openthos.component.SearchOnEditorActionListener;
 import com.emindsoft.openthos.fragment.DeskFragment;
 import com.emindsoft.openthos.fragment.MusicFragment;
@@ -48,6 +48,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ImageView iv_grid_view;
     private ImageView iv_back;
     private ImageView iv_setting;
+    private EditText et_nivagation;
+    private EditText et_search_view;
+    private ImageView iv_search_view;
 
     private static final String USB_SPACE_FRAGMENT = "usb_space_fragment";
     //usb设备链接标识
@@ -67,9 +70,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private PictrueFragment pictrueFragment;
     private OnlineNeighborFragment onlineNeighborFragment;
     private UsbConnectReceiver receiver;
-    private EditText search_view;
-    private boolean isCtrl = false;
     private String[] usbs;
+    private boolean mIsMutiSelect;
 
     private Handler handler = new Handler() {
         @Override
@@ -90,6 +92,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             super.handleMessage(msg);
         }
     };
+    private boolean isFirst = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,7 +108,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         initData();
         //判断usb链接
         initUsb(-1);
-
+        curFragment = sdStorageFragment;
     }
 
     private void initView() {
@@ -120,6 +123,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         iv_grid_view = (ImageView) findViewById(R.id.iv_grid_view);
         iv_back = (ImageView) findViewById(R.id.iv_back);
         iv_setting = (ImageView) findViewById(R.id.iv_setting);
+        et_nivagation = (EditText) findViewById(R.id.et_nivagation);
+        iv_search_view = (ImageView) findViewById(R.id.iv_search);
+        iv_grid_view.setSelected(true);
     }
 
     private void initUsb(int flags) {
@@ -133,13 +139,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             T.showShort(MainActivity.this, "USB设备已连接");
             tv_storage.setVisibility(View.VISIBLE);
             tv_storage.setOnClickListener(MainActivity.this);  //内存存储
-            sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_ATTACHED);
+            sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_ATTACHED, MainActivity.this);
             setSelectedBackground(R.id.tv_computer);
             manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
         } else if (flags == UsbConnectReceiver.USB_STATE_OFF) {
             tv_storage.setVisibility(View.GONE);
             tv_storage.setVisibility(View.GONE);
-            sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_DETACHED);
+            sdStorageFragment = new SdStorageFragment(manager, USB_DEVICE_DETACHED, MainActivity.this);
             setSelectedBackground(R.id.tv_computer);
             manager.beginTransaction().replace(R.id.fl_mian, sdStorageFragment).commit();
         }
@@ -150,7 +156,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         receiver = new UsbConnectReceiver(this);
 
         if (sdStorageFragment == null) {
-            sdStorageFragment = new SdStorageFragment(manager, null);
+            sdStorageFragment = new SdStorageFragment(manager, null, MainActivity.this);
         }
         if (deskFragment == null) {
             deskFragment = new DeskFragment();
@@ -172,8 +178,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //设置左侧侧边栏的点击监听
     private void initData() {
-        search_view = (EditText) findViewById(R.id.search_view);
-        curFragment = sdStorageFragment;
+        et_search_view = (EditText) findViewById(R.id.search_view);
         tv_desk.setOnClickListener(this);  //桌面
         tv_music.setOnClickListener(this);  //音乐
         tv_video.setOnClickListener(this);  //视频
@@ -188,7 +193,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //默认选中的第一个页面
         tv_computer.performClick();
         // 设置搜索监听
-        search_view.setOnEditorActionListener(new SearchOnEditorActionListener(manager, MainActivity.this));
+//        search_view.addTextChangedListener(new EditTextChangeListener(manager,MainActivity.this));
+        et_search_view.setOnEditorActionListener(new SearchOnEditorActionListener(manager, et_search_view.getText(), MainActivity.this));
+        iv_search_view.setOnClickListener(new SearchOnClickListener(manager, et_search_view.getText(), MainActivity.this));  //搜索点击监听
+
     }
 
     @Override
@@ -247,44 +255,51 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        mIsMutiSelect = false;
+        if (!mIsMutiSelect && !isFirst){
+            sendBroadcastMessage("is_ctrl_press", null, mIsMutiSelect);
+            isFirst = true;
+        }
+        return false;
+    }
+
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //判断backspace是回退还是删除操作
-        if (keyCode == KeyEvent.KEYCODE_DEL && !search_view.hasFocus()) {
+        if (keyCode == KeyEvent.KEYCODE_DEL && !et_search_view.hasFocus()) {
             onBackPressed();
         }
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
             L.e("KEYCODE_ENTER", "KEYCODE_ENTER");
             //TODO
         }
-        if (keyCode == KeyEvent.KEYCODE_CTRL_LEFT || keyCode == KeyEvent.KEYCODE_CTRL_RIGHT) {
-            isCtrl = true;
+        if (event.isCtrlPressed()) {
+            mIsMutiSelect = true;
         }
-        if (isCtrl && keyCode == KeyEvent.KEYCODE_X) {
-            sendBroadcastMessage("iv_menu", "pop_cut");
-            T.showShort(this, "剪切成功");
-            isCtrl = false;
+        if (mIsMutiSelect && isFirst) {
+            sendBroadcastMessage("is_ctrl_press", null, mIsMutiSelect);
+            isFirst = false;
         }
-        if (isCtrl && keyCode == KeyEvent.KEYCODE_C) {
-            sendBroadcastMessage("iv_menu", "pop_copy");
-            T.showShort(this, "复制成功");
-            isCtrl = false;
+        if (event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_X) {
+            sendBroadcastMessage("iv_menu", "pop_cut", false);
         }
-        if (isCtrl && keyCode == KeyEvent.KEYCODE_V) {
-            sendBroadcastMessage("iv_menu", "pop_paste");
-            T.showShort(this, "粘贴成功");
-            isCtrl = false;
+        if (event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_C) {
+            sendBroadcastMessage("iv_menu", "pop_copy", false);
         }
-        if (isCtrl && keyCode == KeyEvent.KEYCODE_Z) {
-            sendBroadcastMessage("iv_menu", "pop_cacel");
-            T.showShort(this, "取消成功");
-            isCtrl = false;
+        if (event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_V) {
+            sendBroadcastMessage("iv_menu", "pop_paste", false);
         }
-        if (isCtrl && keyCode == KeyEvent.KEYCODE_D) {
-            sendBroadcastMessage("iv_menu", "pop_delete");
-            isCtrl = false;
+        if (event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_Z) {
+            sendBroadcastMessage("iv_menu", "pop_cacel", false);
         }
-        return super.onKeyDown(keyCode, event);
+        if (event.isCtrlPressed() && keyCode == KeyEvent.KEYCODE_D) {
+            sendBroadcastMessage("iv_menu", "pop_delete", false);
+        }
+        return false;
     }
 
     @Override
@@ -326,17 +341,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.iv_setting:   //设置
                 shownPopWidndow("iv_setting");
                 break;
-            case R.id.iv_grid_view:  //切换视图
+            case R.id.iv_grid_view:  //切换视图gridview
                 //顶部切换视图按钮
-                switchListOrgrid();
+                iv_grid_view.setSelected(true);
+                iv_list_view.setSelected(false);
+                if (!"grid".equals(LocalCache.getViewTag()) || "grid".equals(LocalCache.getViewTag())) {
+                    LocalCache.setViewTag("grid");
+                    T.showShort(MainActivity.this, "网格视图！");
+                }
                 //发送广播通知视图切换
-                sendBroadcastMessage("iv_switch_view", null);
+                sendBroadcastMessage("iv_switch_view", "grid", false);
                 break;
-            case R.id.iv_list_view:  //切换视图
+            case R.id.iv_list_view:  //切换视图listview
                 //顶部切换视图按钮
-                switchListOrgrid();
+                iv_grid_view.setSelected(false);
+                iv_list_view.setSelected(true);
+                if (!"list".equals(LocalCache.getViewTag()) || "list".equals(LocalCache.getViewTag())) {
+                    LocalCache.setViewTag("list");
+                    T.showShort(MainActivity.this, "列表视图！");
+                }
                 //发送广播通知视图切换
-                sendBroadcastMessage("iv_switch_view", null);
+                sendBroadcastMessage("iv_switch_view", "list", false);
                 break;
         }
     }
@@ -346,14 +371,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //设置选中文本背景
         setSelectedBackground(id);
         manager.beginTransaction().replace(R.id.fl_mian, fragment).commit();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (MotionEvent.ACTION_DOWN == event.getAction()) {
-            sendBroadcastMessage("isTouchEvent", null);
-        }
-        return super.onTouchEvent(event);
     }
 
     //设置选中文本背景（左侧侧边栏）
@@ -433,35 +450,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      *
      * @param name 按钮点击的标识
      */
-    private void sendBroadcastMessage(String name, String tag) {
+    private void sendBroadcastMessage(String name, String tag, boolean isCtrl) {
         Intent intent = new Intent();
         switch (name) {
             case "iv_switch_view":
                 intent.setAction("com.switchview");
+                intent.putExtra("switch_view", tag);
                 break;
             case "iv_fresh":
                 intent.setAction("com.refreshview");
-                break;
-            case "isTouchEvent":
-                intent.setAction("com.isTouchEvent");
                 break;
             case "iv_menu":
                 intent.setAction("com.switchmenu");
                 intent.putExtra("pop_menu", tag);
                 break;
+            case "is_ctrl_press":
+                intent.setAction("com.isCtrlPress");
+                intent.putExtra("is_ctrl_press", isCtrl);
+                break;
         }
         sendBroadcast(intent);
-    }
-
-    //顶部切换视图按钮
-    private void switchListOrgrid() {
-        if (!"list".equals(LocalCache.getViewTag())) {
-            LocalCache.setViewTag("list");
-            T.showShort(MainActivity.this, "已切换为列表视图！");
-        } else if (!"grid".equals(LocalCache.getViewTag())) {
-            LocalCache.setViewTag("grid");
-            T.showShort(MainActivity.this, "已切换为网格视图！");
-        }
     }
 
     /**
@@ -526,6 +534,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     finish();
                 }
             }
+            et_nivagation.setText("");
         } else {
             if (manager.getBackStackEntryCount() >= 1) {
                 manager.popBackStack();
@@ -544,6 +553,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onDestroy();
         // 解绑注册
         receiver.unregisterReceiver();
+    }
+
+    @Override
+    public void setNavigationBar(String displayPath) {
+        if (displayPath != null) {
+            et_nivagation.setText(displayPath);
+        }
     }
 
 }

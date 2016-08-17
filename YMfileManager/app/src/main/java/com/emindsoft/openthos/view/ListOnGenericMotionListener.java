@@ -17,10 +17,12 @@ public class ListOnGenericMotionListener implements View.OnGenericMotionListener
     private FileViewInteractionHub mFileViewInteractionHub;
     private int mLastClickId;
     private long mLastClickTime = 0;
+    private boolean mIsCtrlPress;
 
-    public ListOnGenericMotionListener(ListView file_path_list, FileViewInteractionHub mFileViewInteractionHub) {
+    public ListOnGenericMotionListener(ListView file_path_list, FileViewInteractionHub mFileViewInteractionHub, boolean isCtrlPress) {
         this.mFileViewInteractionHub = mFileViewInteractionHub;
         this.file_path_list = file_path_list;
+        this.mIsCtrlPress = isCtrlPress;
     }
 
     @Override
@@ -28,8 +30,10 @@ public class ListOnGenericMotionListener implements View.OnGenericMotionListener
         switch (event.getButtonState()) {
             case MotionEvent.BUTTON_PRIMARY:   // BUTTON_PRIMARY鼠标左键点击
                 if (event.getButtonState() == MotionEvent.BUTTON_PRIMARY) {
-                    //每一个item的点击和双击的判断
-                    file_path_list.setOnItemClickListener(new ListItemClick());
+                    if (!mIsCtrlPress){
+                        //每一个item的点击和双击的判断
+                        file_path_list.setOnItemClickListener(new ListItemClick(event));
+                    }
                 }
                 break;
             case MotionEvent.BUTTON_SECONDARY:    //BUTTON_SECONDARY鼠标右键点击
@@ -45,12 +49,12 @@ public class ListOnGenericMotionListener implements View.OnGenericMotionListener
                         mFileViewInteractionHub.addDialogSelectedItem(position);
                     }
                 });
-                mFileViewInteractionHub.shownContextDialog(mFileViewInteractionHub);
+//                mFileViewInteractionHub.shownContextDialog(mFileViewInteractionHub);
                 break;
             case MotionEvent.BUTTON_TERTIARY:   //BUTTON_TERTIARY鼠标滚轮点击
                 if (event.getButtonState() == MotionEvent.BUTTON_TERTIARY){
                     //每一个item的点击和双击的判断
-                    file_path_list.setOnItemClickListener(new ListItemClick());
+                    file_path_list.setOnItemClickListener(new ListItemClick(event));
                 }
                 break;
             case MotionEvent.ACTION_SCROLL:   //ACTION_SCROLL鼠标滚轮滑动
@@ -63,13 +67,18 @@ public class ListOnGenericMotionListener implements View.OnGenericMotionListener
     }
 
     private class ListItemClick implements AdapterView.OnItemClickListener {
+        private MotionEvent event;
+        public ListItemClick(MotionEvent event) {
+            this.event = event;
+        }
+
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mLastClickId == position && (Math.abs(System.currentTimeMillis() - mLastClickTime) < 1500)) {
                 view.setSelected(false);
 
                 String doubleTag = "double";
-                mFileViewInteractionHub.onListItemClick(parent, view, position, id, doubleTag);
+                mFileViewInteractionHub.onListItemClick(parent, view, position, id, doubleTag, event);
                 mFileViewInteractionHub.clearSelection();
             } else {
                 view.setSelected(true);

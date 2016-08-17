@@ -64,7 +64,7 @@ public class DeskFragment extends BaseFragment {
         //获取应用的包信息并加入appInfos中去
         getInstallPackageInfo();
         //设置adapter
-        deskAdapter = new DeskAdapter(appInfos, getContext());
+        deskAdapter = new DeskAdapter(appInfos, getActivity());
         gv_desk_icon.setAdapter(deskAdapter);
         //设置鼠标的动作监听操作
         gv_desk_icon.setOnGenericMotionListener(new DeskOnGenericMotionListener());

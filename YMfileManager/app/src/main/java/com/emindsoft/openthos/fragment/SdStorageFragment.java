@@ -1,5 +1,6 @@
 package com.emindsoft.openthos.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.emindsoft.openthos.BaseFragment;
+import com.emindsoft.openthos.MainActivity;
 import com.emindsoft.openthos.R;
 import com.emindsoft.openthos.system.FileInfo;
 import com.emindsoft.openthos.system.FileViewInteractionHub;
@@ -76,16 +78,18 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
     private String mountPath;
     private long currentBackTime;
     private String mountDiskPath = null;
+    private Context context;
 
     /**
      * 构造器
-     *
-     * @param manager             fragment管理器
+     *  @param manager             fragment管理器
      * @param usbDeviceIsAttached usb是否连接的标识
+     * @param context
      */
-    public SdStorageFragment(FragmentManager manager, String usbDeviceIsAttached) {
+    public SdStorageFragment(FragmentManager manager, String usbDeviceIsAttached, MainActivity context) {
         this.manager = manager;
         this.usbDeviceIsAttached = usbDeviceIsAttached;
+        this.context = context;
     }
 
     @Override
@@ -179,15 +183,13 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
         //显示外接设备磁盘
 
         if (usbDeviceIsAttached != null && usbDeviceIsAttached.equals("usb_device_attached")) {
-            //设置移动磁盘的显示和隐藏
-            rl_mount_space_one.setVisibility(View.VISIBLE);
-            rl_mount_space_one.setOnClickListener(this);
             //设置usb用量信息
             String[] cmd = {"df"};
             String[] usbs = Util.execUsb(cmd);
             if (usbs != null && usbs.length > 0) {
                 showMountDevices(usbs);
-//                rl_mount_space_one.setOnClickListener(new MountItemClick());
+                //设置移动磁盘的显示和隐藏
+                rl_mount_space_one.setVisibility(View.VISIBLE);
                 rl_mount_space_one.setOnClickListener(this);
             }
         } else if (usbDeviceIsAttached != null && usbDeviceIsAttached.equals("usb_device_detached")) {
@@ -226,6 +228,8 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
             case R.id.rl_android_service:  //云服务
                 setDiskClickInfo(R.id.rl_android_service, YUN_SPACE_FRAGMENT, null);
                 break;
+            default:
+                break;
         }
     }
 
@@ -240,7 +244,7 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
                 copyOrMove = ((SystemSpaceFragment) curFragment).getCurCopyOrMoveMode();
             }
             if (fileInfoArrayList != null && copyOrMove != null) {
-                T.showShort(getContext(), "系统目录只有读取权限！当前操作失败～");
+                T.showShort(context, "系统目录只有读取权限！当前操作失败～");
             }
             curFragment = new SystemSpaceFragment(tag, path, fileInfoArrayList, copyOrMove);
             manager.beginTransaction().replace(R.id.fl_mian, curFragment, SYSTEM_SPACE_FRAGMENT_TAG)
@@ -307,4 +311,5 @@ public class SdStorageFragment extends BaseFragment implements View.OnClickListe
             systemSpaceFragment.goBack();
         }
     }
+
 }

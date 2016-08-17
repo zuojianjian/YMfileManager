@@ -59,7 +59,7 @@ public class PictrueFragment extends BaseFragment {
                     mProgressDialog.dismiss();
                     list = subGroupOfImage(mGruopMap);
                     if (null != list) {
-                        adapter = new GroupAdapter(getContext(), list, gv_pictrue);
+                        adapter = new GroupAdapter(getActivity(), list, gv_pictrue);
                     } else {
                         tv_no_pictrue.setVisibility(View.VISIBLE);
                     }
@@ -148,15 +148,15 @@ public class PictrueFragment extends BaseFragment {
      */
     private void getImages() {
         if (!Util.isSDCardReady()) {
-            Toast.makeText(getContext(), "暂无外部存储", LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "暂无外部存储", LENGTH_SHORT).show();
             return;
         }
 
-        mContentResolver = getContext().getContentResolver();
+        mContentResolver = getActivity().getContentResolver();
 
         if (mContentResolver != null) {
             //显示进度条
-            mProgressDialog = ProgressDialog.show(getContext(), null, "正在加载...");
+            mProgressDialog = ProgressDialog.show(getActivity(), null, "正在加载...");
             new Thread(new Runnable() {
                 @Override
                 public void run() {

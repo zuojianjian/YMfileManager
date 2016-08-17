@@ -263,7 +263,6 @@ public class FileOperationHelper {
         }
 
         file.delete();
-
         Log.v(LOG_TAG, "DeleteFile >>> " + f.filePath);
     }
     //执行1个文件的拷贝，如果文件是目录，拷贝整个目录，可能有递归Copy

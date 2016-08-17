@@ -4,21 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.Window;
-import android.view.WindowManager;
 
 import com.emindsoft.openthos.R;
+import com.emindsoft.openthos.view.TextSelectDialog;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import com.emindsoft.openthos.view.TextSelectDialog;
 
 public class IntentBuilder {
 
     private static final int TEXT_TYPE = 2;
 
-    public static void viewFile(final Context context, final String filePath) {
+    public static void viewFile(final Context context, final String filePath, MotionEvent event) {
         String type = getMimeType(filePath);
         if (!TextUtils.isEmpty(type) && !TextUtils.equals(type, "*/*")) {
             /* 设置intent的file与MimeType */
@@ -65,17 +64,9 @@ public class IntentBuilder {
 //                    });
 
             //创建Dialog并设置样式主题
-            TextSelectDialog dialog = new TextSelectDialog(context, R.style.dialog,filePath);
-            dialog.setCanceledOnTouchOutside(true);//设置点击Dialog外部任意区域关闭Dialog
-            dialog.show();
-            Window win = dialog.getWindow();
-            WindowManager.LayoutParams params = win.getAttributes();
-            params.height = 380; // 高度设置
-            params.width = 120; // 宽度设置
-            params.y = 100;
-            params.x = 30;
-
-            win.setAttributes(params);
+            TextSelectDialog dialog = new TextSelectDialog(context, R.style.menu_dialog,filePath);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.showTextDialog((int) event.getX(), (int) event.getY(),190,150);
         }
     }
 

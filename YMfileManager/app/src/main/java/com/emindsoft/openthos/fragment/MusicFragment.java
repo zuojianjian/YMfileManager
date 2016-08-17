@@ -50,7 +50,7 @@ public class MusicFragment  extends BaseFragment implements AdapterView.OnItemCl
                     //关闭进度条
                     mProgressDialog.dismiss();
                     if (audioItems != null && audioItems.size() > 0) {
-                        gv_audio_pager.setAdapter(new AudioAdapter(getContext(), audioItems));
+                        gv_audio_pager.setAdapter(new AudioAdapter(getActivity(), audioItems));
                     } else {
                         tv_no_audio.setVisibility(View.VISIBLE);
                     }
@@ -99,13 +99,13 @@ public class MusicFragment  extends BaseFragment implements AdapterView.OnItemCl
     }
 
     private void getAudioList() {
-        mProgressDialog = ProgressDialog.show(getContext(), null, "正在加载...");
+        mProgressDialog = ProgressDialog.show(getActivity(), null, "正在加载...");
         //子线程准备数据
         new Thread() {
             public void run() {
                 audioItems = new ArrayList<>();
                 Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                contentResolver = getContext().getContentResolver();
+                contentResolver = getActivity().getContentResolver();
                 String[] projection = {
                         MediaStore.Audio.Media.DISPLAY_NAME,//音乐名称
                         MediaStore.Audio.Media.SIZE,//音乐播放的时长

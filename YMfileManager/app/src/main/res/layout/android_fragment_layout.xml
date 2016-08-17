@@ -32,26 +32,26 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingLeft="80dp"
         android:paddingRight="80dp"
-        android:orientation="horizontal"
         android:visibility="visible">
 
         <RelativeLayout
             android:id="@+id/rl_android_system"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:background="@drawable/sd_page_bg_selector"
-            android:paddingBottom="20dp"
-            android:paddingTop="10dp"
             android:gravity="center"
-            android:layout_weight="1">
+            android:paddingBottom="20dp"
+            android:paddingTop="10dp">
 
             <ImageView
                 android:id="@+id/iv_android"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:src="@mipmap/storage" />
 
             <LinearLayout
@@ -66,14 +66,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:textColor="@android:color/black"
                     android:text="安卓系统"
+                    android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
                 <ProgressBar
                     android:id="@+id/pb_system"
                     style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="match_parent"
+                    android:layout_width="230dp"
                     android:layout_height="10dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginBottom="5dp"
@@ -98,8 +98,8 @@
                         android:id="@+id/tv_system_total"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:singleLine="true"
                         android:ellipsize="end"
+                        android:singleLine="true"
                         android:textSize="13sp" />
 
                     <TextView
@@ -107,17 +107,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
+                        android:ellipsize="end"
                         android:singleLine="true"
                         android:text="可用："
-                        android:ellipsize="end"
                         android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/tv_system_avail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:singleLine="true"
                         android:ellipsize="end"
+                        android:singleLine="true"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -133,17 +133,17 @@
             android:id="@+id/rl_sd_space"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:background="@drawable/sd_page_bg_selector"
-            android:paddingBottom="20dp"
-            android:paddingTop="10dp"
             android:gravity="center"
-            android:layout_weight="1">
+            android:paddingBottom="20dp"
+            android:paddingTop="10dp">
 
             <ImageView
                 android:id="@+id/iv_person"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="15dp"
                 android:src="@mipmap/storage" />
 
             <LinearLayout
@@ -158,14 +158,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:textColor="@android:color/black"
                     android:text="磁盘存储"
+                    android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
                 <ProgressBar
                     android:id="@+id/pb_sd"
                     style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="match_parent"
+                    android:layout_width="230dp"
                     android:layout_height="10dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginBottom="5dp"
@@ -238,28 +238,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:paddingRight="80dp"
-        android:paddingLeft="80dp"
         android:orientation="horizontal"
+        android:paddingLeft="80dp"
+        android:paddingRight="80dp"
         android:visibility="visible">
 
         <RelativeLayout
             android:id="@+id/rl_mount_space_one"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/sd_page_bg_selector"
-            android:paddingBottom="20dp"
-            android:paddingTop="10dp"
             android:layout_marginRight="20dp"
-            android:layout_weight="1"
+            android:background="@drawable/sd_page_bg_selector"
+            android:gravity="center"
+            android:paddingBottom="20dp"
+            android:paddingLeft="80dp"
+            android:paddingRight="80dp"
+            android:paddingTop="10dp"
             android:visibility="gone">
 
             <ImageView
                 android:id="@+id/iv_dvd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:src="@mipmap/storage" />
+                android:layout_marginTop="15dp"
+                android:src="@mipmap/usb_service" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -273,8 +275,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:textColor="@android:color/black"
                     android:text="可移动磁盘"
+                    android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
                 <ProgressBar
@@ -323,28 +325,26 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3" />
 
         <RelativeLayout
             android:id="@+id/rl_mount_space_two"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
             android:background="@drawable/sd_page_bg_selector"
-            android:paddingBottom="20dp"
-            android:paddingTop="10dp"
             android:gravity="center"
-            android:visibility="gone"
-            android:layout_weight="1">
+            android:paddingBottom="20dp"
+            android:paddingLeft="80dp"
+            android:paddingRight="80dp"
+            android:paddingTop="10dp"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/iv_mount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:src="@mipmap/storage" />
+                android:layout_marginTop="15dp"
+                android:src="@mipmap/usb_service" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -358,8 +358,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:textColor="@android:color/black"
                     android:text="可移动磁盘"
+                    android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
                 <ProgressBar
@@ -403,16 +403,6 @@
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="2" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="2" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -445,25 +435,26 @@
         android:layout_marginTop="30dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:visibility="visible"
-        android:layout_marginLeft="80dp">
+        android:paddingLeft="80dp"
+        android:visibility="visible">
 
         <RelativeLayout
             android:id="@+id/rl_android_service"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/sd_page_bg_selector"
+            android:gravity="center"
             android:paddingBottom="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="50dp"
+            android:paddingLeft="80dp"
+            android:paddingRight="80dp"
             android:paddingTop="10dp">
 
             <ImageView
                 android:id="@+id/iv_service"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:src="@mipmap/storage" />
+                android:layout_marginTop="20dp"
+                android:src="@mipmap/cloud_service" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -477,8 +468,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:textColor="@android:color/black"
                     android:text="云盘"
+                    android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
                 <ProgressBar

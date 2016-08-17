@@ -10,20 +10,24 @@
 
     <TextView
         android:id="@+id/dialog_type_text"
+        android:layout_marginLeft="10dp"
         style="@style/textDialog"
         android:text="@string/dialog_type_text"/>
     <TextView
         android:id="@+id/dialog_type_audio"
+        android:layout_marginLeft="10dp"
         style="@style/textDialog"
         android:layout_marginTop="15dp"
         android:text="@string/dialog_type_audio"/>
     <TextView
         android:id="@+id/dialog_type_video"
+        android:layout_marginLeft="10dp"
         style="@style/textDialog"
         android:layout_marginTop="15dp"
         android:text="@string/dialog_type_video"/>
     <TextView
         android:id="@+id/dialog_type_image"
+        android:layout_marginLeft="10dp"
         style="@style/textDialog"
         android:layout_marginTop="15dp"
         android:text="@string/dialog_type_image"/>

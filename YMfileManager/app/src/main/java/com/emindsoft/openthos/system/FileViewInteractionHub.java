@@ -14,24 +14,16 @@ import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.emindsoft.openthos.MainActivity;
 import com.emindsoft.openthos.R;
 import com.emindsoft.openthos.component.MenuDialog;
-import com.emindsoft.openthos.component.SelectDialog;
 import com.emindsoft.openthos.utils.L;
 import com.emindsoft.openthos.utils.LocalCache;
 import com.emindsoft.openthos.utils.T;
@@ -56,17 +48,12 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     private ProgressDialog progressDialog;
 
-    private View mNavigationBar;
-
-    private TextView mNavigationBarText;
-
     private Context mContext;
 
     // 当前是复制还是移动
     private CopyOrMove copyOrMoveMode;
-    private SelectDialog selectDialog;
-    private MenuDialog menuDialog;
     private int selectedDialogItem;
+    private MenuDialog menuDialog;
 
     public enum Mode {
         View, Pick
@@ -187,13 +174,6 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         setupFileListView();
         //剪切复制操作的确定取消按钮
 //        setupOperationPane();
-        //顶部导航栏（sd卡路径）
-        setupNaivgationBar();
-    }
-
-    private void setupNaivgationBar() {
-        mNavigationBar = mFileViewListener.getViewById(R.id.navigation_bar);
-        mNavigationBarText = (TextView) mFileViewListener.getViewById(R.id.current_path_view);
     }
 
 //    // buttons
@@ -309,7 +289,6 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         dialog.show();
     }
 
-    //TODO（待用） 创建文件时获取输入字符(创建文件不能在长按选中时创建)   右键创建
     public void onOperationCreateFile() {
         TextInputDialog dialog = new TextInputDialog(mContext, mContext.getString(
                 R.string.operation_create_file), mContext.getString(R.string.operation_create_file_message),
@@ -337,7 +316,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
             } else if ("grid".equals(LocalCache.getViewTag())) {
                 mFileGridView.setSelection(mFileGridView.getCount() - 1);
             }
-
+            T.showShort(mContext, "文件夹创建成功!");
             clearSelection();
         } else {
             new AlertDialog.Builder(mContext).setMessage(mContext.getString(R.string.fail_to_create_folder))
@@ -356,13 +335,14 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
             return false;
         }
 
-        if (mFileOperationHelper.CreateFile(mCurrentPath,text)) {
+        if (mFileOperationHelper.CreateFile(mCurrentPath, text)) {
             mFileViewListener.addSingleFile(Util.GetFileInfo(Util.makePath(mCurrentPath, text)));
             if ("list".equals(LocalCache.getViewTag())) {
                 mFileListView.setSelection(mFileListView.getCount() - 1);
             } else if ("grid".equals(LocalCache.getViewTag())) {
                 mFileGridView.setSelection(mFileGridView.getCount() - 1);
             }
+            T.showShort(mContext, "文件创建成功!");
             clearSelection();
         } else {
             new AlertDialog.Builder(mContext).setMessage(mContext.getString(R.string.fail_to_create_folder))
@@ -415,6 +395,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     public void onOperationPaste() {
         if (mFileOperationHelper.Paste(mCurrentPath)) {
             showProgress(mContext.getString(R.string.operation_pasting));
+            T.showShort(mContext, "粘贴成功!");
         }
     }
 
@@ -428,6 +409,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         // refresh to hide selected files
         refreshFileList();
         copyOrMoveMode = CopyOrMove.Move;
+        T.showShort(mContext, "剪切成功!");
     }
 
     public void refreshFileList() {
@@ -460,8 +442,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
     //更新导航栏
     private void updateNavigationPane() {
-//        mNavigationBarText.setText(mFileViewListener.getDisplayPath(mCurrentPath));
-        mNavigationBarText.setText(mFileViewListener.getDisplayPath(mCurrentPath));
+        ((MainActivity) mContext).setNavigationBar(mFileViewListener.getDisplayPath(mCurrentPath));
     }
 
     //发送操作
@@ -518,6 +499,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         if (mFileOperationHelper.Rename(f, text)) {
             f.fileName = text;
             mFileViewListener.onDataChanged();
+            T.showShort(mContext, "命名成功!");
         } else {
             new AlertDialog.Builder(mContext).setMessage(mContext.getString(R.string.fail_to_rename))
                     .setPositiveButton(R.string.confirm, null).create().show();
@@ -577,6 +559,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
                             showProgress(mContext.getString(R.string.operation_deleting));
                         }
                         clearSelection();
+                        T.showShort(mContext, "删除成功！");
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
@@ -662,7 +645,7 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     }
 
     //listview或gridview的item左键或者滚轮点击事件监听
-    public void onListItemClick(AdapterView<?> parent, View view, int position, long id, String doubleTag) {
+    public void onListItemClick(AdapterView<?> parent, View view, int position, long id, String doubleTag, MotionEvent event) {
         FileInfo lFileInfo = mFileViewListener.getItem(position);
         if (lFileInfo == null) {
             Log.e(LOG_TAG, "file does not exist on position:" + position);
@@ -671,26 +654,30 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 
 //        if (isInSelection()) {
 //            boolean selected = lFileInfo.Selected;
+//
 ////            ImageView checkBox = (ImageView) view.findViewById(R.id.file_checkbox);
+//            LinearLayout ll_grid_item_bg = (LinearLayout) view.findViewById(R.id.ll_grid_item_bg);
 //            if (selected) {
 //                mCheckedFileNameList.remove(lFileInfo);
+//                ll_grid_item_bg.setSelected(false);
 ////                checkBox.setImageResource(R.mipmap.btn_check_off_holo_light);
 //            } else {
 //                mCheckedFileNameList.add(lFileInfo);
+//                ll_grid_item_bg.setSelected(false);
 ////                checkBox.setImageResource(R.mipmap.btn_check_on_holo_light);
 //            }
-//            lFileInfo.Selected = !selected;已
+//            lFileInfo.Selected = !selected;
 //            return;
 //        }
 
-        if (!lFileInfo.IsDir) {
+        if (!lFileInfo.IsDir && doubleTag != null) {
             if (mCurrentMode == Mode.Pick) {
                 mFileViewListener.onPick(lFileInfo);
             } else {
                 //打开文件
-                viewFile(lFileInfo);
+                viewFile(lFileInfo,event);
             }
-        }else if (doubleTag.equals("double")){  //打开文件夹
+        } else if (doubleTag.equals("double") && doubleTag != null) {  //打开文件夹
 //            mCheckedFileNameList.remove(lFileInfo);  //
             mCurrentPath = getAbsoluteName(mCurrentPath, lFileInfo.fileName);
             refreshFileList();
@@ -721,6 +708,27 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
 //        }
 //        mCurrentPath = getAbsoluteName(mCurrentPath, lFileInfo.fileName);
         refreshFileList();
+    }
+
+    public void setBackground(View view, int position, FileInfo lFileInfo) {
+        if (lFileInfo == null) {
+            Log.e(LOG_TAG, "file does not exist on position:" + position);
+            return;
+        }
+        if (!lFileInfo.Selected && !mCheckedFileNameList.contains(position)) {
+            lFileInfo.Selected = true;
+
+            mCheckedFileNameList.add(lFileInfo);
+//            view.setSelected(true);
+        } else {
+            lFileInfo.Selected = false;
+
+            mCheckedFileNameList.remove(lFileInfo);
+//            view.setSelected(false);
+        }
+//        lFileInfo.Selected = !selected;
+
+        L.e("mCheckedFileNameList", mCheckedFileNameList.size() + "");
     }
 
     public void setMode(Mode m) {
@@ -794,9 +802,9 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
     }
 
     //查看文件
-    private void viewFile(FileInfo lFileInfo) {
+    private void viewFile(FileInfo lFileInfo, MotionEvent event) {
         try {
-            IntentBuilder.viewFile(mContext, lFileInfo.filePath);
+            IntentBuilder.viewFile(mContext, lFileInfo.filePath, event);
         } catch (ActivityNotFoundException e) {
             Log.e(LOG_TAG, "fail to view file: " + e.toString());
         }
@@ -848,261 +856,237 @@ public class FileViewInteractionHub implements FileOperationHelper.IOperationPro
         }
     }
 
-//    //显示自定义dialog
-//    public void shownContextDialog(FileViewInteractionHub mFileViewInteractionHub) {
-//        //创建Dialog并设置样式主题
-//        selectDialog = new SelectDialog(mContext, R.style.dialog, mFileViewInteractionHub);
-//        selectdialog.setcanceledontouchoutside(true);//设置点击dialog外部任意区域关闭dialog
-//        selectDialog.show();
-//        //显示区域范围的设置在显示dialog之后，不然会不起作用
-//        Window win = selectDialog.getWindow();
-//        WindowManager.LayoutParams params = win.getAttributes();
-//        params.height = 420; // 高度设置
-//        params.width = 190; // 宽度设置
-//        params.x = 30;
-//
-//        win.setAttributes(params);
-//    }
-
-    //显示自定义dialog
-    public void shownContextDialog(FileViewInteractionHub mFileViewInteractionHub) {
+    //    //显示自定义dialog
+    public void shownContextDialog(FileViewInteractionHub mFileViewInteractionHub, MotionEvent event) {
         //创建Dialog并设置样式主题
         menuDialog = new MenuDialog(mContext, R.style.menu_dialog, mFileViewInteractionHub);
-        selectDialog.setCanceledOnTouchOutside(true);//设置点击Dialog外部任意区域关闭Dialog
-        selectDialog.show();
-        //显示区域范围的设置在显示dialog之后，不然会不起作用
-        Window win = selectDialog.getWindow();
-        WindowManager.LayoutParams params = win.getAttributes();
-        params.height = 420; // 高度设置
-        params.width = 190; // 宽度设置
-        params.x = 30;
-
-        win.setAttributes(params);
+        menuDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        menuDialog.showDialog((int) event.getX(), (int) event.getY(), 450, 190);
+//                menuDialog.setEnablePaste(canPaste);
     }
 
     public void dismissContextDialog() {
-        selectDialog.dismiss();
-//        refreshFileList();
+        menuDialog.dismiss();
     }
 
     //下面为item的触屏点击事件监听代码
 
-    // menu
-    private static final int MENU_SEARCH = 1;
-
-    //     private static final int MENU_NEW_FOLDER = 2;
-//    MENU_SORT = 3;
-    private static final int MENU_SORT = 0;
-
-    private static final int MENU_SEND = 7;
-
-    private static final int MENU_RENAME = 8;
-
-    private static final int MENU_DELETE = 9;
-
-    private static final int MENU_INFO = 10;
-
-    private static final int MENU_SORT_NAME = 11;
-
-    private static final int MENU_SORT_SIZE = 12;
-
-    private static final int MENU_SORT_DATE = 13;
-
-    private static final int MENU_SORT_TYPE = 14;
-
-    private static final int MENU_REFRESH = 15;
-
-    private static final int MENU_SELECTALL = 16;
-
-    private static final int MENU_SETTING = 17;
-
-    private static final int MENU_EXIT = 18;
-
-
-    //TODO 中间context长按menu
-    public View.OnCreateContextMenuListener mListViewContextMenuListener = new View.OnCreateContextMenuListener() {
-        @Override
-        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            if (isInSelection() || isMoveState())
-                return;
-
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-
-            SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, R.string.menu_item_sort).setIcon(
-                    R.drawable.ic_menu_sort);
-            addMenuItem(sortMenu, MENU_SORT_NAME, 0, R.string.menu_item_sort_name);
-            addMenuItem(sortMenu, MENU_SORT_SIZE, 1, R.string.menu_item_sort_size);
-            addMenuItem(sortMenu, MENU_SORT_DATE, 2, R.string.menu_item_sort_date);
-            addMenuItem(sortMenu, MENU_SORT_TYPE, 3, R.string.menu_item_sort_type);
-            sortMenu.setGroupCheckable(0, true, true);
-            sortMenu.getItem(0).setChecked(true);
-
-            addMenuItem(menu, Constants.MENU_COPY, 0, R.string.operation_copy);
-            addMenuItem(menu, Constants.MENU_COPY_PATH, 0, R.string.operation_copy_path);
-            addMenuItem(menu, Constants.MENU_PASTE, 0,
-                    R.string.operation_paste);
-            addMenuItem(menu, Constants.MENU_MOVE, 0, R.string.operation_move);
-            addMenuItem(menu, MENU_SEND, 0, R.string.operation_send);
-            addMenuItem(menu, MENU_RENAME, 0, R.string.operation_rename);
-            addMenuItem(menu, MENU_DELETE, 0, R.string.operation_delete);
-            addMenuItem(menu, MENU_INFO, 0, R.string.operation_info);
-            addMenuItem(menu, Constants.MENU_NEW_FOLDER, 0, R.string.operation_folder);
-            if (!canPaste()) {
-                MenuItem menuItem = menu.findItem(Constants.MENU_PASTE);
-                if (menuItem != null)
-                    menuItem.setEnabled(false);
-            }
-        }
-    };
-
-    private void addMenuItem(Menu menu, int itemId, int order, int string) {
-        addMenuItem(menu, itemId, order, string, -1);
-    }
-
-    private void addMenuItem(Menu menu, int itemId, int order, int string, int iconRes) {
-        if (!mFileViewListener.shouldHideMenu(itemId)) {
-            MenuItem item = menu.add(0, itemId, order, string).setOnMenuItemClickListener(menuItemClick);
-            if (iconRes > 0) {
-                item.setIcon(iconRes);
-            }
-        }
-    }
-
-
-    //TODO  每条底部按钮的点击事件
-    private MenuItem.OnMenuItemClickListener menuItemClick = new MenuItem.OnMenuItemClickListener() {
-
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            mListViewContextMenuSelectedItem = info != null ? info.position : -1;
-
-            int itemId = item.getItemId();
-            if (mFileViewListener.onOperation(itemId)) {
-                return true;
-            }
-
-            addContextMenuSelectedItem();
-
-            switch (itemId) {
-                case Constants.MENU_NEW_FOLDER://创建
-                    onOperationCreateFolder();
-                    break;
-                case MENU_REFRESH://刷新
-                    onOperationReferesh();
-                    break;
-                case MENU_SELECTALL://全选
-                    onOperationSelectAllOrCancel();
-                    break;
-                case Constants.MENU_SHOWHIDE://隐藏
-                    onOperationShowSysFiles();
-                    break;
-                case MENU_SETTING://设置
-                    onOperationSetting();
-                    break;
-                case MENU_EXIT://退出
-                    ((MainActivity) mContext).finish();
-                    break;
-                // sort
-                case MENU_SORT_NAME://分类：名称
-                    item.setChecked(true);
-                    onSortChanged(FileSortHelper.SortMethod.name);
-                    break;
-                case MENU_SORT_SIZE://分类：大小
-                    item.setChecked(true);
-                    onSortChanged(FileSortHelper.SortMethod.size);
-                    break;
-                case MENU_SORT_DATE://分类：日期
-                    item.setChecked(true);
-                    onSortChanged(FileSortHelper.SortMethod.date);
-                    break;
-                case MENU_SORT_TYPE://分类：类型
-                    item.setChecked(true);
-                    onSortChanged(FileSortHelper.SortMethod.type);
-                    break;
-
-                case Constants.MENU_COPY://复制
-                    doOnOperationCopy();
-                    break;
-                case Constants.MENU_COPY_PATH://复制路径
-                    onOperationCopyPath();
-                    break;
-                case Constants.MENU_PASTE://粘贴
-                    onOperationPaste();
-                    break;
-                case Constants.MENU_MOVE://移动
-                    onOperationMove();
-                    break;
-                case MENU_SEND://发送
-                    onOperationSend();
-                    break;
-                case MENU_RENAME://重命名
-                    onOperationRename();
-                    break;
-                case MENU_DELETE://删除
-                    onOperationDelete();
-                    break;
-                case MENU_INFO://详情
-                    onOperationInfo();
-                    break;
-                default:
-                    return false;
-            }
-
-            mListViewContextMenuSelectedItem = -1;
-            return true;
-        }
-
-    };
-
-    private int mListViewContextMenuSelectedItem;
-
-    public void addContextMenuSelectedItem() {
-        if (mCheckedFileNameList.size() == 0) {
-            int pos = mListViewContextMenuSelectedItem;
-            if (pos != -1) {
-                FileInfo fileInfo = mFileViewListener.getItem(pos);
-                if (fileInfo != null) {
-                    mCheckedFileNameList.add(fileInfo);
-                }
-            }
-        }
-    }
-
-    //监听checkbox是否选中
-    public void onListItemClick(AdapterView<?> parent, View view, int position, long id) {
-        FileInfo lFileInfo = mFileViewListener.getItem(position);
-
-        if (lFileInfo == null) {
-            Log.e(LOG_TAG, "file does not exist on position:" + position);
-            return;
-        }
-
-        if (isInSelection()) {
-            boolean selected = lFileInfo.Selected;
-            ImageView checkBox = (ImageView) view.findViewById(R.id.file_checkbox);
-            if (selected) {
-                mCheckedFileNameList.remove(lFileInfo);
-                checkBox.setImageResource(R.mipmap.btn_check_off_holo_light);
-            } else {
-                mCheckedFileNameList.add(lFileInfo);
-                checkBox.setImageResource(R.mipmap.btn_check_on_holo_light);
-            }
-            lFileInfo.Selected = !selected;
-            return;
-        }
-
-        if (!lFileInfo.IsDir) {
-            if (mCurrentMode == Mode.Pick) {
-                mFileViewListener.onPick(lFileInfo);
-            } else {
-                viewFile(lFileInfo);
-            }
-            return;
-        }
-
-        mCurrentPath = getAbsoluteName(mCurrentPath, lFileInfo.fileName);
-        refreshFileList();
-    }
+//    // menu
+//    private static final int MENU_SEARCH = 1;
+//
+//    //     private static final int MENU_NEW_FOLDER = 2;
+////    MENU_SORT = 3;
+//    private static final int MENU_SORT = 0;
+//
+//    private static final int MENU_SEND = 7;
+//
+//    private static final int MENU_RENAME = 8;
+//
+//    private static final int MENU_DELETE = 9;
+//
+//    private static final int MENU_INFO = 10;
+//
+//    private static final int MENU_SORT_NAME = 11;
+//
+//    private static final int MENU_SORT_SIZE = 12;
+//
+//    private static final int MENU_SORT_DATE = 13;
+//
+//    private static final int MENU_SORT_TYPE = 14;
+//
+//    private static final int MENU_REFRESH = 15;
+//
+//    private static final int MENU_SELECTALL = 16;
+//
+//    private static final int MENU_SETTING = 17;
+//
+//    private static final int MENU_EXIT = 18;
+//
+//
+//    //TODO 中间context长按menu
+//    public View.OnCreateContextMenuListener mListViewContextMenuListener = new View.OnCreateContextMenuListener() {
+//        @Override
+//        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//            if (isInSelection() || isMoveState())
+//                return;
+//
+//            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+//
+//            SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, R.string.menu_item_sort).setIcon(
+//                    R.drawable.ic_menu_sort);
+//            addMenuItem(sortMenu, MENU_SORT_NAME, 0, R.string.menu_item_sort_name);
+//            addMenuItem(sortMenu, MENU_SORT_SIZE, 1, R.string.menu_item_sort_size);
+//            addMenuItem(sortMenu, MENU_SORT_DATE, 2, R.string.menu_item_sort_date);
+//            addMenuItem(sortMenu, MENU_SORT_TYPE, 3, R.string.menu_item_sort_type);
+//            sortMenu.setGroupCheckable(0, true, true);
+//            sortMenu.getItem(0).setChecked(true);
+//
+//            addMenuItem(menu, Constants.MENU_COPY, 0, R.string.operation_copy);
+//            addMenuItem(menu, Constants.MENU_COPY_PATH, 0, R.string.operation_copy_path);
+//            addMenuItem(menu, Constants.MENU_PASTE, 0,
+//                    R.string.operation_paste);
+//            addMenuItem(menu, Constants.MENU_MOVE, 0, R.string.operation_move);
+//            addMenuItem(menu, MENU_SEND, 0, R.string.operation_send);
+//            addMenuItem(menu, MENU_RENAME, 0, R.string.operation_rename);
+//            addMenuItem(menu, MENU_DELETE, 0, R.string.operation_delete);
+//            addMenuItem(menu, MENU_INFO, 0, R.string.operation_info);
+//            addMenuItem(menu, Constants.MENU_NEW_FOLDER, 0, R.string.operation_folder);
+//            if (!canPaste()) {
+//                MenuItem menuItem = menu.findItem(Constants.MENU_PASTE);
+//                if (menuItem != null)
+//                    menuItem.setEnabled(false);
+//            }
+//        }
+//    };
+//
+//    private void addMenuItem(Menu menu, int itemId, int order, int string) {
+//        addMenuItem(menu, itemId, order, string, -1);
+//    }
+//
+//    private void addMenuItem(Menu menu, int itemId, int order, int string, int iconRes) {
+//        if (!mFileViewListener.shouldHideMenu(itemId)) {
+//            MenuItem item = menu.add(0, itemId, order, string).setOnMenuItemClickListener(menuItemClick);
+//            if (iconRes > 0) {
+//                item.setIcon(iconRes);
+//            }
+//        }
+//    }
+//
+//
+//    //TODO  每条底部按钮的点击事件
+//    private MenuItem.OnMenuItemClickListener menuItemClick = new MenuItem.OnMenuItemClickListener() {
+//
+//        @Override
+//        public boolean onMenuItemClick(MenuItem item) {
+//            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+//            mListViewContextMenuSelectedItem = info != null ? info.position : -1;
+//
+//            int itemId = item.getItemId();
+//            if (mFileViewListener.onOperation(itemId)) {
+//                return true;
+//            }
+//
+//            addContextMenuSelectedItem();
+//
+//            switch (itemId) {
+//                case Constants.MENU_NEW_FOLDER://创建
+//                    onOperationCreateFolder();
+//                    break;
+//                case MENU_REFRESH://刷新
+//                    onOperationReferesh();
+//                    break;
+//                case MENU_SELECTALL://全选
+//                    onOperationSelectAllOrCancel();
+//                    break;
+//                case Constants.MENU_SHOWHIDE://隐藏
+//                    onOperationShowSysFiles();
+//                    break;
+//                case MENU_SETTING://设置
+//                    onOperationSetting();
+//                    break;
+//                case MENU_EXIT://退出
+//                    ((MainActivity) mContext).finish();
+//                    break;
+//                // sort
+//                case MENU_SORT_NAME://分类：名称
+//                    item.setChecked(true);
+//                    onSortChanged(FileSortHelper.SortMethod.name);
+//                    break;
+//                case MENU_SORT_SIZE://分类：大小
+//                    item.setChecked(true);
+//                    onSortChanged(FileSortHelper.SortMethod.size);
+//                    break;
+//                case MENU_SORT_DATE://分类：日期
+//                    item.setChecked(true);
+//                    onSortChanged(FileSortHelper.SortMethod.date);
+//                    break;
+//                case MENU_SORT_TYPE://分类：类型
+//                    item.setChecked(true);
+//                    onSortChanged(FileSortHelper.SortMethod.type);
+//                    break;
+//
+//                case Constants.MENU_COPY://复制
+//                    doOnOperationCopy();
+//                    break;
+//                case Constants.MENU_COPY_PATH://复制路径
+//                    onOperationCopyPath();
+//                    break;
+//                case Constants.MENU_PASTE://粘贴
+//                    onOperationPaste();
+//                    break;
+//                case Constants.MENU_MOVE://移动
+//                    onOperationMove();
+//                    break;
+//                case MENU_SEND://发送
+//                    onOperationSend();
+//                    break;
+//                case MENU_RENAME://重命名
+//                    onOperationRename();
+//                    break;
+//                case MENU_DELETE://删除
+//                    onOperationDelete();
+//                    break;
+//                case MENU_INFO://详情
+//                    onOperationInfo();
+//                    break;
+//                default:
+//                    return false;
+//            }
+//
+//            mListViewContextMenuSelectedItem = -1;
+//            return true;
+//        }
+//
+//    };
+//
+//    private int mListViewContextMenuSelectedItem;
+//
+//    public void addContextMenuSelectedItem() {
+//        if (mCheckedFileNameList.size() == 0) {
+//            int pos = mListViewContextMenuSelectedItem;
+//            if (pos != -1) {
+//                FileInfo fileInfo = mFileViewListener.getItem(pos);
+//                if (fileInfo != null) {
+//                    mCheckedFileNameList.add(fileInfo);
+//                }
+//            }
+//        }
+//    }
+//
+//    //监听checkbox是否选中
+//    public void onListItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        FileInfo lFileInfo = mFileViewListener.getItem(position);
+//
+//        if (lFileInfo == null) {
+//            Log.e(LOG_TAG, "file does not exist on position:" + position);
+//            return;
+//        }
+//
+//        if (isInSelection()) {
+//            boolean selected = lFileInfo.Selected;
+//            ImageView checkBox = (ImageView) view.findViewById(R.id.file_checkbox);
+//            if (selected) {
+//                mCheckedFileNameList.remove(lFileInfo);
+//                checkBox.setImageResource(R.mipmap.btn_check_off_holo_light);
+//            } else {
+//                mCheckedFileNameList.add(lFileInfo);
+//                checkBox.setImageResource(R.mipmap.btn_check_on_holo_light);
+//            }
+//            lFileInfo.Selected = !selected;
+//            return;
+//        }
+//
+//        if (!lFileInfo.IsDir) {
+//            if (mCurrentMode == Mode.Pick) {
+//                mFileViewListener.onPick(lFileInfo);
+//            } else {
+//                viewFile(lFileInfo);
+//            }
+//            return;
+//        }
+//
+//        mCurrentPath = getAbsoluteName(mCurrentPath, lFileInfo.fileName);
+//        refreshFileList();
+//    }
 
 }
